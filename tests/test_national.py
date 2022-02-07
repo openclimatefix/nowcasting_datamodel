@@ -1,8 +1,10 @@
 """ Test national forecast"""
 # Used constants
+import pytest
+
 from nowcasting_datamodel.models import Forecast, ForecastSQL
 from nowcasting_datamodel.national import make_national_forecast
-import pytest
+
 
 def test_make_national_forecast(forecasts_all):
 
@@ -20,4 +22,3 @@ def test_make_national_forecast_error(forecasts_all):
 
     with pytest.raises(Exception):
         _ = make_national_forecast(forecasts=forecasts_all)
-
