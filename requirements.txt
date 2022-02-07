@@ -3,5 +3,3 @@ pandas
 sqlalchemy
 psycopg2-binary
 numpy
-click
-s3fs
