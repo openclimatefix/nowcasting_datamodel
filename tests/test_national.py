@@ -14,9 +14,9 @@ def test_make_national_forecast(forecasts_all):
 
 
 def test_make_national_forecast_error(forecasts_all):
-    forecasts_all = forecasts_all[0:10]
 
     forecasts_all = [Forecast.from_orm(f) for f in forecasts_all]
+    forecasts_all[0].location.gsp_id = 2
 
     with pytest.raises(Exception):
         _ = make_national_forecast(forecasts=forecasts_all)
