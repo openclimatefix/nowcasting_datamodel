@@ -10,9 +10,10 @@ from nowcasting_datamodel.models import (
     ForecastValueSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
+    MLModelSQL,
     national_gb_label,
 )
-from nowcasting_datamodel.read import get_location
+from nowcasting_datamodel.read import get_location, get_model
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
@@ -39,6 +40,7 @@ def make_fake_forecast(
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
+    model = get_model(name="fake_model", session=session, version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
@@ -51,7 +53,7 @@ def make_fake_forecast(
         forecast_values.append(f)
 
     forecast = ForecastSQL(
-        model_name="fake",
+        model=model,
         forecast_creation_time=t0_datetime_utc,
         location=location,
         input_data_last_updated=input_data_last_updated,
@@ -77,6 +79,7 @@ def make_fake_forecasts(
 def make_fake_national_forecast(t0_datetime_utc: Optional[datetime] = None) -> ForecastSQL:
     """Make national fake forecast"""
     location = LocationSQL(label=national_gb_label)
+    model = MLModelSQL(name="fake_model_national", version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
@@ -89,7 +92,7 @@ def make_fake_national_forecast(t0_datetime_utc: Optional[datetime] = None) -> F
         forecast_values.append(f)
 
     forecast = ForecastSQL(
-        model_name="fake",
+        model=model,
         forecast_creation_time=t0_datetime_utc,
         location=location,
         input_data_last_updated=input_data_last_updated,

@@ -3,9 +3,10 @@
 The following class are made
 1. Reusable classes
 2. Location objects, where the forecast is for
-3. ForecastValue objects, specific values of a forecast and time
-4. Input data status, shows when the data was collected
-5. Forecasts, a forecast that is made for one gsp, for several time steps into the future
+3. Model object, what forecast model is used
+4. ForecastValue objects, specific values of a forecast and time
+5. Input data status, shows when the data was collected
+6. Forecasts, a forecast that is made for one gsp, for several time steps into the future
 
 Current these models have a primary index of 'id'.
 This keeps things very simple at the start.
@@ -92,7 +93,36 @@ class Location(EnhancedBaseModel):
 
 
 ########
-# 3. ForecastValue
+# 3. Model
+########
+class MLModelSQL(Base):
+    """ML model that is being used"""
+
+    __tablename__ = "model"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    version = Column(String)
+
+    forecast = relationship("ForecastSQL", back_populates="model")
+
+
+class MLModel(EnhancedBaseModel):
+    """ML model that is being used"""
+
+    name: Optional[str] = Field(..., description="The name of the model", index=True)
+    version: Optional[str] = Field(..., description="The version of the model")
+
+    def to_orm(self) -> LocationSQL:
+        """Change model to MLModelSQL"""
+        return MLModelSQL(
+            name=self.name,
+            version=self.version,
+        )
+
+
+########
+# 4. ForecastValue
 ########
 class ForecastValueSQL(Base, CreatedMixin):
     """One Forecast of generation at one timestamp"""
@@ -131,7 +161,7 @@ class ForecastValue(EnhancedBaseModel):
 
 
 ########
-# 4. Input data status
+# 5. Input data status
 ########
 class InputDataLastUpdatedSQL(Base, CreatedMixin):
     """Information about the input data that was used to create the forecast"""
@@ -175,7 +205,7 @@ class InputDataLastUpdated(EnhancedBaseModel):
 
 
 ########
-# 4. Forecasts
+# 6. Forecasts
 ########
 # TODO add model_name to forecast, or add model table #13
 class ForecastSQL(Base, CreatedMixin):
@@ -185,7 +215,8 @@ class ForecastSQL(Base, CreatedMixin):
 
     id = Column(Integer, primary_key=True)
     forecast_creation_time = Column(DateTime(timezone=True))
-    model_name = Column(String)
+    model = relationship("MLModelSQL", back_populates="forecast")
+    model_id = Column(Integer, ForeignKey("model.id"), index=True)
 
     # many (forecasts) to one (location)
     location = relationship("LocationSQL", back_populates="forecast")
@@ -207,7 +238,7 @@ class Forecast(EnhancedBaseModel):
     """A single Forecast"""
 
     location: Location = Field(..., description="The location object for this forecaster")
-    model_name: str = Field(..., description="The name of the model that made this forecast")
+    model: MLModel = Field(..., description="The name of the model that made this forecast")
     forecast_creation_time: datetime = Field(
         ..., description="The time when the forecaster was made"
     )
@@ -227,7 +258,7 @@ class Forecast(EnhancedBaseModel):
     def to_orm(self) -> ForecastSQL:
         """Change model to ForecastSQL"""
         return ForecastSQL(
-            model_name=self.model_name,
+            model=self.model.to_orm(),
             forecast_creation_time=self.forecast_creation_time,
             location=self.location.to_orm(),
             input_data_last_updated=self.input_data_last_updated.to_orm(),

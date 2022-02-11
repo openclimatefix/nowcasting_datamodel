@@ -14,6 +14,7 @@ from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueSQL,
     LocationSQL,
+    MLModelSQL,
     national_gb_label,
 )
 
@@ -171,3 +172,40 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
         location = locations[0]
 
     return location
+
+
+def get_model(session: Session, name: str, version: str) -> MLModelSQL:
+    """
+    Get model object from name and version
+
+    :param session: database session
+    :param name: name of the model
+    :param version: version of the model
+
+    return: Model object
+
+    """
+
+    # start main query
+    query = session.query(MLModelSQL)
+
+    # filter on gsp_id
+    query = query.filter(MLModelSQL.name == name)
+    query = query.filter(MLModelSQL.version == version)
+
+    # get all results
+    models = query.all()
+
+    if len(models) == 0:
+        logger.debug(
+            f"Model for name {name} and version {version }does not exist so going to add it"
+        )
+
+        model = MLModelSQL(name=name, version=version)
+        session.add(model)
+        session.commit()
+
+    else:
+        model = models[0]
+
+    return model

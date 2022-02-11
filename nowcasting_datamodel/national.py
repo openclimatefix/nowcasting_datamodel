@@ -71,7 +71,7 @@ def make_national_forecast(forecasts: List[Forecast], n_gsps: int = N_GSP) -> Fo
     return Forecast(
         forecast_values=forecast_values,
         location=location,
-        model_name=forecasts[0].model_name,
+        model=forecasts[0].model,
         input_data_last_updated=forecasts[0].input_data_last_updated,
         forecast_creation_time=forecasts[0].forecast_creation_time,
     ).to_orm()

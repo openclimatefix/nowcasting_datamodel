@@ -1,15 +1,27 @@
 import logging
 
 from nowcasting_datamodel.fake import make_fake_forecasts, make_fake_national_forecast
-from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL
+from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, MLModelSQL
 from nowcasting_datamodel.read import (
     get_all_gsp_ids_latest_forecast,
     get_forecast_values,
     get_latest_forecast,
     get_latest_national_forecast,
+    get_model,
 )
 
 logger = logging.getLogger(__name__)
+
+
+def test_get_model(db_session):
+
+    model_read_1 = get_model(session=db_session, name="test_name", version="9.9.9")
+    model_read_2 = get_model(session=db_session, name="test_name", version="9.9.9")
+
+    assert model_read_1.name == model_read_2.name
+    assert model_read_1.version == model_read_2.version
+
+    _ = MLModel.from_orm(model_read_2)
 
 
 def test_get_forecast(db_session, forecasts):
