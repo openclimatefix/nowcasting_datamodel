@@ -190,8 +190,8 @@ def get_model(session: Session, name: str, version:str) -> MLModelSQL:
     query = session.query(MLModelSQL)
 
     # filter on gsp_id
-    query = query.filter(LocationSQL.name == name)
-    query = query.filter(LocationSQL.version == version)
+    query = query.filter(MLModelSQL.name == name)
+    query = query.filter(MLModelSQL.version == version)
 
     # get all results
     models = query.all()

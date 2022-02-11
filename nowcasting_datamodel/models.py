@@ -98,7 +98,7 @@ class Location(EnhancedBaseModel):
 class MLModelSQL(Base):
     """ML model that is being used"""
 
-    __tablename__ = "location"
+    __tablename__ = "model"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -215,7 +215,7 @@ class ForecastSQL(Base, CreatedMixin):
 
     id = Column(Integer, primary_key=True)
     forecast_creation_time = Column(DateTime(timezone=True))
-    location = relationship("MLModelSQL", back_populates="forecast")
+    model = relationship("MLModelSQL", back_populates="forecast")
     model_id = Column(Integer, ForeignKey("model.id"), index=True)
 
     # many (forecasts) to one (location)
