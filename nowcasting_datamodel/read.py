@@ -174,7 +174,7 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     return location
 
 
-def get_model(session: Session, name: str, version:str) -> MLModelSQL:
+def get_model(session: Session, name: str, version: str) -> MLModelSQL:
     """
     Get model object from name and version
 
@@ -197,7 +197,9 @@ def get_model(session: Session, name: str, version:str) -> MLModelSQL:
     models = query.all()
 
     if len(models) == 0:
-        logger.debug(f"Model for name {name} and version {version }does not exist so going to add it")
+        logger.debug(
+            f"Model for name {name} and version {version }does not exist so going to add it"
+        )
 
         model = MLModelSQL(name=name, version=version)
         session.add(model)

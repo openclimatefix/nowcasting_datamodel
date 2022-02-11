@@ -40,7 +40,7 @@ def make_fake_forecast(
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
-    model = get_model(name='fake_model', session=session, version='0.1.2')
+    model = get_model(name="fake_model", session=session, version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
@@ -79,7 +79,7 @@ def make_fake_forecasts(
 def make_fake_national_forecast(t0_datetime_utc: Optional[datetime] = None) -> ForecastSQL:
     """Make national fake forecast"""
     location = LocationSQL(label=national_gb_label)
-    model = MLModelSQL(name='fake_model_national', version='0.1.2')
+    model = MLModelSQL(name="fake_model_national", version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
