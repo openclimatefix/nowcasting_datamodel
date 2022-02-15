@@ -55,7 +55,7 @@ class PVSystem(EnhancedBaseModel):
 
     @validator("provider")
     def validate_provider(cls, v):
-        """ Validate the provider"""
+        """Validate the provider"""
         if v not in providers:
             raise Exception(f"Provider ({v}) must be in {providers}")
         return v
@@ -103,7 +103,7 @@ class PVYield(EnhancedBaseModel):
 
     @validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):
-        """ Validate the solar_generation_kw field"""
+        """Validate the solar_generation_kw field"""
         if v < 0:
             logger.debug(f"Changing solar_generation_kw ({v}) to 0")
             v = 0
