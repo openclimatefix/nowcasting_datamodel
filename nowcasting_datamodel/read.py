@@ -15,8 +15,8 @@ from nowcasting_datamodel.models import (
     ForecastValueSQL,
     LocationSQL,
     MLModelSQL,
+    PVSystemSQL,
     national_gb_label,
-    PVSystemSQL
 )
 
 logger = logging.getLogger(__name__)
@@ -212,7 +212,9 @@ def get_model(session: Session, name: str, version: str) -> MLModelSQL:
     return model
 
 
-def get_pv_system(session: Session, pv_system_id: int, provider: Optional[str] = 'pvoutput.org') -> PVSystemSQL:
+def get_pv_system(
+    session: Session, pv_system_id: int, provider: Optional[str] = "pvoutput.org"
+) -> PVSystemSQL:
     """
     Get model object from name and version
 

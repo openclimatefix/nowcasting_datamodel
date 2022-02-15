@@ -1,10 +1,10 @@
 """ Save forecasts to the database """
+import logging
 from typing import List
 
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import ForecastSQL, PVSystemSQL
-import logging
 
 logger = logging.getLogger(__name__)
 
