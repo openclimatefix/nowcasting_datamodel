@@ -3,7 +3,6 @@ from datetime import datetime
 from pydantic import BaseModel
 from sqlalchemy import Column, DateTime
 
-
 from nowcasting_datamodel.utils import convert_to_camelcase
 
 

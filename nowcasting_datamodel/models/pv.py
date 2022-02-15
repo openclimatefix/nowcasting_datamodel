@@ -8,20 +8,21 @@ import logging
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, Integer, String, ForeignKey
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from nowcasting_datamodel.utils import datetime_must_have_timezone
 from nowcasting_datamodel.connection import Base
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
+from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 logger = logging.getLogger(__name__)
 
-providers = ['pvoutput.org']
+providers = ["pvoutput.org"]
 
 ########
 # 7. PV Metadata
 ########
+
 
 class PVSystemSQL(Base, CreatedMixin):
     """Metadata for PV data"""
@@ -52,10 +53,10 @@ class PVSystem(EnhancedBaseModel):
 
     rm_mode = True
 
-    @validator('provider')
+    @validator("provider")
     def validate_provider(cls, v):
         if v not in providers:
-            raise Exception(f'Provider ({v}) must be in {providers}')
+            raise Exception(f"Provider ({v}) must be in {providers}")
         return v
 
     def to_orm(self) -> PVSystemSQL:
@@ -73,6 +74,7 @@ class PVSystem(EnhancedBaseModel):
 ########
 # 8. PV Yield
 ########
+
 
 class PVYieldSQL(Base, CreatedMixin):
     """PV Yield data"""
@@ -94,12 +96,14 @@ class PVYield(EnhancedBaseModel):
     datetime_utc: int = Field(..., description="The timestamp of the pv system")
     solar_generation_kw: float = Field(..., description="The provider of the PV system")
 
-    _normalize_target_time = validator("datetime_utc", allow_reuse=True)(datetime_must_have_timezone)
+    _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
+        datetime_must_have_timezone
+    )
 
-    @validator('solar_generation_kw')
+    @validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):
         if v < 0:
-            logger.debug(f'Changing solar_generation_kw ({v}) to 0')
+            logger.debug(f"Changing solar_generation_kw ({v}) to 0")
             v = 0
         return v
 
