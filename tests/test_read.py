@@ -5,7 +5,14 @@ from nowcasting_datamodel.fake import (
     make_fake_national_forecast,
     make_fake_pv_system,
 )
-from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, MLModelSQL, PVSystem
+from nowcasting_datamodel.models import (
+    Forecast,
+    ForecastValue,
+    LocationSQL,
+    MLModel,
+    MLModelSQL,
+    PVSystem,
+)
 from nowcasting_datamodel.read import (
     get_all_gsp_ids_latest_forecast,
     get_forecast_values,
