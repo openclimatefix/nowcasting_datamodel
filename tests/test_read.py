@@ -5,7 +5,7 @@ from nowcasting_datamodel.fake import (
     make_fake_national_forecast,
     make_fake_pv_system,
 )
-from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, MLModelSQL
+from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, MLModelSQL, PVSystem
 from nowcasting_datamodel.read import (
     get_all_gsp_ids_latest_forecast,
     get_forecast_values,
@@ -97,12 +97,12 @@ def test_get_national_latest_forecast(db_session):
     assert forecast_values_read == f2
 
 
-def test_get_pv_system(db_session):
+def test_get_pv_system(db_session_pv):
 
     pv_system = make_fake_pv_system()
-    save_pv_system(session=db_session, pv_system=pv_system)
+    save_pv_system(session=db_session_pv, pv_system=pv_system)
 
     pv_system_get = get_pv_system(
-        session=db_session, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
+        session=db_session_pv, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
     )
-    assert pv_system == pv_system_get
+    assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)

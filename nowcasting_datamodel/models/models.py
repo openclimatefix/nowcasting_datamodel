@@ -17,7 +17,7 @@ from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
-from nowcasting_datamodel.connection import Base
+from nowcasting_datamodel.connection import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
@@ -28,7 +28,7 @@ national_gb_label = "National-GB"
 ########
 # 2. Location
 ########
-class LocationSQL(Base):
+class LocationSQL(Base_Forecast):
     """Location that the forecast is for"""
 
     __tablename__ = "location"
@@ -68,7 +68,7 @@ class Location(EnhancedBaseModel):
 ########
 # 3. Model
 ########
-class MLModelSQL(Base):
+class MLModelSQL(Base_Forecast):
     """ML model that is being used"""
 
     __tablename__ = "model"
@@ -97,7 +97,7 @@ class MLModel(EnhancedBaseModel):
 ########
 # 4. ForecastValue
 ########
-class ForecastValueSQL(Base, CreatedMixin):
+class ForecastValueSQL(Base_Forecast, CreatedMixin):
     """One Forecast of generation at one timestamp"""
 
     __tablename__ = "forecast_value"
@@ -136,7 +136,7 @@ class ForecastValue(EnhancedBaseModel):
 ########
 # 5. Input data status
 ########
-class InputDataLastUpdatedSQL(Base, CreatedMixin):
+class InputDataLastUpdatedSQL(Base_Forecast, CreatedMixin):
     """Information about the input data that was used to create the forecast"""
 
     __tablename__ = "input_data_last_updated"
@@ -181,7 +181,7 @@ class InputDataLastUpdated(EnhancedBaseModel):
 # 6. Forecasts
 ########
 # TODO add model_name to forecast, or add model table #13
-class ForecastSQL(Base, CreatedMixin):
+class ForecastSQL(Base_Forecast, CreatedMixin):
     """Forecast SQL model"""
 
     __tablename__ = "forecast"

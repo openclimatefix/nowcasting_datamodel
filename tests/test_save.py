@@ -8,7 +8,7 @@ def test_save(db_session):
     save(session=db_session, forecasts=forecasts)
 
 
-def test_save_pv_system(db_session):
+def test_save_pv_system(db_session_pv):
     pv_system = make_fake_pv_system()
 
-    save_pv_system(session=db_session, pv_system=pv_system)
+    save_pv_system(session=db_session_pv, pv_system=pv_system)
