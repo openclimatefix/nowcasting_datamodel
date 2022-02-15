@@ -5,8 +5,8 @@
 
 """
 import logging
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String

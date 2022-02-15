@@ -11,8 +11,8 @@ from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModelSQL,
+    PVSystemSQL,
     national_gb_label,
-    PVSystemSQL
 )
 from nowcasting_datamodel.read import get_location, get_model
 
@@ -24,7 +24,7 @@ def make_fake_location(gsp_id: int) -> LocationSQL:
 
 def make_fake_pv_system() -> PVSystemSQL:
     """Make fake location with gsp id"""
-    return PVSystemSQL(pv_system_id=1, provider="pvoutput.org",latitude=55 ,longitude=0)
+    return PVSystemSQL(pv_system_id=1, provider="pvoutput.org", latitude=55, longitude=0)
 
 
 def make_fake_input_data_last_updated() -> InputDataLastUpdatedSQL:
