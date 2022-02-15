@@ -24,6 +24,7 @@ from nowcasting_datamodel.utils import datetime_must_have_timezone
 national_gb_label = "National-GB"
 # TODO #3 Add forecast latest table, this make it easy to load the latest forecast
 
+
 ########
 # 2. Location
 ########
