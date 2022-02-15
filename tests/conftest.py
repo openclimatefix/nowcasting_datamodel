@@ -4,7 +4,7 @@ from typing import List
 import pytest
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.connection import DatabaseConnection, Base_PV, Base_Forecast
+from nowcasting_datamodel.connection import Base_Forecast, Base_PV, DatabaseConnection
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models import ForecastSQL
 
@@ -48,7 +48,7 @@ def forecasts_all(db_session) -> List[ForecastSQL]:
 @pytest.fixture
 def db_connection():
 
-    url = os.getenv("DB_URL", 'sqlite:///test.db')
+    url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url)
     Base_Forecast.metadata.create_all(connection.engine)
@@ -71,7 +71,7 @@ def db_session(db_connection):
 @pytest.fixture
 def db_connection_pv():
 
-    url = os.getenv("DB_URL_PV", 'sqlite:///test_pv.db')
+    url = os.getenv("DB_URL_PV", "sqlite:///test_pv.db")
 
     connection = DatabaseConnection(url=url, base=Base_PV)
     Base_PV.metadata.create_all(connection.engine)
