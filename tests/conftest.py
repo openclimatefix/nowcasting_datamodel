@@ -78,7 +78,7 @@ def db_connection_pv():
 
     yield connection
 
-    Base_Forecast.metadata.drop_all(connection.engine)
+    Base_PV.metadata.drop_all(connection.engine)
 
 
 @pytest.fixture(scope="function", autouse=True)

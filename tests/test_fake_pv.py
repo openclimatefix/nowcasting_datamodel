@@ -1,3 +1,5 @@
+import pytest
+
 from datetime import datetime
 
 from nowcasting_datamodel.fake import make_fake_pv_system
@@ -10,7 +12,14 @@ def test_make_fake_pv_system():
     _ = PVSystem.to_orm(pv_system)
 
 
+def test_pv_system_error():
+    with pytest.raises(Exception):
+        _ = PVSystem(pv_system_id=1, provider="fake.com", latitude=55, longitude=0)
+
+
 def test_make_fake_pv_yield():
 
     pv_yield = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=-1)
     assert pv_yield.solar_generation_kw == 0
+
+    _ = pv_yield.to_orm()

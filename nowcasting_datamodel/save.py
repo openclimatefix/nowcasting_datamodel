@@ -4,7 +4,7 @@ from typing import List
 
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models import ForecastSQL, PVSystemSQL
+from nowcasting_datamodel.models import ForecastSQL, PVSystem, PVSystemSQL
 
 logger = logging.getLogger(__name__)
 
@@ -25,13 +25,12 @@ def save(forecasts: List[ForecastSQL], session: Session):
     session.commit()
 
 
-def save_pv_system(session: Session, pv_system: PVSystemSQL) -> PVSystemSQL:
+def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
     """
     Get model object from name and version
 
     :param session: database session
-    :param pv_system_id: pv system id
-    :param provider: the pv provider, defaulted to pvoutput.org
+    :param pv_system: pv system sql object
 
     return: PVSystem object
 
@@ -53,7 +52,7 @@ def save_pv_system(session: Session, pv_system: PVSystemSQL) -> PVSystemSQL:
             f"does not exist so going to add it"
         )
 
-        session.add(pv_system)
+        session.add(pv_system.to_orm())
         session.commit()
 
     else:
