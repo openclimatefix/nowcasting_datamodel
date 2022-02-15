@@ -54,6 +54,7 @@ class PVSystem(EnhancedBaseModel):
 
     @validator('provider')
     def validate_provider(cls, v):
+        """ Validate the provider"""
         if v not in providers:
             raise Exception(f'Provider ({v}) must be in {providers}')
         return v
@@ -85,7 +86,7 @@ class PVYieldSQL(Base, CreatedMixin):
 
     # many (forecasts) to one (location)
     pv_system = relationship("PVSystemSQL", back_populates="pv_yield")
-    pv_system_id = Column(Integer, ForeignKey("pv_system.pv_system_id"), index=True)
+    pv_system_id = Column(Integer, ForeignKey("pv_system.id"), index=True)
 
 
 class PVYield(EnhancedBaseModel):
@@ -98,6 +99,7 @@ class PVYield(EnhancedBaseModel):
 
     @validator('solar_generation_kw')
     def validate_solar_generation_kw(cls, v):
+        """ Validate the solar_generation_kw field"""
         if v < 0:
             logger.debug(f'Changing solar_generation_kw ({v}) to 0')
             v = 0
