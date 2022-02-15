@@ -1,6 +1,10 @@
 import logging
 
-from nowcasting_datamodel.fake import make_fake_forecasts, make_fake_national_forecast
+from nowcasting_datamodel.fake import (
+    make_fake_forecasts,
+    make_fake_national_forecast,
+    make_fake_pv_system,
+)
 from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, MLModelSQL
 from nowcasting_datamodel.read import (
     get_all_gsp_ids_latest_forecast,
@@ -8,7 +12,9 @@ from nowcasting_datamodel.read import (
     get_latest_forecast,
     get_latest_national_forecast,
     get_model,
+    get_pv_system,
 )
+from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
 
@@ -89,3 +95,14 @@ def test_get_national_latest_forecast(db_session):
     db_session.add(f2)
     forecast_values_read = get_latest_national_forecast(session=db_session)
     assert forecast_values_read == f2
+
+
+def test_get_pv_system(db_session):
+
+    pv_system = make_fake_pv_system()
+    save_pv_system(session=db_session, pv_system=pv_system)
+
+    pv_system_get = get_pv_system(
+        session=db_session, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
+    )
+    assert pv_system == pv_system_get
