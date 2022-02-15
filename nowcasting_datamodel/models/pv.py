@@ -6,6 +6,7 @@
 """
 import logging
 from typing import Optional
+from datetime import datetime
 
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
@@ -43,7 +44,6 @@ class PVSystemSQL(Base, CreatedMixin):
 class PVSystem(EnhancedBaseModel):
     """Metadata for PV data"""
 
-    label: str = Field(..., description="")
     pv_system_id: int = Field(..., description="The PV system id")
     provider: str = Field(..., description="The provider of the PV system")
     latitude: float = Field(..., description="The latitude of the PV system")
@@ -94,7 +94,7 @@ class PVYieldSQL(Base, CreatedMixin):
 class PVYield(EnhancedBaseModel):
     """PV Yield data"""
 
-    datetime_utc: int = Field(..., description="The timestamp of the pv system")
+    datetime_utc: datetime = Field(..., description="The timestamp of the pv system")
     solar_generation_kw: float = Field(..., description="The provider of the PV system")
 
     _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
