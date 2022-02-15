@@ -8,49 +8,22 @@ The following class are made
 5. Input data status, shows when the data was collected
 6. Forecasts, a forecast that is made for one gsp, for several time steps into the future
 
-Current these models have a primary index of 'id'.
-This keeps things very simple at the start.
-But there can be multiple forecasts for similar values.
-
-Later on it would be good to add a forecast latest table, where the latest forecast can be read.
-The primary keys could be 'gsp_id' and 'target_datetime_utc'.
 """
 
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 
-from nowcasting_datamodel.utils import convert_to_camelcase, datetime_must_have_timezone
-
-Base = declarative_base()
+from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.connection import Base
+from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 
 
 national_gb_label = "National-GB"
 # TODO #3 Add forecast latest table, this make it easy to load the latest forecast
-
-
-########
-# 1. Reusable classes
-########
-class CreatedMixin:
-    """Mixin to add created datetime to model"""
-
-    created_utc = Column(DateTime(timezone=True), default=lambda: datetime.utcnow())
-
-
-class EnhancedBaseModel(BaseModel):
-    """Ensures that attribute names are returned in camelCase"""
-
-    # Automatically creates camelcase alias for field names
-    # See https://pydantic-docs.helpmanual.io/usage/model_config/#alias-generator
-    class Config:  # noqa: D106
-        alias_generator = convert_to_camelcase
-        allow_population_by_field_name = True
-        orm_mode = True
-
 
 ########
 # 2. Location

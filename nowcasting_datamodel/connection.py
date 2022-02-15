@@ -2,10 +2,11 @@
 import logging
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models import Base
+
+Base = declarative_base()
 
 logger = logging.getLogger(__name__)
 
