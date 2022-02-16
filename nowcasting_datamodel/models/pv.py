@@ -37,6 +37,7 @@ class PVSystemSQL(Base_PV, CreatedMixin):
     longitude = Column(Float)
     name = Column(String, nullable=True)
     orientation = Column(Float, nullable=True)
+    status_interval_minutes = Column(Integer, nullable=True)
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
 
@@ -46,10 +47,12 @@ class PVSystem(EnhancedBaseModel):
 
     pv_system_id: int = Field(..., description="The PV system id")
     provider: str = Field(..., description="The provider of the PV system")
-    latitude: float = Field(..., description="The latitude of the PV system")
-    longitude: float = Field(..., description="The longitude of the PV system")
+    latitude: float = Field(None, description="The latitude of the PV system")
+    longitude: float = Field(None, description="The longitude of the PV system")
     name: Optional[str] = Field(None, description="The PV system name")
     orientation: Optional[float] = Field(None, description="The orientation of the PV system")
+    status_interval_minutes: Optional[float] \
+        = Field(None, description="The number of minutes for the pv data to be refreshed")
 
     rm_mode = True
 
@@ -69,6 +72,7 @@ class PVSystem(EnhancedBaseModel):
             longitude=self.longitude,
             name=self.name,
             orientation=self.orientation,
+            status_interval_minutes=self.status_interval_minutes
         )
 
 
