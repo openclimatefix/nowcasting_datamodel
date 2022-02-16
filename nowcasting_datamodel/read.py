@@ -15,6 +15,7 @@ from nowcasting_datamodel.models import (
     ForecastValueSQL,
     LocationSQL,
     MLModelSQL,
+    PVSystemSQL,
     national_gb_label,
 )
 
@@ -209,3 +210,31 @@ def get_model(session: Session, name: str, version: str) -> MLModelSQL:
         model = models[0]
 
     return model
+
+
+def get_pv_system(
+    session: Session, pv_system_id: int, provider: Optional[str] = "pvoutput.org"
+) -> PVSystemSQL:
+    """
+    Get model object from name and version
+
+    :param session: database session
+    :param pv_system_id: pv system id
+    :param provider: the pv provider, defaulted to pvoutput.org
+
+    return: PVSystem object
+    """
+
+    # start main query
+    query = session.query(PVSystemSQL)
+
+    # filter on pv_system_id and provider
+    query = query.filter(PVSystemSQL.pv_system_id == pv_system_id)
+    query = query.filter(PVSystemSQL.provider == provider)
+
+    # get all results
+    pv_systems = query.all()
+
+    pv_system = pv_systems[0]
+
+    return pv_system
