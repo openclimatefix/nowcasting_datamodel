@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class DatabaseConnection:
     """Database connection class"""
 
-    def __init__(self, url, base=Base_Forecast, echo:bool=True):
+    def __init__(self, url, base=Base_Forecast, echo: bool = True):
         """
         Set up database connection
 

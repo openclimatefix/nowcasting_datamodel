@@ -1,7 +1,6 @@
-import pytest
-
 from datetime import datetime, timezone
 
+import pytest
 
 from nowcasting_datamodel.fake import make_fake_pv_system
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
@@ -49,7 +48,9 @@ def test_latest_datetime(db_session_pv):
     pv_systems_read = db_session_pv.query(PVSystemSQL).all()
     assert len(pv_systems_read) == 1
 
-    assert pv_systems_read[0].last_pv_yield.datetime_utc == datetime(2022, 1, 2, tzinfo=timezone.utc)
+    assert pv_systems_read[0].last_pv_yield.datetime_utc == datetime(
+        2022, 1, 2, tzinfo=timezone.utc
+    )
 
 
 def test_latest_datetime_mulitple_pv_systems(db_session_pv):
@@ -62,8 +63,12 @@ def test_latest_datetime_mulitple_pv_systems(db_session_pv):
     pv_yield_3 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
     pv_yield_3_sql = pv_yield_3.to_orm()
 
-    pv_system_sql_1: PVSystemSQL = PVSystem(pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5).to_orm()
-    pv_system_sql_2: PVSystemSQL = PVSystem(pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5).to_orm()
+    pv_system_sql_1: PVSystemSQL = PVSystem(
+        pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5
+    ).to_orm()
+    pv_system_sql_2: PVSystemSQL = PVSystem(
+        pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5
+    ).to_orm()
 
     # add pv system to yield object
     pv_yield_1_sql.pv_system = pv_system_sql_1
@@ -81,5 +86,6 @@ def test_latest_datetime_mulitple_pv_systems(db_session_pv):
     pv_systems_read = db_session_pv.query(PVSystemSQL).all()
     assert len(pv_systems_read) == 2
 
-    assert pv_systems_read[0].last_pv_yield.datetime_utc == datetime(2022, 1, 2, tzinfo=timezone.utc)
-
+    assert pv_systems_read[0].last_pv_yield.datetime_utc == datetime(
+        2022, 1, 2, tzinfo=timezone.utc
+    )

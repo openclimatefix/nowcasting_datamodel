@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, select, and_
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, and_, select
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.connection import Base_PV
