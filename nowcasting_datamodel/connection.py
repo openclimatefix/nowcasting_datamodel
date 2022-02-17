@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class DatabaseConnection:
     """Database connection class"""
 
-    def __init__(self, url, base=Base_Forecast):
+    def __init__(self, url, base=Base_Forecast, echo:bool=True):
         """
         Set up database connection
 
@@ -22,7 +22,7 @@ class DatabaseConnection:
         """
         self.url = url
 
-        self.engine = create_engine(self.url, echo=True)
+        self.engine = create_engine(self.url, echo=echo)
 
         # quick and easy way to make sure the database table names are made.
         # This should be moved, or done separate from here.

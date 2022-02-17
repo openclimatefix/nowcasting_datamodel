@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, select, and_
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.connection import Base_PV
@@ -51,8 +51,9 @@ class PVSystem(EnhancedBaseModel):
     longitude: float = Field(None, description="The longitude of the PV system")
     name: Optional[str] = Field(None, description="The PV system name")
     orientation: Optional[float] = Field(None, description="The orientation of the PV system")
-    status_interval_minutes: Optional[float] \
-        = Field(None, description="The number of minutes for the pv data to be refreshed")
+    status_interval_minutes: Optional[float] = Field(
+        None, description="The number of minutes for the pv data to be refreshed"
+    )
 
     rm_mode = True
 
@@ -72,7 +73,7 @@ class PVSystem(EnhancedBaseModel):
             longitude=self.longitude,
             name=self.name,
             orientation=self.orientation,
-            status_interval_minutes=self.status_interval_minutes
+            status_interval_minutes=self.status_interval_minutes,
         )
 
 
@@ -121,3 +122,25 @@ class PVYield(EnhancedBaseModel):
             datetime_utc=self.datetime_utc,
             solar_generation_kw=self.solar_generation_kw,
         )
+
+
+# Add the last yield value asociated with a pv system.
+# This means we can just load the pv system and know the last pv yield value.
+# Helpful advice on
+# https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
+PVSystemSQL.last_pv_yield = relationship(
+    PVYieldSQL,
+    primaryjoin=and_(
+        PVSystemSQL.id == PVYieldSQL.pv_system_id,
+        PVYieldSQL.datetime_utc
+        == (
+            select([PVYieldSQL.datetime_utc])
+            .where(PVSystemSQL.id == PVYieldSQL.pv_system_id)
+            .order_by(PVYieldSQL.datetime_utc.desc())
+            .limit(1)
+            .scalar_subquery()
+        ),
+    ),
+    viewonly=True,
+    uselist=False,
+)
