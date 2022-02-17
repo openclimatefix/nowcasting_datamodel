@@ -14,3 +14,8 @@ from nowcasting_datamodel.models import ManyForecasts
 
 diagram = erd.create(ManyForecasts)
 diagram.draw("diagram.png")
+
+from nowcasting_datamodel.models import PVYield
+
+diagram = erd.create(PVYield)
+diagram.draw("diagram_pv.png")

@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, and_, select
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.connection import Base_PV
@@ -37,6 +37,7 @@ class PVSystemSQL(Base_PV, CreatedMixin):
     longitude = Column(Float)
     name = Column(String, nullable=True)
     orientation = Column(Float, nullable=True)
+    status_interval_minutes = Column(Integer, nullable=True)
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
 
@@ -46,12 +47,13 @@ class PVSystem(EnhancedBaseModel):
 
     pv_system_id: int = Field(..., description="The PV system id")
     provider: str = Field(..., description="The provider of the PV system")
-    latitude: float = Field(..., description="The latitude of the PV system")
-    longitude: float = Field(..., description="The longitude of the PV system")
+    latitude: float = Field(None, description="The latitude of the PV system")
+    longitude: float = Field(None, description="The longitude of the PV system")
     name: Optional[str] = Field(None, description="The PV system name")
     orientation: Optional[float] = Field(None, description="The orientation of the PV system")
-
-    rm_mode = True
+    status_interval_minutes: Optional[float] = Field(
+        None, description="The number of minutes for the pv data to be refreshed"
+    )
 
     @validator("provider")
     def validate_provider(cls, v):
@@ -69,6 +71,7 @@ class PVSystem(EnhancedBaseModel):
             longitude=self.longitude,
             name=self.name,
             orientation=self.orientation,
+            status_interval_minutes=self.status_interval_minutes,
         )
 
 
@@ -101,6 +104,11 @@ class PVYield(EnhancedBaseModel):
         datetime_must_have_timezone
     )
 
+    pv_system: Optional[PVSystem] = Field(
+        None,
+        description="The PV system asscioated with this model",
+    )
+
     @validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):
         """Validate the solar_generation_kw field"""
@@ -109,11 +117,31 @@ class PVYield(EnhancedBaseModel):
             v = 0
         return v
 
-    rm_mode = True
-
     def to_orm(self) -> PVYieldSQL:
         """Change model to PVYieldSQL"""
         return PVYieldSQL(
             datetime_utc=self.datetime_utc,
             solar_generation_kw=self.solar_generation_kw,
         )
+
+
+# Add the last yield value asociated with a pv system.
+# This means we can just load the pv system and know the last pv yield value.
+# Helpful advice on
+# https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
+PVSystemSQL.last_pv_yield = relationship(
+    PVYieldSQL,
+    primaryjoin=and_(
+        PVSystemSQL.id == PVYieldSQL.pv_system_id,
+        PVYieldSQL.datetime_utc
+        == (
+            select([PVYieldSQL.datetime_utc])
+            .where(PVSystemSQL.id == PVYieldSQL.pv_system_id)
+            .order_by(PVYieldSQL.datetime_utc.desc())
+            .limit(1)
+            .scalar_subquery()
+        ),
+    ),
+    viewonly=True,
+    uselist=False,
+)
