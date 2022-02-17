@@ -55,8 +55,6 @@ class PVSystem(EnhancedBaseModel):
         None, description="The number of minutes for the pv data to be refreshed"
     )
 
-    rm_mode = True
-
     @validator("provider")
     def validate_provider(cls, v):
         """Validate the provider"""
@@ -106,6 +104,11 @@ class PVYield(EnhancedBaseModel):
         datetime_must_have_timezone
     )
 
+    pv_system: Optional[PVSystem] = Field(
+        None,
+        description="The PV system asscioated with this model",
+    )
+
     @validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):
         """Validate the solar_generation_kw field"""
@@ -113,8 +116,6 @@ class PVYield(EnhancedBaseModel):
             logger.debug(f"Changing solar_generation_kw ({v}) to 0")
             v = 0
         return v
-
-    rm_mode = True
 
     def to_orm(self) -> PVYieldSQL:
         """Change model to PVYieldSQL"""
