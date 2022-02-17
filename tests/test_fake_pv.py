@@ -2,6 +2,7 @@ import pytest
 
 from datetime import datetime, timezone
 
+
 from nowcasting_datamodel.fake import make_fake_pv_system
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
 
