@@ -1,3 +1,4 @@
+""" App for running database migrations """
 import os
 import click
 import time

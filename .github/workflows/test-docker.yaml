@@ -16,7 +16,7 @@ jobs:
         run: docker-compose -f test-docker-compose.yml build
 
       - name: Run tests inside the container
-        run: docker-compose -f test-docker-compose.yml run datamodel
+        run: docker-compose -f test-docker-compose.yml run tests
 
       - name: Copy coverage
         run: |
