@@ -27,7 +27,7 @@ class DatabaseConnection:
         self.Session = sessionmaker(bind=self.engine)
 
     def create_all(self):
-        """ Create all tables """
+        """Create all tables"""
         self.base.metadata.create_all(self.engine)
 
     def get_session(self) -> Session:

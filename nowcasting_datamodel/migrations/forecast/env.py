@@ -1,6 +1,6 @@
 """ run migrations on Forecast Database """
-from logging.config import fileConfig
 import os
+from logging.config import fileConfig
 
 from alembic import context
 

@@ -1,11 +1,11 @@
 """ App for running database migrations """
-import os
-import click
-import time
 import logging
+import os
+import time
 
-from alembic.config import Config
+import click
 from alembic import command
+from alembic.config import Config
 
 filename = os.path.dirname(os.path.abspath(__file__)) + "/alembic.ini"
 
