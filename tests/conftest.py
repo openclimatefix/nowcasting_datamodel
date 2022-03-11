@@ -4,9 +4,10 @@ from typing import List
 import pytest
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.connection import Base_Forecast, Base_PV, DatabaseConnection
+from nowcasting_datamodel.connection import Base_Forecast, DatabaseConnection
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models import ForecastSQL
+from nowcasting_datamodel.models.pv import Base_PV
 
 
 @pytest.fixture
