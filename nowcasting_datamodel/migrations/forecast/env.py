@@ -1,3 +1,4 @@
+""" run migrations on Forecast Database """
 from logging.config import fileConfig
 import os
 

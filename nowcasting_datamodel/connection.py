@@ -28,18 +28,10 @@ class DatabaseConnection:
 
         self.engine = create_engine(self.url, echo=echo)
 
-        # quick and easy way to make sure the database table names are made.
-        # This should be moved, or done separate from here.
-        # try:
-        #     base.metadata.create_all(self.engine)
-        # except Exception as e:
-        #     logger.debug(
-        #         f'Try to run "create all" on database, but failed. ' f"Will pass this anyway {e}"
-        #     )
-
         self.Session = sessionmaker(bind=self.engine)
 
     def create_all(self):
+        """ Create all tables """
         self.base.metadata.create_all(self.engine)
 
     def get_session(self) -> Session:

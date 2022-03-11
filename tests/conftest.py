@@ -45,27 +45,38 @@ def forecasts_all(db_session) -> List[ForecastSQL]:
     return f
 
 
+""" 
+This is a bit complicated and sensitive to change
+https://gist.github.com/kissgyorgy/e2365f25a213de44b9a2 helped me get going
+"""
+
 @pytest.fixture
 def db_connection():
 
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url)
-    # Base_Forecast.metadata.create_all(connection.engine)
+    Base_Forecast.metadata.create_all(connection.engine)
 
     yield connection
 
-    # Base_Forecast.metadata.drop_all(connection.engine)
+    Base_Forecast.metadata.drop_all(connection.engine)
 
 
 @pytest.fixture(scope="function", autouse=True)
 def db_session(db_connection):
     """Creates a new database session for a test."""
 
-    with db_connection.get_session() as s:
+    connection = db_connection.engine.connect()
+    t = connection.begin()
+
+    with db_connection.Session(bind=connection) as s:
         s.begin()
         yield s
         s.rollback()
+
+    t.rollback()
+    connection.close()
 
 
 @pytest.fixture
@@ -74,18 +85,24 @@ def db_connection_pv():
     url = os.getenv("DB_URL_PV", "sqlite:///test_pv.db")
 
     connection = DatabaseConnection(url=url, base=Base_PV)
-    # Base_PV.metadata.create_all(connection.engine)
+    Base_PV.metadata.create_all(connection.engine)
 
     yield connection
 
-    # Base_PV.metadata.drop_all(connection.engine)
+    Base_PV.metadata.drop_all(connection.engine)
 
 
 @pytest.fixture(scope="function", autouse=True)
 def db_session_pv(db_connection_pv):
     """Creates a new database session for a test."""
 
+    connection = db_connection_pv.engine.connect()
+    t = connection.begin()
+
     with db_connection_pv.get_session() as s:
         s.begin()
         yield s
         s.rollback()
+
+    t.rollback()
+    connection.close()
