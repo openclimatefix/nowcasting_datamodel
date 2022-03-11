@@ -46,10 +46,11 @@ def forecasts_all(db_session) -> List[ForecastSQL]:
     return f
 
 
-""" 
+"""
 This is a bit complicated and sensitive to change
 https://gist.github.com/kissgyorgy/e2365f25a213de44b9a2 helped me get going
 """
+
 
 @pytest.fixture
 def db_connection():
