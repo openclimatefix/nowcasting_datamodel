@@ -4,6 +4,9 @@ from logging.config import fileConfig
 
 from alembic import context
 
+from nowcasting_datamodel.connection import DatabaseConnection
+from nowcasting_datamodel.models.pv import Base_PV
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -16,8 +19,6 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from nowcasting_datamodel.connection import DatabaseConnection
-from nowcasting_datamodel.models.pv import Base_PV
 target_metadata = Base_PV.metadata
 
 
@@ -29,13 +30,11 @@ def run_migrations_online():
 
     """
 
-    connection = DatabaseConnection(os.getenv('DB_URL_PV'), base=Base_PV)
+    connection = DatabaseConnection(os.getenv("DB_URL_PV"), base=Base_PV)
     connectable = connection.engine
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=Base_PV.metadata
-        )
+        context.configure(connection=connection, target_metadata=Base_PV.metadata)
 
         with context.begin_transaction():
             context.run_migrations()

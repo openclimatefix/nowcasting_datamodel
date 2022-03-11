@@ -2,14 +2,10 @@
 import logging
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
-# Base_Forecast = declarative_base()
-# Base_PV = declarative_base()
-
 from nowcasting_datamodel.models.models import Base_Forecast
-from nowcasting_datamodel.models.pv import Base_PV
 
 logger = logging.getLogger(__name__)
 

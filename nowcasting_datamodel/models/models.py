@@ -26,6 +26,7 @@ national_gb_label = "National-GB"
 
 Base_Forecast = declarative_base()
 
+
 ########
 # 2. Location
 ########

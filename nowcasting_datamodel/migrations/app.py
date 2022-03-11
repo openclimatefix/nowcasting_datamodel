@@ -6,10 +6,11 @@ import logging
 
 from alembic.config import Config
 from alembic import command
-filename = os.path.dirname(os.path.abspath(__file__)) + '/alembic.ini'
+
+filename = os.path.dirname(os.path.abspath(__file__)) + "/alembic.ini"
 
 logger = logging.getLogger(__name__)
-logger.setLevel(os.getenv('LOGLEVEL','INFO'))
+logger.setLevel(os.getenv("LOGLEVEL", "INFO"))
 
 
 @click.command()
@@ -29,7 +30,7 @@ logger.setLevel(os.getenv('LOGLEVEL','INFO'))
     type=click.BOOL,
     is_flag=True,
 )
-def app(make_migrations:bool, run_migrations: bool):
+def app(make_migrations: bool, run_migrations: bool):
     """
     Make migrations and run them
 
@@ -41,15 +42,15 @@ def app(make_migrations:bool, run_migrations: bool):
     time.sleep(1)
 
     if make_migrations:
-        make_all_migrations('forecast')
-        make_all_migrations('pv')
+        make_all_migrations("forecast")
+        make_all_migrations("pv")
 
     if run_migrations:
-        run_all_migrations('forecast')
-        run_all_migrations('pv')
+        run_all_migrations("forecast")
+        run_all_migrations("pv")
 
 
-def make_all_migrations(database:str):
+def make_all_migrations(database: str):
     """
     Make migrations.
 
@@ -59,15 +60,15 @@ def make_all_migrations(database:str):
     :param database: either 'pv' or 'forecast'
     """
 
-    logger.info(f'Making migrations for {database}')
+    logger.info(f"Making migrations for {database}")
 
     alembic_cfg = Config(filename, ini_section=database)
     command.revision(alembic_cfg, autogenerate=True)
 
-    logger.info('Making migrations:done')
+    logger.info("Making migrations:done")
 
 
-def run_all_migrations(database:str):
+def run_all_migrations(database: str):
     """Run migrations
 
     Looks at the migrations in
@@ -75,7 +76,7 @@ def run_all_migrations(database:str):
     and runs them
     """
 
-    logger.info(f'Running migrations for {database}')
+    logger.info(f"Running migrations for {database}")
 
     # see here - https://alembic.sqlalchemy.org/en/latest/api/config.html
     # for more help
@@ -83,7 +84,7 @@ def run_all_migrations(database:str):
 
     command.upgrade(alembic_cfg, "head")
 
-    logger.info(f'Running migrations {database}: done')
+    logger.info(f"Running migrations {database}: done")
 
 
 if __name__ == "__main__":
