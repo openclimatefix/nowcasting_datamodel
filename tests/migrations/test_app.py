@@ -8,4 +8,3 @@ def test_app():
     runner = CliRunner()
     response = runner.invoke(app, ["--make-migrations", "--run-migrations"])
     assert response.exit_code == 0, response.exception
-
