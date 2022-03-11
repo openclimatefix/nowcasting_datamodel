@@ -1,0 +1,4 @@
+[run]
+omit =
+     nowcasting_datamodel/migrations/pv/*
+     nowcasting_datamodel/migrations/forecast/*
