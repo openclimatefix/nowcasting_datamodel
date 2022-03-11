@@ -31,4 +31,5 @@ RUN pip install -e .
 
 RUN if [ "$TESTING" = 1 ]; then pip install pytest pytest-cov coverage; fi
 
-# in the future we can run migrations using this fiel
+# run migrations using this file
+CMD ["python", "-u", "nowcasting_datamodel/migrations/app.py", "--run-migrations"]
