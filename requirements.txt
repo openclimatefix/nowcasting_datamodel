@@ -3,3 +3,5 @@ pandas
 sqlalchemy
 psycopg2-binary
 numpy
+alembic
+click

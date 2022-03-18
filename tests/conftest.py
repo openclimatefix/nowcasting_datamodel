@@ -4,9 +4,10 @@ from typing import List
 import pytest
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.connection import Base_Forecast, Base_PV, DatabaseConnection
+from nowcasting_datamodel.connection import Base_Forecast, DatabaseConnection
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models import ForecastSQL
+from nowcasting_datamodel.models.pv import Base_PV
 
 
 @pytest.fixture
@@ -45,6 +46,12 @@ def forecasts_all(db_session) -> List[ForecastSQL]:
     return f
 
 
+"""
+This is a bit complicated and sensitive to change
+https://gist.github.com/kissgyorgy/e2365f25a213de44b9a2 helped me get going
+"""
+
+
 @pytest.fixture
 def db_connection():
 
@@ -62,10 +69,16 @@ def db_connection():
 def db_session(db_connection):
     """Creates a new database session for a test."""
 
-    with db_connection.get_session() as s:
+    connection = db_connection.engine.connect()
+    t = connection.begin()
+
+    with db_connection.Session(bind=connection) as s:
         s.begin()
         yield s
         s.rollback()
+
+    t.rollback()
+    connection.close()
 
 
 @pytest.fixture
@@ -85,7 +98,13 @@ def db_connection_pv():
 def db_session_pv(db_connection_pv):
     """Creates a new database session for a test."""
 
+    connection = db_connection_pv.engine.connect()
+    t = connection.begin()
+
     with db_connection_pv.get_session() as s:
         s.begin()
         yield s
         s.rollback()
+
+    t.rollback()
+    connection.close()

@@ -15,6 +15,7 @@ ARG GIT_PYTHON_REFRESH=quiet
 COPY setup.py app/setup.py
 COPY README.md app/README.md
 COPY requirements.txt app/requirements.txt
+COPY .coveragerc app/.coveragerc
 
 # install requirements
 RUN pip install -r app/requirements.txt
@@ -31,4 +32,5 @@ RUN pip install -e .
 
 RUN if [ "$TESTING" = 1 ]; then pip install pytest pytest-cov coverage; fi
 
-# in the future we can run migrations using this fiel
+# run migrations using this file
+CMD ["python", "-u", "nowcasting_datamodel/migrations/app.py", "--run-migrations"]
