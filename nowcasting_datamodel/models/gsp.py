@@ -56,6 +56,7 @@ class GSP(EnhancedBaseModel):
         """Change model to PVSystemSQL"""
         return GSPSQL(
             id=self.id,
+            label=self.label,
             name=self.name,
             group=self.group,
             region_name=self.region_name,

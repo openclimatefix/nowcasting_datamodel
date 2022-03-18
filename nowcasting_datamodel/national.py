@@ -20,7 +20,7 @@ def make_national_forecast(forecasts: List[Forecast], n_gsps: int = N_GSP) -> Fo
     ), f"The number of forecast was only {len(forecasts)}, it should be {n_gsps}"
 
     # check the gsp ids are unique
-    gsps = [int(f.location.gsp_id) for f in forecasts]
+    gsps = [int(f.location.id) for f in forecasts]
     seen = set()
     dupes = [x for x in gsps if x in seen or seen.add(x)]
     assert len(seen) == n_gsps, f"Found non unique GSP ids {dupes}"
@@ -31,7 +31,7 @@ def make_national_forecast(forecasts: List[Forecast], n_gsps: int = N_GSP) -> Fo
     forecast_values_flat = []
     for forecast in forecasts:
 
-        gsp_id = forecast.location.gsp_id
+        gsp_id = forecast.location.id
 
         one_gsp = pd.DataFrame(
             [ForecastValue.from_orm(value).dict() for value in forecast.forecast_values]
