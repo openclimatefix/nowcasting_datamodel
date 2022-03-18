@@ -9,12 +9,12 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, UUID, and_, select
+from sqlalchemy import UUID, Column, DateTime, Float, ForeignKey, Integer, String, and_, select
 from sqlalchemy.orm import declarative_base, relationship
 
+from nowcasting_datamodel.models.pv import Base_PV
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
-from nowcasting_datamodel.models.pv import Base_PV
 
 logger = logging.getLogger(__name__)
 
