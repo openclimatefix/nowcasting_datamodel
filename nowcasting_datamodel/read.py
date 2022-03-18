@@ -11,9 +11,9 @@ from sqlalchemy import desc
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import (
+    GSPSQL,
     ForecastSQL,
     ForecastValueSQL,
-    GSPSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,

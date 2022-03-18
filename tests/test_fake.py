@@ -8,14 +8,14 @@ from nowcasting_datamodel.fake import (
     make_fake_national_forecast,
 )
 from nowcasting_datamodel.models import (
+    GSP,
+    GSPSQL,
     Forecast,
     ForecastSQL,
     ForecastValue,
     ForecastValueSQL,
     InputDataLastUpdated,
     InputDataLastUpdatedSQL,
-    GSP,
-    GSPSQL,
 )
 
 

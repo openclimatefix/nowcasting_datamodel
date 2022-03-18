@@ -7,7 +7,6 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.base import Base_Forecast
 
-
 logger = logging.getLogger(__name__)
 
 

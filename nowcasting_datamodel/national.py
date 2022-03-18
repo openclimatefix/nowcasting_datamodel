@@ -5,13 +5,7 @@ from typing import List
 import pandas as pd
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import (
-    Forecast,
-    ForecastSQL,
-    ForecastValue,
-    GSP,
-    national_gb_label,
-)
+from nowcasting_datamodel.models import GSP, Forecast, ForecastSQL, ForecastValue, national_gb_label
 
 logger = logging.getLogger(__name__)
 
