@@ -1,7 +1,7 @@
 """ Pydantic and Sqlalchemy models for the database
 
-1. GSP for storing GSP data (pv.py)
-2. GSP yield for storing GSP data (pv.py)
+1. GSP for storing GSP data (https://www.solar.sheffield.ac.uk/pvlive/)
+2. GSP yield for storing GSP data (https://www.solar.sheffield.ac.uk/pvlive/)
 
 """
 import logging
