@@ -14,10 +14,9 @@ from sqlalchemy.orm import declarative_base, relationship
 
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.models.base import Base_PV
 
 logger = logging.getLogger(__name__)
-
-Base_PV = declarative_base()
 
 providers = ["pvoutput.org"]
 

@@ -8,7 +8,7 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import (
     Forecast,
     ForecastValue,
-    LocationSQL,
+    GSPSQL,
     MLModel,
     MLModelSQL,
     PVSystem,
@@ -41,7 +41,7 @@ def test_get_forecast(db_session, forecasts):
 
     forecast_read = get_latest_forecast(session=db_session)
 
-    assert forecast_read.location.gsp_id == forecasts[-1].location.gsp_id
+    assert forecast_read.location.id == forecasts[-1].location.id
     assert forecast_read.forecast_values[0] == forecasts[-1].forecast_values[0]
 
     _ = Forecast.from_orm(forecast_read)
@@ -49,8 +49,8 @@ def test_get_forecast(db_session, forecasts):
 
 def test_read_gsp_id(db_session, forecasts):
 
-    forecast_read = get_latest_forecast(session=db_session, gsp_id=forecasts[1].location.gsp_id)
-    assert forecast_read.location.gsp_id == forecasts[1].location.gsp_id
+    forecast_read = get_latest_forecast(session=db_session, gsp_id=forecasts[1].location.id)
+    assert forecast_read.location.id == forecasts[1].location.id
 
 
 def test_get_forecast_values(db_session, forecasts):
@@ -64,7 +64,7 @@ def test_get_forecast_values(db_session, forecasts):
 def test_get_forecast_values_gsp_id(db_session, forecasts):
 
     forecast_values_read = get_forecast_values(
-        session=db_session, gsp_id=forecasts[0].location.gsp_id
+        session=db_session, gsp_id=forecasts[0].location.id
     )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
@@ -79,12 +79,12 @@ def test_get_all_gsp_ids_latest_forecast(db_session):
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     db_session.add_all(f1)
 
-    assert len(db_session.query(LocationSQL).all()) == 2
+    assert len(db_session.query(GSPSQL).all()) == 2
 
     f2 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     db_session.add_all(f2)
 
-    assert len(db_session.query(LocationSQL).all()) == 2
+    assert len(db_session.query(GSPSQL).all()) == 2
 
     forecast_values_read = get_all_gsp_ids_latest_forecast(session=db_session)
     print(forecast_values_read)

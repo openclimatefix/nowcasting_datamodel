@@ -22,3 +22,4 @@ The primary keys could be 'gsp_id' and 'target_datetime_utc'.
 
 from .models import *  # noqa F403
 from .pv import *  # noqa F403
+from .gsp import *  # noqa F403

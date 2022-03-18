@@ -19,51 +19,51 @@ from sqlalchemy.orm import declarative_base, relationship
 
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.models.base import Base_Forecast
+from nowcasting_datamodel.models.gsp import GSP
 
 national_gb_label = "National-GB"
 # TODO #3 Add forecast latest table, this make it easy to load the latest forecast
 
-Base_Forecast = declarative_base()
 
-
-########
-# 2. Location
-########
-class LocationSQL(Base_Forecast):
-    """Location that the forecast is for"""
-
-    __tablename__ = "location"
-
-    id = Column(Integer, primary_key=True)
-    label = Column(String)
-    gsp_id = Column(Integer)
-    gsp_name = Column(String, nullable=True)
-    gsp_group = Column(String, nullable=True)
-    region_name = Column(String, nullable=True)
-
-    forecast = relationship("ForecastSQL", back_populates="location")
-
-
-class Location(EnhancedBaseModel):
-    """Location that the forecast is for"""
-
-    label: str = Field(..., description="")
-    gsp_id: Optional[int] = Field(None, description="The Grid Supply Point (GSP) id", index=True)
-    gsp_name: Optional[str] = Field(None, description="The GSP name")
-    gsp_group: Optional[str] = Field(None, description="The GSP group name")
-    region_name: Optional[str] = Field(None, description="The GSP region name")
-
-    rm_mode = True
-
-    def to_orm(self) -> LocationSQL:
-        """Change model to LocationSQL"""
-        return LocationSQL(
-            label=self.label,
-            gsp_id=self.gsp_id,
-            gsp_name=self.gsp_name,
-            gsp_group=self.gsp_group,
-            region_name=self.region_name,
-        )
+# ########
+# # 2. Location
+# ########
+# class LocationSQL(Base_Forecast):
+#     """Location that the forecast is for"""
+#
+#     __tablename__ = "location"
+#
+#     id = Column(Integer, primary_key=True)
+#     label = Column(String)
+#     gsp_id = Column(Integer)
+#     gsp_name = Column(String, nullable=True)
+#     gsp_group = Column(String, nullable=True)
+#     region_name = Column(String, nullable=True)
+#
+#     forecast = relationship("ForecastSQL", back_populates="location")
+#
+#
+# class Location(EnhancedBaseModel):
+#     """Location that the forecast is for"""
+#
+#     label: str = Field(..., description="")
+#     gsp_id: Optional[int] = Field(None, description="The Grid Supply Point (GSP) id", index=True)
+#     gsp_name: Optional[str] = Field(None, description="The GSP name")
+#     gsp_group: Optional[str] = Field(None, description="The GSP group name")
+#     region_name: Optional[str] = Field(None, description="The GSP region name")
+#
+#     rm_mode = True
+#
+#     def to_orm(self) -> LocationSQL:
+#         """Change model to LocationSQL"""
+#         return LocationSQL(
+#             label=self.label,
+#             gsp_id=self.gsp_id,
+#             gsp_name=self.gsp_name,
+#             gsp_group=self.gsp_group,
+#             region_name=self.region_name,
+#         )
 
 
 ########
@@ -87,7 +87,7 @@ class MLModel(EnhancedBaseModel):
     name: Optional[str] = Field(..., description="The name of the model", index=True)
     version: Optional[str] = Field(..., description="The version of the model")
 
-    def to_orm(self) -> LocationSQL:
+    def to_orm(self) -> MLModelSQL:
         """Change model to MLModelSQL"""
         return MLModelSQL(
             name=self.name,
@@ -193,8 +193,8 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     model_id = Column(Integer, ForeignKey("model.id"), index=True)
 
     # many (forecasts) to one (location)
-    location = relationship("LocationSQL", back_populates="forecast")
-    location_id = Column(Integer, ForeignKey("location.id"), index=True)
+    location = relationship("GSPSQL", back_populates="forecast")
+    location_id = Column(Integer, ForeignKey("gsp.pk"), index=True)
 
     # one (forecasts) to many (forecast_value)
     forecast_values = relationship("ForecastValueSQL", back_populates="forecast")
@@ -211,7 +211,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
 class Forecast(EnhancedBaseModel):
     """A single Forecast"""
 
-    location: Location = Field(..., description="The location object for this forecaster")
+    location: GSP = Field(..., description="The location object for this forecaster")
     model: MLModel = Field(..., description="The name of the model that made this forecast")
     forecast_creation_time: datetime = Field(
         ..., description="The time when the forecaster was made"

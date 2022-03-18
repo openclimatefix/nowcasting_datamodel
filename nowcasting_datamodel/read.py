@@ -13,7 +13,7 @@ from sqlalchemy.orm.session import Session
 from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueSQL,
-    LocationSQL,
+    GSPSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
@@ -43,9 +43,9 @@ def get_latest_forecast(
 
     # filter on gsp_id
     if gsp_id is not None:
-        query = query.join(LocationSQL)
-        query = query.filter(LocationSQL.gsp_id == gsp_id)
-        order_by_items.append(LocationSQL.gsp_id)
+        query = query.join(GSPSQL)
+        query = query.filter(GSPSQL.id == gsp_id)
+        order_by_items.append(GSPSQL.id)
 
     order_by_items.append(ForecastSQL.created_utc.desc())
 
@@ -73,9 +73,9 @@ def get_all_gsp_ids_latest_forecast(
 
     # start main query
     query = session.query(ForecastSQL)
-    query = query.distinct(LocationSQL.gsp_id)
-    query = query.join(LocationSQL)
-    query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
+    query = query.distinct(GSPSQL.id)
+    query = query.join(GSPSQL)
+    query = query.order_by(GSPSQL.id, desc(ForecastSQL.created_utc))
 
     forecasts = query.all()
 
@@ -103,8 +103,8 @@ def get_forecast_values(
     # filter on gsp_id
     if gsp_id is not None:
         query = query.join(ForecastSQL)
-        query = query.join(LocationSQL)
-        query = query.filter(LocationSQL.gsp_id == gsp_id)
+        query = query.join(GSPSQL)
+        query = query.filter(GSPSQL.id == gsp_id)
 
     # get all results
     forecasts = query.all()
@@ -130,8 +130,8 @@ def get_latest_national_forecast(
     query = session.query(ForecastSQL)
 
     # filter on gsp_id
-    query = query.join(LocationSQL)
-    query = query.filter(LocationSQL.label == national_gb_label)
+    query = query.join(GSPSQL)
+    query = query.filter(GSPSQL.label == national_gb_label)
 
     # order, so latest is at the top
     query = query.order_by(ForecastSQL.created_utc.desc())
@@ -142,7 +142,7 @@ def get_latest_national_forecast(
     return forecast
 
 
-def get_location(session: Session, gsp_id: int) -> LocationSQL:
+def get_location(session: Session, gsp_id: int) -> GSPSQL:
     """
     Get location object from gsp id
 
@@ -154,10 +154,10 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     """
 
     # start main query
-    query = session.query(LocationSQL)
+    query = session.query(GSPSQL)
 
     # filter on gsp_id
-    query = query.filter(LocationSQL.gsp_id == gsp_id)
+    query = query.filter(GSPSQL.id == gsp_id)
 
     # get all results
     locations = query.all()
@@ -165,7 +165,7 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     if len(locations) == 0:
         logger.debug(f"Location for gsp_id {gsp_id} does not exist so going to add it")
 
-        location = LocationSQL(gsp_id=gsp_id, label=f"GSP_{gsp_id}")
+        location = GSPSQL(id=gsp_id, label=f"GSP_{gsp_id}")
         session.add(location)
         session.commit()
 

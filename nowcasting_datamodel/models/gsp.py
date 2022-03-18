@@ -12,7 +12,7 @@ from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, and_, select
 from sqlalchemy.orm import relationship
 
-from nowcasting_datamodel.models.pv import Base_PV
+from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 ########
 
 
-class GSPSQL(Base_PV, CreatedMixin):
+class GSPSQL(Base_Forecast, CreatedMixin):
     """Metadata for GSP data"""
 
     __tablename__ = "gsp"
@@ -37,6 +37,7 @@ class GSPSQL(Base_PV, CreatedMixin):
     status_interval_minutes = Column(Integer, nullable=True, default=30)
 
     gsp_yield = relationship("GSPYieldSQL", back_populates="gsp")
+    forecast = relationship("ForecastSQL", back_populates="location")
 
 
 class GSP(EnhancedBaseModel):
@@ -67,7 +68,7 @@ class GSP(EnhancedBaseModel):
 ########
 
 
-class GSPYieldSQL(Base_PV, CreatedMixin):
+class GSPYieldSQL(Base_Forecast, CreatedMixin):
     """PV Yield data"""
 
     __tablename__ = "gsp_yield"
@@ -113,17 +114,17 @@ class GSPYield(EnhancedBaseModel):
 
 
 # Add the last yield value asociated with a pv system.
-# This means we can just load the pv system and know the last pv yield value.
+# This means we can just load the gsp and know the last gsp yield value.
 # Helpful advice on
 # https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
 GSPSQL.last_pv_yield = relationship(
     GSPYieldSQL,
     primaryjoin=and_(
-        GSPSQL.id == GSPYieldSQL.pv_system_id,
+        GSPSQL.pk == GSPYieldSQL.gsp_pk,
         GSPYieldSQL.datetime_utc
         == (
             select([GSPYieldSQL.datetime_utc])
-            .where(GSPSQL.id == GSPYieldSQL.pv_system_id)
+            .where(GSPSQL.pk == GSPYieldSQL.gsp_pk)
             .order_by(GSPYieldSQL.datetime_utc.desc())
             .limit(1)
             .scalar_subquery()

@@ -9,7 +9,7 @@ from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueSQL,
     InputDataLastUpdatedSQL,
-    LocationSQL,
+    GSPSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
@@ -17,9 +17,9 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.read import get_location, get_model
 
 
-def make_fake_location(gsp_id: int) -> LocationSQL:
+def make_fake_location(gsp_id: int) -> GSPSQL:
     """Make fake location with gsp id"""
-    return LocationSQL(label=f"GSP_{gsp_id}", gsp_id=gsp_id)
+    return GSPSQL(label=f"GSP_{gsp_id}", id=gsp_id)
 
 
 def make_fake_pv_system() -> PVSystemSQL:
@@ -84,7 +84,7 @@ def make_fake_forecasts(
 
 def make_fake_national_forecast(t0_datetime_utc: Optional[datetime] = None) -> ForecastSQL:
     """Make national fake forecast"""
-    location = LocationSQL(label=national_gb_label)
+    location = GSPSQL(label=national_gb_label)
     model = MLModelSQL(name="fake_model_national", version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 

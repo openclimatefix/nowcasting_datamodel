@@ -9,7 +9,7 @@ from nowcasting_datamodel.models import (
     Forecast,
     ForecastSQL,
     ForecastValue,
-    Location,
+    GSP,
     national_gb_label,
 )
 
@@ -31,7 +31,7 @@ def make_national_forecast(forecasts: List[Forecast], n_gsps: int = N_GSP) -> Fo
     dupes = [x for x in gsps if x in seen or seen.add(x)]
     assert len(seen) == n_gsps, f"Found non unique GSP ids {dupes}"
 
-    location = Location(label=national_gb_label)
+    location = GSP(label=national_gb_label)
 
     # make pandas dataframe of all the forecast values with a gsp id
     forecast_values_flat = []
