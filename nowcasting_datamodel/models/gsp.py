@@ -9,8 +9,8 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import UUID, Column, DateTime, Float, ForeignKey, Integer, String, and_, select
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, and_, select
+from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.pv import Base_PV
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
@@ -117,7 +117,7 @@ class GSPYield(EnhancedBaseModel):
 # Helpful advice on
 # https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
 GSPSQL.last_pv_yield = relationship(
-    PVYieldSQL,
+    GSPYieldSQL,
     primaryjoin=and_(
         GSPSQL.id == GSPYieldSQL.pv_system_id,
         GSPYieldSQL.datetime_utc
