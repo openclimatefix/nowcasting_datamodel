@@ -5,7 +5,13 @@ from typing import List
 import pandas as pd
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import GSP, Forecast, ForecastSQL, ForecastValue, national_gb_label
+from nowcasting_datamodel.models import (
+    Forecast,
+    ForecastSQL,
+    ForecastValue,
+    Location,
+    national_gb_label,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -20,18 +26,18 @@ def make_national_forecast(forecasts: List[Forecast], n_gsps: int = N_GSP) -> Fo
     ), f"The number of forecast was only {len(forecasts)}, it should be {n_gsps}"
 
     # check the gsp ids are unique
-    gsps = [int(f.location.id) for f in forecasts]
+    gsps = [int(f.location.gsp_id) for f in forecasts]
     seen = set()
     dupes = [x for x in gsps if x in seen or seen.add(x)]
     assert len(seen) == n_gsps, f"Found non unique GSP ids {dupes}"
 
-    location = GSP(label=national_gb_label)
+    location = Location(label=national_gb_label)
 
     # make pandas dataframe of all the forecast values with a gsp id
     forecast_values_flat = []
     for forecast in forecasts:
 
-        gsp_id = forecast.location.id
+        gsp_id = forecast.location.gsp_id
 
         one_gsp = pd.DataFrame(
             [ForecastValue.from_orm(value).dict() for value in forecast.forecast_values]

@@ -7,11 +7,10 @@ from nowcasting_datamodel.fake import (
     make_fake_pv_system,
 )
 from nowcasting_datamodel.models import (
-    GSPSQL,
     Forecast,
     ForecastValue,
+    LocationSQL,
     MLModel,
-    MLModelSQL,
     PVSystem,
     PVSystemSQL,
     PVYield,
@@ -24,7 +23,6 @@ from nowcasting_datamodel.read import (
     get_model,
     get_pv_system,
 )
-from nowcasting_datamodel.read_pv import get_latest_pv_yield
 from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
@@ -45,7 +43,7 @@ def test_get_forecast(db_session, forecasts):
 
     forecast_read = get_latest_forecast(session=db_session)
 
-    assert forecast_read.location.id == forecasts[-1].location.id
+    assert forecast_read.location.gsp_id == forecasts[-1].location.gsp_id
     assert forecast_read.forecast_values[0] == forecasts[-1].forecast_values[0]
 
     _ = Forecast.from_orm(forecast_read)
@@ -53,8 +51,8 @@ def test_get_forecast(db_session, forecasts):
 
 def test_read_gsp_id(db_session, forecasts):
 
-    forecast_read = get_latest_forecast(session=db_session, gsp_id=forecasts[1].location.id)
-    assert forecast_read.location.id == forecasts[1].location.id
+    forecast_read = get_latest_forecast(session=db_session, gsp_id=forecasts[1].location.gsp_id)
+    assert forecast_read.location.gsp_id == forecasts[1].location.gsp_id
 
 
 def test_get_forecast_values(db_session, forecasts):
@@ -67,7 +65,9 @@ def test_get_forecast_values(db_session, forecasts):
 
 def test_get_forecast_values_gsp_id(db_session, forecasts):
 
-    forecast_values_read = get_forecast_values(session=db_session, gsp_id=forecasts[0].location.id)
+    forecast_values_read = get_forecast_values(
+        session=db_session, gsp_id=forecasts[0].location.gsp_id
+    )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
 
@@ -81,12 +81,12 @@ def test_get_all_gsp_ids_latest_forecast(db_session):
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     db_session.add_all(f1)
 
-    assert len(db_session.query(GSPSQL).all()) == 2
+    assert len(db_session.query(LocationSQL).all()) == 2
 
     f2 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     db_session.add_all(f2)
 
-    assert len(db_session.query(GSPSQL).all()) == 2
+    assert len(db_session.query(LocationSQL).all()) == 2
 
     forecast_values_read = get_all_gsp_ids_latest_forecast(session=db_session)
     print(forecast_values_read)
@@ -116,47 +116,3 @@ def test_get_pv_system(db_session_pv):
     )
     assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
 
-
-def test_get_latest_pv_yield(db_session_pv):
-
-    pv_yield_1 = PVYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1)
-    pv_yield_1_sql = pv_yield_1.to_orm()
-
-    pv_yield_2 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
-    pv_yield_2_sql = pv_yield_2.to_orm()
-
-    pv_yield_3 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
-    pv_yield_3_sql = pv_yield_3.to_orm()
-
-    pv_system_sql_1: PVSystemSQL = PVSystem(
-        pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5
-    ).to_orm()
-    pv_system_sql_2: PVSystemSQL = PVSystem(
-        pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5
-    ).to_orm()
-
-    # add pv system to yield object
-    pv_yield_1_sql.pv_system = pv_system_sql_1
-    pv_yield_2_sql.pv_system = pv_system_sql_1
-    pv_yield_3_sql.pv_system = pv_system_sql_2
-
-    # add to database
-    db_session_pv.add(pv_yield_1_sql)
-    db_session_pv.add(pv_yield_2_sql)
-    db_session_pv.add(pv_system_sql_1)
-    db_session_pv.add(pv_system_sql_2)
-
-    db_session_pv.commit()
-
-    pv_yields = get_latest_pv_yield(
-        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2]
-    )
-
-    # read database
-    assert len(pv_yields) == 2
-
-    assert pv_yields[0].datetime_utc == datetime(2022, 1, 2)
-    assert pv_yields[1].datetime_utc == datetime(2022, 1, 1)
-
-    pv_systems = db_session_pv.query(PVSystemSQL).order_by(PVSystemSQL.created_utc).all()
-    pv_yields[0].pv_system.id = pv_systems[0].id

@@ -8,21 +8,21 @@ from nowcasting_datamodel.fake import (
     make_fake_national_forecast,
 )
 from nowcasting_datamodel.models import (
-    GSP,
-    GSPSQL,
     Forecast,
     ForecastSQL,
     ForecastValue,
     ForecastValueSQL,
     InputDataLastUpdated,
     InputDataLastUpdatedSQL,
+    Location,
+    LocationSQL,
 )
 
 
 def test_make_fake_location():
-    location_sql: GSPSQL = make_fake_location(1)
-    location = GSP.from_orm(location_sql)
-    _ = GSP.to_orm(location)
+    location_sql: LocationSQL = make_fake_location(1)
+    location = Location.from_orm(location_sql)
+    _ = Location.to_orm(location)
 
 
 def test_make_fake_input_data_last_updated():

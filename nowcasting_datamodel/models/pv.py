@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String, and_, select
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_PV
@@ -125,25 +125,3 @@ class PVYield(EnhancedBaseModel):
             datetime_utc=self.datetime_utc,
             solar_generation_kw=self.solar_generation_kw,
         )
-
-
-# # Add the last yield value asociated with a pv system.
-# # This means we can just load the pv system and know the last pv yield value.
-# # Helpful advice on
-# # https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
-# PVSystemSQL.last_pv_yield = relationship(
-#     PVYieldSQL,
-#     primaryjoin=and_(
-#         PVSystemSQL.id == PVYieldSQL.pv_system_id,
-#         PVYieldSQL.datetime_utc
-#         == (
-#             select([PVYieldSQL.datetime_utc])
-#             .where(PVSystemSQL.id == PVYieldSQL.pv_system_id)
-#             .order_by(PVYieldSQL.datetime_utc.desc())
-#             .limit(1)
-#             .scalar_subquery()
-#         ),
-#     ),
-#     viewonly=True,
-#     uselist=False,
-# )
