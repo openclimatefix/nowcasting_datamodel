@@ -93,7 +93,7 @@ class PVYieldSQL(Base_PV, CreatedMixin):
     pv_system = relationship("PVSystemSQL", back_populates="pv_yield")
     pv_system_id = Column(Integer, ForeignKey("pv_system.id"), index=True)
 
-    Index('ix_datetime_utc', datetime_utc.desc())
+    Index("ix_datetime_utc", datetime_utc.desc())
 
 
 class PVYield(EnhancedBaseModel):
