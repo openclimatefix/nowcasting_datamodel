@@ -97,7 +97,7 @@ class GSPYield(EnhancedBaseModel):
 
     gsp: Optional[GSP] = Field(
         None,
-        description="The GSP asscioated with this model",
+        description="The GSP associated with this model",
     )
 
     @validator("solar_generation_kw")
@@ -120,7 +120,7 @@ class GSPYield(EnhancedBaseModel):
 # This means we can just load the gsp and know the last gsp yield value.
 # Helpful advice on
 # https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
-GSPSQL.last_pv_yield = relationship(
+GSPSQL.last_gsp_yield = relationship(
     GSPYieldSQL,
     primaryjoin=and_(
         GSPSQL.pk == GSPYieldSQL.gsp_pk,

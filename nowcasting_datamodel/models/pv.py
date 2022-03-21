@@ -108,7 +108,7 @@ class PVYield(EnhancedBaseModel):
 
     pv_system: Optional[PVSystem] = Field(
         None,
-        description="The PV system asscioated with this model",
+        description="The PV system associated with this model",
     )
 
     @validator("solar_generation_kw")
