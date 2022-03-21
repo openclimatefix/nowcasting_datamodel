@@ -56,7 +56,7 @@ def get_latest_gsp_yield(
 
         # add pv systems that dont have any pv yields
         gsp_systems_with_gsp_yields_ids = [
-            pv_system.id for pv_system in gsp_systems_with_gsp_yields
+            gsp.id for gsp in gsp_systems_with_gsp_yields
         ]
 
         gsp_systems_with_no_gsp_yields = []

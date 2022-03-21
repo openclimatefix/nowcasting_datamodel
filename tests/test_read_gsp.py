@@ -38,7 +38,7 @@ def test_get_latest_pv_yield(db_session):
     gsp_yields = get_latest_gsp_yield(session=db_session, gsps=[gsp_sql_1, gsp_sql_2])
 
     # read database
-    assert len(gsp_yields) == 3
+    assert len(gsp_yields) == 2
 
     assert gsp_yields[0].datetime_utc == datetime(2022, 1, 2)
     assert gsp_yields[1].datetime_utc == datetime(2022, 1, 1)
