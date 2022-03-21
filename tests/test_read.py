@@ -115,4 +115,3 @@ def test_get_pv_system(db_session_pv):
         session=db_session_pv, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
     )
     assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
-
