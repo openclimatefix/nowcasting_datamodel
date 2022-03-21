@@ -19,7 +19,7 @@ from nowcasting_datamodel.read import get_location, get_model
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
     """Make fake location with gsp id"""
-    return LocationSQL(label=f"GSP_{gsp_id}", id=gsp_id)
+    return LocationSQL(label=f"GSP_{gsp_id}", gsp_id=gsp_id)
 
 
 def make_fake_pv_system() -> PVSystemSQL:
