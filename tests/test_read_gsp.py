@@ -3,7 +3,6 @@ from datetime import datetime
 
 from nowcasting_datamodel.models import LocationSQL, Location, GSPYield
 from nowcasting_datamodel.read.read_gsp import get_latest_gsp_yield
-from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 """ Read pv functions """
-from typing import List, Optional, Union
+from typing import List, Union
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
@@ -55,7 +55,9 @@ def get_latest_gsp_yield(
             gsp_systems_with_gsp_yields.append(gsp)
 
         # add pv systems that dont have any pv yields
-        gsp_systems_with_gsp_yields_ids = [pv_system.id for pv_system in gsp_systems_with_gsp_yields]
+        gsp_systems_with_gsp_yields_ids = [
+            pv_system.id for pv_system in gsp_systems_with_gsp_yields
+        ]
 
         gsp_systems_with_no_gsp_yields = []
         for gsp in gsps:
