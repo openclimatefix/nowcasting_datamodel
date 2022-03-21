@@ -45,7 +45,7 @@ def upgrade():  # noqa 103
     op.create_index("ix_datetime_utc", "gsp_yield", [sa.text("datetime_utc DESC")], unique=False)
     op.create_index(op.f("ix_gsp_yield_datetime_utc"), "gsp_yield", ["datetime_utc"], unique=False)
     op.create_index(op.f("ix_gsp_yield_gsp_pk"), "gsp_yield", ["gsp_pk"], unique=False)
-    op.drop_constraint('forecast_location_id_fkey', "forecast", type_="foreignkey")
+    op.drop_constraint("forecast_location_id_fkey", "forecast", type_="foreignkey")
     op.drop_table("location")
     op.create_foreign_key("forecast_gsp_id_fkey", "forecast", "gsp", ["location_id"], ["pk"])
     # ### end Alembic commands ###
