@@ -83,7 +83,9 @@ class GSPYield(EnhancedBaseModel):
 
     datetime_utc: datetime = Field(..., description="The timestamp of the gsp yield")
     solar_generation_kw: float = Field(..., description="The amount of solar generation")
-    regime: str = Field('in-day', description="When the GSP data is pulled, can be 'in-day' or 'day-after'")
+    regime: str = Field(
+        "in-day", description="When the GSP data is pulled, can be 'in-day' or 'day-after'"
+    )
 
     _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
         datetime_must_have_timezone
@@ -105,7 +107,7 @@ class GSPYield(EnhancedBaseModel):
     @validator("regime")
     def validate_regime(cls, v):
         """Validate the solar_generation_kw field"""
-        if v not in ['day-after', 'in-da']:
+        if v not in ["day-after", "in-da"]:
             message = f"Regime ({v}) not in 'day-after', 'in-da'"
             logger.debug(message)
             raise Exception(message)
@@ -116,5 +118,5 @@ class GSPYield(EnhancedBaseModel):
         return GSPYieldSQL(
             datetime_utc=self.datetime_utc,
             solar_generation_kw=self.solar_generation_kw,
-            regime=self.regime
+            regime=self.regime,
         )
