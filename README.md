@@ -73,7 +73,7 @@ Functions used to make fake model data.
 
 Tests are run by using the following command
 ```bash
-docker-compose -f test-docker-compose.yml run datamodel
+docker-compose -f test-docker-compose.yml run tests
 ```
 
 These sets up `postgres` in a docker container and runs the tests in another docker container.

@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models.models import Base_Forecast
+from nowcasting_datamodel.models.base import Base_Forecast
 
 logger = logging.getLogger(__name__)
 

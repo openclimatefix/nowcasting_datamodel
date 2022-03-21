@@ -3,10 +3,11 @@
 When we change the datamodel of the PV or Forecast database we will need to run a database migration
 
 ## 1. old local database
-start local database of database before data model changes
+start local database of database before data model changes. This can be done by setting `DB_URL` and `DB_URL_PV` and running
+by running ```python nowcasting_datamodel/migrations/app.py --run-migrations```
 
 ## 2. run migrations scripts
-by running nowcasting_datatmodel/migrations/app.py
+by running ```python nowcasting_datamodel/migrations/app.py --make-migrations```
 
 ## 3. migrations revision
 commit migrations revision to repo

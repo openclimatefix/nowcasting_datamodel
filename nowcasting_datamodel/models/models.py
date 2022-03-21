@@ -15,15 +15,14 @@ from typing import List, Optional
 
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 
+from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 national_gb_label = "National-GB"
 # TODO #3 Add forecast latest table, this make it easy to load the latest forecast
-
-Base_Forecast = declarative_base()
 
 
 ########
@@ -87,7 +86,7 @@ class MLModel(EnhancedBaseModel):
     name: Optional[str] = Field(..., description="The name of the model", index=True)
     version: Optional[str] = Field(..., description="The version of the model")
 
-    def to_orm(self) -> LocationSQL:
+    def to_orm(self) -> MLModelSQL:
         """Change model to MLModelSQL"""
         return MLModelSQL(
             name=self.name,
