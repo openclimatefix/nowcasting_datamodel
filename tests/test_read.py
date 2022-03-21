@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime, timezone
 
 from nowcasting_datamodel.fake import (
     make_fake_forecasts,
@@ -12,10 +11,8 @@ from nowcasting_datamodel.models import (
     LocationSQL,
     MLModel,
     PVSystem,
-    PVSystemSQL,
-    PVYield,
 )
-from nowcasting_datamodel.read import (
+from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
     get_forecast_values,
     get_latest_forecast,

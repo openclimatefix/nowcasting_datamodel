@@ -14,7 +14,7 @@ from nowcasting_datamodel.models import (
     national_gb_label,
 )
 from nowcasting_datamodel.models.gsp import LocationSQL
-from nowcasting_datamodel.read import get_location, get_model
+from nowcasting_datamodel.read.read import get_location, get_model
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:

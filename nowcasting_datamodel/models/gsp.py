@@ -36,7 +36,7 @@ class LocationSQL(Base_Forecast):
     region_name = Column(String, nullable=True)
 
     forecast = relationship("ForecastSQL", back_populates="location")
-    gsp_yield = relationship("GSPYieldSQL", back_populates="gsp")
+    gsp_yield = relationship("GSPYieldSQL", back_populates="location")
 
 
 class Location(EnhancedBaseModel):
@@ -71,8 +71,8 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
     solar_generation_kw = Column(String)
 
     # many (forecasts) to one (location)
-    gsp = relationship("LocationSQL", back_populates="gsp_yield")
-    gsp_id = Column(Integer, ForeignKey("location.id"), index=True)
+    location = relationship("LocationSQL", back_populates="gsp_yield")
+    location_id = Column(Integer, ForeignKey("location.id"), index=True)
 
     Index("ix_gsp_yield_datetime_utc_desc", datetime_utc.desc())
 
