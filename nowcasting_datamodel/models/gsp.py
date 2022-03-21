@@ -1,3 +1,9 @@
+""" Pydantic and Sqlalchemy models for the database
+
+2. Location objects, where the forecast is for
+8. GSP yield for storing GSP yield data
+
+"""
 import logging
 from datetime import datetime
 from typing import Optional

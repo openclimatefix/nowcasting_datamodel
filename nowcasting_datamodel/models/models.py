@@ -2,7 +2,6 @@
 
 The following class are made
 1. Reusable classes
-2. Location objects, where the forecast is for
 3. Model object, what forecast model is used
 4. ForecastValue objects, specific values of a forecast and time
 5. Input data status, shows when the data was collected
