@@ -1,5 +1,4 @@
 import logging
-
 from datetime import datetime, timezone
 
 from nowcasting_datamodel.fake import (
@@ -17,13 +16,6 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     PVYield,
 )
-
-
-from datetime import datetime
-
-from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield
-
-
 from nowcasting_datamodel.read_pv import get_latest_pv_yield, get_pv_systems
 from nowcasting_datamodel.save import save_pv_system
 
