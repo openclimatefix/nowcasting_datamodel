@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, and_, select
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String, and_, select
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
@@ -81,6 +81,8 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
     # many (forecasts) to one (location)
     gsp = relationship("GSPSQL", back_populates="gsp_yield")
     gsp_pk = Column(Integer, ForeignKey("gsp.pk"), index=True)
+
+    Index("ix_datetime_utc", datetime_utc.desc())
 
 
 class GSPYield(EnhancedBaseModel):
