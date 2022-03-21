@@ -10,7 +10,7 @@ Date: 2022-01-19
 
 import erdantic as erd
 
-from nowcasting_datamodel.models import ManyForecasts, GSPYield
+from nowcasting_datamodel.models import GSPYield, ManyForecasts
 
 diagram = erd.create(ManyForecasts, GSPYield)
 diagram.draw("diagram.png")
