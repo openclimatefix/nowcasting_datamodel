@@ -9,11 +9,11 @@ from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueSQL,
     InputDataLastUpdatedSQL,
-    LocationSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
 )
+from nowcasting_datamodel.models.gsp import LocationSQL
 from nowcasting_datamodel.read import get_location, get_model
 
 
