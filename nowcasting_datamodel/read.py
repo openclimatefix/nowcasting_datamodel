@@ -157,7 +157,7 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     query = session.query(LocationSQL)
 
     # filter on gsp_id
-    query = query.filter(LocationSQL.id == gsp_id)
+    query = query.filter(LocationSQL.gsp_id == gsp_id)
 
     # get all results
     locations = query.all()

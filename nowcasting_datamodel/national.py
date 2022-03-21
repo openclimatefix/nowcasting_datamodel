@@ -37,7 +37,7 @@ def make_national_forecast(forecasts: List[Forecast], n_gsps: int = N_GSP) -> Fo
     forecast_values_flat = []
     for forecast in forecasts:
 
-        gsp_id = forecast.location.id
+        gsp_id = forecast.location.gsp_id
 
         one_gsp = pd.DataFrame(
             [ForecastValue.from_orm(value).dict() for value in forecast.forecast_values]
