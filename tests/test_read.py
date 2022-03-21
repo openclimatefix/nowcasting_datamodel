@@ -13,8 +13,8 @@ from nowcasting_datamodel.models import (
     MLModel,
     MLModelSQL,
     PVSystem,
-PVSystemSQL,
-PVYield
+    PVSystemSQL,
+    PVYield,
 )
 from nowcasting_datamodel.read import (
     get_all_gsp_ids_latest_forecast,
@@ -148,7 +148,9 @@ def test_get_latest_pv_yield(db_session_pv):
 
     db_session_pv.commit()
 
-    pv_yields = get_latest_pv_yield(session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2])
+    pv_yields = get_latest_pv_yield(
+        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2]
+    )
 
     # read database
     assert len(pv_yields) == 2
@@ -158,6 +160,3 @@ def test_get_latest_pv_yield(db_session_pv):
 
     pv_systems = db_session_pv.query(PVSystemSQL).order_by(PVSystemSQL.created_utc).all()
     pv_yields[0].pv_system.id = pv_systems[0].id
-
-
-
