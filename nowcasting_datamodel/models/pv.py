@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, and_, select
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String, and_, select
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_PV
@@ -92,6 +92,8 @@ class PVYieldSQL(Base_PV, CreatedMixin):
     # many (forecasts) to one (location)
     pv_system = relationship("PVSystemSQL", back_populates="pv_yield")
     pv_system_id = Column(Integer, ForeignKey("pv_system.id"), index=True)
+
+    Index('ix_datetime_utc', datetime_utc.desc())
 
 
 class PVYield(EnhancedBaseModel):
