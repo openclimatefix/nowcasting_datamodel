@@ -47,7 +47,7 @@ services:
       - GIT_PYTHON_REFRESH=quiet
       - LOG_LEVEL=DEBUG
     command: >
-      bash -c "sleep 10
+      bash -c "sleep 15
       && pytest --cov=./nowcasting_datamodel
       && coverage report -m
       && coverage xml
