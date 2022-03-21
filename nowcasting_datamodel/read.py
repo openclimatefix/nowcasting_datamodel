@@ -44,8 +44,8 @@ def get_latest_forecast(
     # filter on gsp_id
     if gsp_id is not None:
         query = query.join(LocationSQL)
-        query = query.filter(LocationSQL.id == gsp_id)
-        order_by_items.append(LocationSQL.id)
+        query = query.filter(LocationSQL.gsp_id == gsp_id)
+        order_by_items.append(LocationSQL.gsp_id)
 
     order_by_items.append(ForecastSQL.created_utc.desc())
 
@@ -73,9 +73,9 @@ def get_all_gsp_ids_latest_forecast(
 
     # start main query
     query = session.query(ForecastSQL)
-    query = query.distinct(LocationSQL.id)
+    query = query.distinct(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
-    query = query.order_by(LocationSQL.id, desc(ForecastSQL.created_utc))
+    query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     forecasts = query.all()
 
@@ -104,7 +104,7 @@ def get_forecast_values(
     if gsp_id is not None:
         query = query.join(ForecastSQL)
         query = query.join(LocationSQL)
-        query = query.filter(LocationSQL.id == gsp_id)
+        query = query.filter(LocationSQL.gsp_id == gsp_id)
 
     # get all results
     forecasts = query.all()
@@ -165,7 +165,7 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     if len(locations) == 0:
         logger.debug(f"Location for gsp_id {gsp_id} does not exist so going to add it")
 
-        location = LocationSQL(id=gsp_id, label=f"GSP_{gsp_id}")
+        location = LocationSQL(gsp_id=gsp_id, label=f"GSP_{gsp_id}")
         session.add(location)
         session.commit()
 
