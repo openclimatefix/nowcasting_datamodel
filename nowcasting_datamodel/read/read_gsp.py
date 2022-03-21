@@ -8,7 +8,7 @@ from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
 
 def get_latest_gsp_yield(
-    session: Session, gsps: List[LocationSQL], append_to_gsps: bool = False, regime:str='in-day'
+    session: Session, gsps: List[LocationSQL], append_to_gsps: bool = False, regime: str = "in-day"
 ) -> Union[List[GSPYieldSQL], List[LocationSQL]]:
     """
     Get the last gsp yield data
