@@ -127,23 +127,23 @@ class PVYield(EnhancedBaseModel):
         )
 
 
-# Add the last yield value asociated with a pv system.
-# This means we can just load the pv system and know the last pv yield value.
-# Helpful advice on
-# https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
-PVSystemSQL.last_pv_yield = relationship(
-    PVYieldSQL,
-    primaryjoin=and_(
-        PVSystemSQL.id == PVYieldSQL.pv_system_id,
-        PVYieldSQL.datetime_utc
-        == (
-            select([PVYieldSQL.datetime_utc])
-            .where(PVSystemSQL.id == PVYieldSQL.pv_system_id)
-            .order_by(PVYieldSQL.datetime_utc.desc())
-            .limit(1)
-            .scalar_subquery()
-        ),
-    ),
-    viewonly=True,
-    uselist=False,
-)
+# # Add the last yield value asociated with a pv system.
+# # This means we can just load the pv system and know the last pv yield value.
+# # Helpful advice on
+# # https://groups.google.com/g/sqlalchemy/c/Vw1iBXSLibI
+# PVSystemSQL.last_pv_yield = relationship(
+#     PVYieldSQL,
+#     primaryjoin=and_(
+#         PVSystemSQL.id == PVYieldSQL.pv_system_id,
+#         PVYieldSQL.datetime_utc
+#         == (
+#             select([PVYieldSQL.datetime_utc])
+#             .where(PVSystemSQL.id == PVYieldSQL.pv_system_id)
+#             .order_by(PVYieldSQL.datetime_utc.desc())
+#             .limit(1)
+#             .scalar_subquery()
+#         ),
+#     ),
+#     viewonly=True,
+#     uselist=False,
+# )
