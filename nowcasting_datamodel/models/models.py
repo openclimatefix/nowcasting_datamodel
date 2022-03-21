@@ -2,7 +2,6 @@
 
 The following class are made
 1. Reusable classes
-2. Location objects, where the forecast is for
 3. Model object, what forecast model is used
 4. ForecastValue objects, specific values of a forecast and time
 5. Input data status, shows when the data was collected
@@ -18,6 +17,7 @@ from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, Stri
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
+from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
@@ -28,41 +28,6 @@ national_gb_label = "National-GB"
 ########
 # 2. Location
 ########
-class LocationSQL(Base_Forecast):
-    """Location that the forecast is for"""
-
-    __tablename__ = "location"
-
-    id = Column(Integer, primary_key=True)
-    label = Column(String)
-    gsp_id = Column(Integer)
-    gsp_name = Column(String, nullable=True)
-    gsp_group = Column(String, nullable=True)
-    region_name = Column(String, nullable=True)
-
-    forecast = relationship("ForecastSQL", back_populates="location")
-
-
-class Location(EnhancedBaseModel):
-    """Location that the forecast is for"""
-
-    label: str = Field(..., description="")
-    gsp_id: Optional[int] = Field(None, description="The Grid Supply Point (GSP) id", index=True)
-    gsp_name: Optional[str] = Field(None, description="The GSP name")
-    gsp_group: Optional[str] = Field(None, description="The GSP group name")
-    region_name: Optional[str] = Field(None, description="The GSP region name")
-
-    rm_mode = True
-
-    def to_orm(self) -> LocationSQL:
-        """Change model to LocationSQL"""
-        return LocationSQL(
-            label=self.label,
-            gsp_id=self.gsp_id,
-            gsp_name=self.gsp_name,
-            gsp_group=self.gsp_group,
-            region_name=self.region_name,
-        )
 
 
 ########

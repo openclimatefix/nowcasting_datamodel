@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield
-from nowcasting_datamodel.read_pv import get_latest_pv_yield, get_pv_systems
+from nowcasting_datamodel.read.read_pv import get_latest_pv_yield, get_pv_systems
 from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
@@ -91,6 +91,7 @@ def test_get_latest_pv_yield_append_no_yields(db_session_pv):
         pv_systems=[pv_system_sql_1, pv_system_sql_2],
         append_to_pv_systems=True,
     )
+
     assert pv_systems[0].last_pv_yield is None
     assert len(pv_systems) == 2
 
