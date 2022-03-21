@@ -4,7 +4,7 @@ from typing import List, Union
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from nowcasting_datamodel.models import LocationSQL, GSPYieldSQL
+from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
 
 def get_latest_gsp_yield(
