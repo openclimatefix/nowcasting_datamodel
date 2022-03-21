@@ -65,7 +65,9 @@ def test_get_forecast_values(db_session, forecasts):
 
 def test_get_forecast_values_gsp_id(db_session, forecasts):
 
-    forecast_values_read = get_forecast_values(session=db_session, gsp_id=forecasts[0].location.gsp_id)
+    forecast_values_read = get_forecast_values(
+        session=db_session, gsp_id=forecasts[0].location.gsp_id
+    )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
 
