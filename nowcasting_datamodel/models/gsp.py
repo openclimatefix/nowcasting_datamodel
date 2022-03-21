@@ -69,6 +69,7 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
     id = Column(Integer, primary_key=True)
     datetime_utc = Column(DateTime, index=True)
     solar_generation_kw = Column(String)
+    regime = Column(String, nullable=True)
 
     # many (forecasts) to one (location)
     location = relationship("LocationSQL", back_populates="gsp_yield")
@@ -82,6 +83,7 @@ class GSPYield(EnhancedBaseModel):
 
     datetime_utc: datetime = Field(..., description="The timestamp of the gsp yield")
     solar_generation_kw: float = Field(..., description="The amount of solar generation")
+    regime: str = Field('in-day', description="When the GSP data is pulled, can be 'in-day' or 'day-after'")
 
     _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
         datetime_must_have_timezone
@@ -100,9 +102,19 @@ class GSPYield(EnhancedBaseModel):
             v = 0
         return v
 
+    @validator("regime")
+    def validate_regime(cls, v):
+        """Validate the solar_generation_kw field"""
+        if v not in ['day-after', 'in-da']:
+            message = f"Regime ({v}) not in 'day-after', 'in-da'"
+            logger.debug(message)
+            raise Exception(message)
+        return v
+
     def to_orm(self) -> GSPYieldSQL:
         """Change model to GSPYieldSQL"""
         return GSPYieldSQL(
             datetime_utc=self.datetime_utc,
             solar_generation_kw=self.solar_generation_kw,
+            regime=self.regime
         )

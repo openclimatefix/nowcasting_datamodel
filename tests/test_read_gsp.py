@@ -7,7 +7,7 @@ from nowcasting_datamodel.read.read_gsp import get_latest_gsp_yield
 logger = logging.getLogger(__name__)
 
 
-def test_get_latest_pv_yield(db_session):
+def test_get_latest_gsp_yield(db_session):
 
     gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1)
     gsp_yield_1_sql = gsp_yield_1.to_orm()
@@ -69,7 +69,7 @@ def test_get_latest_gsp_yield_append_no_yields(db_session):
     assert len(pv_systems) == 2
 
 
-def test_get_latest_pv_yield_append(db_session):
+def test_get_latest_gsp_yield_append(db_session):
     gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1)
     gsp_yield_1_sql = gsp_yield_1.to_orm()
 
