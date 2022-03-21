@@ -1,15 +1,8 @@
 import logging
 from datetime import datetime
 
-from nowcasting_datamodel.models import (
-    PVSystem,
-PVSystemSQL,
-PVYield
-)
-from nowcasting_datamodel.read_pv import (
-    get_latest_pv_yield, get_pv_systems
-)
-from nowcasting_datamodel.read_pv import get_latest_pv_yield
+from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield
+from nowcasting_datamodel.read_pv import get_latest_pv_yield, get_pv_systems
 from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
@@ -25,14 +18,10 @@ def test_get_pv_system(db_session_pv):
     save_pv_system(session=db_session_pv, pv_system=pv_system_sql_1)
     save_pv_system(session=db_session_pv, pv_system=pv_system_sql_2)
 
-    pv_systems_get = get_pv_systems(
-        session=db_session_pv
-    )
+    pv_systems_get = get_pv_systems(session=db_session_pv)
     assert len(pv_systems_get) == 2
 
-    pv_systems_get = get_pv_systems(
-        session=db_session_pv, pv_systems_ids=[pv_systems_get[0].id]
-    )
+    pv_systems_get = get_pv_systems(session=db_session_pv, pv_systems_ids=[pv_systems_get[0].id])
 
     assert len(pv_systems_get) == 1
 
@@ -68,7 +57,9 @@ def test_get_latest_pv_yield(db_session_pv):
 
     db_session_pv.commit()
 
-    pv_yields = get_latest_pv_yield(session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2])
+    pv_yields = get_latest_pv_yield(
+        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2]
+    )
 
     # read database
     assert len(pv_yields) == 2
@@ -95,7 +86,11 @@ def test_get_latest_pv_yield_append_no_yields(db_session_pv):
 
     db_session_pv.commit()
 
-    pv_systems = get_latest_pv_yield(session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2],append_to_pv_systems=True)
+    pv_systems = get_latest_pv_yield(
+        session=db_session_pv,
+        pv_systems=[pv_system_sql_1, pv_system_sql_2],
+        append_to_pv_systems=True,
+    )
     assert len(pv_systems) == 2
 
 
@@ -129,10 +124,9 @@ def test_get_latest_pv_yield_append(db_session_pv):
 
     db_session_pv.commit()
 
-
-    pv_systems = get_latest_pv_yield(session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2],append_to_pv_systems=True)
+    pv_systems = get_latest_pv_yield(
+        session=db_session_pv,
+        pv_systems=[pv_system_sql_1, pv_system_sql_2],
+        append_to_pv_systems=True,
+    )
     assert len(pv_systems) == 2
-
-
-
-

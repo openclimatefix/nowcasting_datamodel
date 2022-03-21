@@ -6,10 +6,10 @@ import numpy as np
 from sqlalchemy.orm import Session
 
 from nowcasting_datamodel.models import (
-    LocationSQL,
     ForecastSQL,
     ForecastValueSQL,
     InputDataLastUpdatedSQL,
+    LocationSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,

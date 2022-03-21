@@ -64,7 +64,6 @@ class Location(EnhancedBaseModel):
         )
 
 
-
 ########
 # 3. Model
 ########

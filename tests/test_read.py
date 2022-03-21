@@ -7,13 +7,13 @@ from nowcasting_datamodel.fake import (
     make_fake_pv_system,
 )
 from nowcasting_datamodel.models import (
-    LocationSQL,
     Forecast,
     ForecastValue,
+    LocationSQL,
     MLModel,
     PVSystem,
-PVSystemSQL,
-PVYield
+    PVSystemSQL,
+    PVYield,
 )
 from nowcasting_datamodel.read import (
     get_all_gsp_ids_latest_forecast,
@@ -114,4 +114,3 @@ def test_get_pv_system(db_session_pv):
         session=db_session_pv, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
     )
     assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
-
