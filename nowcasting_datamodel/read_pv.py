@@ -1,3 +1,4 @@
+""" Read pv functions """
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
@@ -42,12 +43,13 @@ def get_latest_pv_yield(
     session: Session, pv_systems: List[PVSystemSQL], append_to_pv_systems: bool = False
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
+    Get the last pv yield data
 
-
-    :param session:
-    :param pv_systems:
-    :param append_to_pv_systems:
-    :return:
+    :param session: database sessions
+    :param pv_systems: list of pv systems
+    :param append_to_pv_systems: append pv yield to pv systems, or return pv systems.
+        If appended the yield is access by 'pv_system.last_pv_yield'
+    :return: either list of pv yields, or pv systems
     """
 
     pv_systems_ids = [pv_system.id for pv_system in pv_systems]

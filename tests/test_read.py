@@ -23,7 +23,6 @@ from nowcasting_datamodel.read import (
     get_model,
     get_pv_system,
 )
-from nowcasting_datamodel.read_pv import get_latest_pv_yield
 from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
@@ -44,7 +43,7 @@ def test_get_forecast(db_session, forecasts):
 
     forecast_read = get_latest_forecast(session=db_session)
 
-    assert forecast_read.location.id == forecasts[-1].location.gsp_id
+    assert forecast_read.location.gsp_id == forecasts[-1].location.gsp_id
     assert forecast_read.forecast_values[0] == forecasts[-1].forecast_values[0]
 
     _ = Forecast.from_orm(forecast_read)
