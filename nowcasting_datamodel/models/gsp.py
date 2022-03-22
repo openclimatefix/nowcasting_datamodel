@@ -107,8 +107,8 @@ class GSPYield(EnhancedBaseModel):
     @validator("regime")
     def validate_regime(cls, v):
         """Validate the solar_generation_kw field"""
-        if v not in ["day-after", "in-da"]:
-            message = f"Regime ({v}) not in 'day-after', 'in-da'"
+        if v not in ["day-after", "in-day"]:
+            message = f"Regime ({v}) not in 'day-after', 'in-day'"
             logger.debug(message)
             raise Exception(message)
         return v
