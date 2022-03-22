@@ -13,10 +13,20 @@ from nowcasting_datamodel.read.read import (
     get_latest_national_forecast,
     get_model,
     get_pv_system,
+    get_all_location
 )
 from nowcasting_datamodel.save import save_pv_system
 
 logger = logging.getLogger(__name__)
+
+
+def test_get_all_location(db_session):
+
+    db_session.add(LocationSQL(label='GSP_1',gsp_id=1))
+    db_session.add(LocationSQL(label='GSP_2', gsp_id=2))
+
+    locations = get_all_location(session=db_session)
+    assert len(locations) == 2
 
 
 def test_get_model(db_session):
