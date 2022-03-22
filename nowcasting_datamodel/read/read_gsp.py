@@ -68,6 +68,6 @@ def get_latest_gsp_yield(
 
                 gsp_systems_with_no_gsp_yields.append(gsp)
 
-        all_gsp_systems = gsp_systems_with_gsp_yields_ids + gsp_systems_with_no_gsp_yields
+        all_gsp_systems = gsp_systems_with_gsp_yields + gsp_systems_with_no_gsp_yields
 
         return all_gsp_systems
