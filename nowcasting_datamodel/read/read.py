@@ -175,6 +175,33 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     return location
 
 
+def get_all_location(session: Session, gsp_ids: List[int] = None) -> List[LocationSQL]:
+    """
+    Get all location object from gsp id
+
+    :param session: database session
+    :param gsp_ids: list of gsp id of the location
+
+    return: List of GSP locations
+
+    """
+
+    # start main query
+    query = session.query(LocationSQL)
+    query = query.distinct(LocationSQL.gsp_id)
+
+    # filter on gsp_id
+    if gsp_ids is not None:
+        query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
+
+    query = query.order_by(LocationSQL.gsp_id)
+
+    # get all results
+    locations = query.all()
+
+    return locations
+
+
 def get_model(session: Session, name: str, version: str) -> MLModelSQL:
     """
     Get model object from name and version
