@@ -34,7 +34,7 @@ def get_latest_gsp_yield(
     query = query.where(GSPYieldSQL.regime == regime)
 
     # only select on results per pv system
-    query = query.distinct(LocationSQL.id)
+    query = query.distinct(LocationSQL.gsp_id)
 
     # select only th epv systems we want
     query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
