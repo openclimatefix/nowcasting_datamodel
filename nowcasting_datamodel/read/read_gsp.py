@@ -34,14 +34,14 @@ def get_latest_gsp_yield(
     query = query.where(GSPYieldSQL.regime == regime)
 
     # only select on results per pv system
-    query = query.distinct(LocationSQL.id)
+    query = query.distinct(LocationSQL.gsp_id)
 
     # select only th epv systems we want
     query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
-        LocationSQL.id, desc(GSPYieldSQL.datetime_utc), desc(GSPYieldSQL.created_utc)
+        LocationSQL.gsp_id, desc(GSPYieldSQL.datetime_utc), desc(GSPYieldSQL.created_utc)
     )
 
     # get all results
