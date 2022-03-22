@@ -1,12 +1,11 @@
 """ Read pv functions """
-from typing import List, Union
 import logging
+from typing import List, Union
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
-
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +50,7 @@ def get_latest_gsp_yield(
     # get all results
     gsp_yields: List[GSPYieldSQL] = query.all()
 
-    logger.debug(f'Found {len(gsp_yields)}  latest gsp yields')
+    logger.debug(f"Found {len(gsp_yields)}  latest gsp yields")
 
     if not append_to_gsps:
         return gsp_yields
@@ -64,7 +63,7 @@ def get_latest_gsp_yield(
 
             gsp_systems_with_gsp_yields.append(gsp)
 
-        logger.debug(f'Found {len(gsp_systems_with_gsp_yields)} gsps with yields')
+        logger.debug(f"Found {len(gsp_systems_with_gsp_yields)} gsps with yields")
 
         # add pv systems that dont have any pv yields
         gsp_systems_with_gsp_yields_ids = [gsp.id for gsp in gsp_systems_with_gsp_yields]
@@ -76,7 +75,7 @@ def get_latest_gsp_yield(
 
                 gsp_systems_with_no_gsp_yields.append(gsp)
 
-        logger.debug(f'Found {len(gsp_systems_with_gsp_yields)} gsps with no yields')
+        logger.debug(f"Found {len(gsp_systems_with_gsp_yields)} gsps with no yields")
 
         all_gsp_systems = gsp_systems_with_gsp_yields + gsp_systems_with_no_gsp_yields
 
