@@ -37,7 +37,7 @@ def get_latest_gsp_yield(
     query = query.distinct(LocationSQL.id)
 
     # select only th epv systems we want
-    query = query.where(LocationSQL.id.in_(gsp_ids))
+    query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
