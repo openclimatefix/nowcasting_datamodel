@@ -63,7 +63,7 @@ def get_latest_gsp_yield(
 
         gsp_systems_with_no_gsp_yields = []
         for gsp in gsps:
-            if gsp.id not in gsp_systems_with_gsp_yields_ids:
+            if gsp.gsp_id not in gsp_systems_with_gsp_yields_ids:
                 gsp.last_gsp_yield = None
 
                 gsp_systems_with_no_gsp_yields.append(gsp)
