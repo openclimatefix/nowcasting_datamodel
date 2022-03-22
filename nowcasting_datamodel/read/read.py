@@ -175,7 +175,6 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
     return location
 
 
-
 def get_all_location(session: Session, gsp_ids: List[int] = None) -> List[LocationSQL]:
     """
     Get all location object from gsp id
