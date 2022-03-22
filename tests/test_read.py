@@ -8,7 +8,7 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, PVSystem
 from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
-    get_all_location,
+    get_all_locations,
     get_forecast_values,
     get_latest_forecast,
     get_latest_national_forecast,
@@ -25,7 +25,7 @@ def test_get_all_location(db_session):
     db_session.add(LocationSQL(label="GSP_1", gsp_id=1))
     db_session.add(LocationSQL(label="GSP_2", gsp_id=2))
 
-    locations = get_all_location(session=db_session)
+    locations = get_all_locations(session=db_session)
     assert len(locations) == 2
 
 
