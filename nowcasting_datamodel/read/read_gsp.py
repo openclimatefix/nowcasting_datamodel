@@ -41,7 +41,7 @@ def get_latest_gsp_yield(
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
-        LocationSQL.id, desc(GSPYieldSQL.datetime_utc), desc(GSPYieldSQL.created_utc)
+        LocationSQL.gsp_id, desc(GSPYieldSQL.datetime_utc), desc(GSPYieldSQL.created_utc)
     )
 
     # get all results
