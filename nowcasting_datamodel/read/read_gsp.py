@@ -55,7 +55,7 @@ def get_latest_gsp_yield(
     if not append_to_gsps:
         return gsp_yields
     else:
-        # get list of pvsystems with last pv yields
+        # get list of gsp with last pv yields
         gsp_systems_with_gsp_yields = []
         for gsp_yield in gsp_yields:
             gsp = gsp_yield.location
@@ -75,7 +75,7 @@ def get_latest_gsp_yield(
 
                 gsp_systems_with_no_gsp_yields.append(gsp)
 
-        logger.debug(f"Found {len(gsp_systems_with_gsp_yields)} gsps with no yields")
+        logger.debug(f"Found {len(gsp_systems_with_no_gsp_yields)} gsps with no yields")
 
         all_gsp_systems = gsp_systems_with_gsp_yields + gsp_systems_with_no_gsp_yields
 
