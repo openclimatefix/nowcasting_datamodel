@@ -13,4 +13,3 @@ jobs:
     with:
       image_base_name: nowcasting_datamodel
       docker_file: infrastructure/docker/Dockerfile
-
