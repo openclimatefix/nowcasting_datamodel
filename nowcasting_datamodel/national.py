@@ -6,7 +6,7 @@ import pandas as pd
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue
+from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue, national_gb_label
 from nowcasting_datamodel.read.read import get_location
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ def make_national_forecast(
     dupes = [x for x in gsps if x in seen or seen.add(x)]
     assert len(seen) == n_gsps, f"Found non unique GSP ids {dupes}"
 
-    location = get_location(gsp_id=0, session=session)
+    location = get_location(gsp_id=0, session=session, label=national_gb_label)
 
     # make pandas dataframe of all the forecast values with a gsp id
     forecast_values_flat = []
