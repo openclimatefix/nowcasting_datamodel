@@ -66,10 +66,15 @@ def make_national_forecast(
         ForecastValue(**forecast_value) for forecast_value in forecast_values.to_dict("records")
     ]
 
-    return Forecast(
+    national_forecast = Forecast(
         forecast_values=forecast_values,
         location=location,
         model=forecasts[0].model,
         input_data_last_updated=forecasts[0].input_data_last_updated,
         forecast_creation_time=forecasts[0].forecast_creation_time,
     ).to_orm()
+
+    # make location is LocationSQL loaded from database
+    national_forecast.location = location
+
+    return national_forecast
