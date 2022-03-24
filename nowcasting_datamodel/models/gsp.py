@@ -52,6 +52,10 @@ class Location(EnhancedBaseModel):
 
     def to_orm(self) -> LocationSQL:
         """Change model to LocationSQL"""
+
+        if isinstance(self, LocationSQL):
+            return self
+
         return LocationSQL(
             label=self.label,
             gsp_id=self.gsp_id,
