@@ -5,14 +5,21 @@ from nowcasting_datamodel.fake import (
     make_fake_national_forecast,
     make_fake_pv_system,
 )
-from nowcasting_datamodel.models import Forecast, ForecastValue, LocationSQL, MLModel, PVSystem, national_gb_label
+from nowcasting_datamodel.models import (
+    Forecast,
+    ForecastValue,
+    LocationSQL,
+    MLModel,
+    PVSystem,
+    national_gb_label,
+)
 from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
     get_all_locations,
-    get_location,
     get_forecast_values,
     get_latest_forecast,
     get_latest_national_forecast,
+    get_location,
     get_model,
     get_pv_system,
 )
@@ -39,6 +46,8 @@ def test_get_national_location(db_session):
 
     locations = get_all_locations(session=db_session)
     assert len(locations) == 1
+
+    _ = get_location(session=db_session, gsp_id=0, label="test_label")
 
 
 def test_get_model(db_session):
