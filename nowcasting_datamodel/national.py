@@ -3,14 +3,10 @@ import logging
 from typing import List
 
 import pandas as pd
+from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import (
-    Forecast,
-    ForecastSQL,
-    ForecastValue,
-)
-from sqlalchemy.orm.session import Session
+from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue
 from nowcasting_datamodel.read.read import get_location
 
 logger = logging.getLogger(__name__)
