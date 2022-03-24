@@ -166,6 +166,8 @@ def get_location(session: Session, gsp_id: int) -> LocationSQL:
         logger.debug(f"Location for gsp_id {gsp_id} does not exist so going to add it")
 
         location = LocationSQL(gsp_id=gsp_id, label=f"GSP_{gsp_id}")
+        if gsp_id == 0:
+            location.label = national_gb_label
         session.add(location)
         session.commit()
 
