@@ -24,7 +24,7 @@ def get_latest_gsp_yield(
     :return: either list of gsp yields, or pv systems
     """
 
-    gsp_ids = [gsp.id for gsp in gsps]
+    gsp_ids = [gsp.gsp_id for gsp in gsps]
 
     # start main query
     query = session.query(GSPYieldSQL)
