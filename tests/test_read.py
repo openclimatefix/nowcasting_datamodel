@@ -40,6 +40,8 @@ def test_get_national_location(db_session):
     locations = get_all_locations(session=db_session)
     assert len(locations) == 1
 
+    _ = get_location(session=db_session, gsp_id=0, label='test_label')
+
 
 def test_get_model(db_session):
 
