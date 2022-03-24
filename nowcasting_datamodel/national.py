@@ -9,8 +9,6 @@ from nowcasting_datamodel.models import (
     Forecast,
     ForecastSQL,
     ForecastValue,
-    Location,
-    national_gb_label,
 )
 from sqlalchemy.orm.session import Session
 from nowcasting_datamodel.read.read import get_location
@@ -18,7 +16,9 @@ from nowcasting_datamodel.read.read import get_location
 logger = logging.getLogger(__name__)
 
 
-def make_national_forecast(forecasts: List[Forecast], session: Session, n_gsps: int = N_GSP) -> ForecastSQL:
+def make_national_forecast(
+    forecasts: List[Forecast], session: Session, n_gsps: int = N_GSP
+) -> ForecastSQL:
     """This takes a list of forecast and adds up all the forecast values
 
     Note that a different method to do this, would be to do this in the database
@@ -33,7 +33,7 @@ def make_national_forecast(forecasts: List[Forecast], session: Session, n_gsps: 
     dupes = [x for x in gsps if x in seen or seen.add(x)]
     assert len(seen) == n_gsps, f"Found non unique GSP ids {dupes}"
 
-    location = get_location(gsp_id=0,session=session)
+    location = get_location(gsp_id=0, session=session)
 
     # make pandas dataframe of all the forecast values with a gsp id
     forecast_values_flat = []
