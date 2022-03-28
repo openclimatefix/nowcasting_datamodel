@@ -44,7 +44,7 @@ def get_latest_input_data_last_updated(
     # get all results
     input_data = query.first()
 
-    logger.debug(f"Found latest input data")
+    logger.debug("Found latest input data")
 
     return input_data
 

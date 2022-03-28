@@ -156,4 +156,4 @@ def test_get_latest_input_data_last_updated(db_session):
     db_session.commit()
 
     input_data_last_updated = get_latest_input_data_last_updated(session=db_session)
-    assert input_data_last_updated.gsp == now.replace(tzinfo=None)
+    assert input_data_last_updated.gsp.replace(tzinfo=None) == now.replace(tzinfo=None)
