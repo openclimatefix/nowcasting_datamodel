@@ -21,11 +21,11 @@ from nowcasting_datamodel.read.read import (
     get_forecast_values,
     get_latest_forecast,
     get_latest_input_data_last_updated,
-    update_latest_input_data_last_updated,
     get_latest_national_forecast,
     get_location,
     get_model,
     get_pv_system,
+    update_latest_input_data_last_updated,
 )
 from nowcasting_datamodel.save import save_pv_system
 
@@ -171,7 +171,7 @@ def test_update_latest_input_data_last_updated(db_session):
     db_session.add(input_data_last_updated_1)
     db_session.commit()
 
-    update_latest_input_data_last_updated(session=db_session, component='gsp', update_datetime=now)
+    update_latest_input_data_last_updated(session=db_session, component="gsp", update_datetime=now)
 
     input_data_last_updated = get_latest_input_data_last_updated(session=db_session)
     assert input_data_last_updated.gsp.replace(tzinfo=None) == now.replace(tzinfo=None)
