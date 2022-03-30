@@ -27,9 +27,8 @@ def get_latest_input_data_last_updated(
     session: Session,
 ) -> InputDataLastUpdatedSQL:
     """
-    Read last input data last udpated
+    Read last input data last updated
 
-    :param session: database session
     :param session: database session
 
     return: Latest input data object
