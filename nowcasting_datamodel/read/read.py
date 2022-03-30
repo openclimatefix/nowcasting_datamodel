@@ -5,6 +5,7 @@
 3. get all forecast values
 """
 import logging
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy import desc
@@ -46,6 +47,37 @@ def get_latest_input_data_last_updated(
     logger.debug("Found latest input data")
 
     return input_data
+
+
+def update_latest_input_data_last_updated(
+    session: Session, component: str, update_datetime: Optional[datetime] = None
+):
+    """
+    Update the table InputDataLastUpdatedSQL with a new valye
+
+    :param session:
+    :param component: This should be gsp, pv, nwp or satellite
+    :param update_datetime: the datetime is should be updated.
+        Default is None, so will be set to now
+    :return:
+    """
+
+    # For the moment we load the latest, update it and save a new one.
+    # This may be a problem if these function is run at the same twice,
+    # but for the moment lets ignore this
+
+    if update_datetime is None:
+        update_datetime = datetime.now(tz=timezone.utc)
+
+    # get latest
+    latest_input_data_last_updated = get_latest_input_data_last_updated(session=session)
+
+    # set new value
+    setattr(latest_input_data_last_updated, component, update_datetime)
+
+    # save to database
+    session.add(latest_input_data_last_updated)
+    session.commit()
 
 
 def get_latest_forecast(
