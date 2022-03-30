@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta, timezone
 
 from nowcasting_datamodel.fake import (
     make_fake_forecasts,
@@ -8,6 +9,7 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import (
     Forecast,
     ForecastValue,
+    InputDataLastUpdatedSQL,
     LocationSQL,
     MLModel,
     PVSystem,
@@ -18,6 +20,7 @@ from nowcasting_datamodel.read.read import (
     get_all_locations,
     get_forecast_values,
     get_latest_forecast,
+    get_latest_input_data_last_updated,
     get_latest_national_forecast,
     get_location,
     get_model,
@@ -137,3 +140,20 @@ def test_get_pv_system(db_session_pv):
         session=db_session_pv, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
     )
     assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
+
+
+def test_get_latest_input_data_last_updated(db_session):
+
+    yesterday = datetime.now(tz=timezone.utc) - timedelta(hours=24)
+    now = datetime.now(tz=timezone.utc)
+
+    input_data_last_updated_1 = InputDataLastUpdatedSQL(
+        gsp=yesterday, nwp=yesterday, pv=yesterday, satellite=yesterday
+    )
+    input_data_last_updated_2 = InputDataLastUpdatedSQL(gsp=now, nwp=now, pv=now, satellite=now)
+
+    db_session.add_all([input_data_last_updated_1, input_data_last_updated_2])
+    db_session.commit()
+
+    input_data_last_updated = get_latest_input_data_last_updated(session=db_session)
+    assert input_data_last_updated.gsp.replace(tzinfo=None) == now.replace(tzinfo=None)

@@ -13,6 +13,7 @@ from sqlalchemy.orm.session import Session
 from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueSQL,
+    InputDataLastUpdatedSQL,
     LocationSQL,
     MLModelSQL,
     PVSystemSQL,
@@ -20,6 +21,31 @@ from nowcasting_datamodel.models import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def get_latest_input_data_last_updated(
+    session: Session,
+) -> InputDataLastUpdatedSQL:
+    """
+    Read last input data last updated
+
+    :param session: database session
+
+    return: Latest input data object
+    """
+
+    # start main query
+    query = session.query(InputDataLastUpdatedSQL)
+
+    # this make the newest ones comes to the top
+    query = query.order_by(InputDataLastUpdatedSQL.created_utc.desc())
+
+    # get all results
+    input_data = query.first()
+
+    logger.debug("Found latest input data")
+
+    return input_data
 
 
 def get_latest_forecast(
