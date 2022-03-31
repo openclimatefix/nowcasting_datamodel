@@ -1,6 +1,7 @@
 import logging
-from freezegun import freeze_time
 from datetime import datetime, timedelta, timezone
+
+from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import (
     make_fake_forecasts,
@@ -197,6 +198,7 @@ def test_update_latest_input_data_last_updated_freeze(db_session):
     assert input_data_last_updated.pv.replace(tzinfo=None) == now.replace(tzinfo=None)
     assert input_data_last_updated.gsp.replace(tzinfo=None) == yesterday.replace(tzinfo=None)
 
+
 @freeze_time("2022-01-01")
 def test_update_latest_input_data_last_updated_freeze_no_data(db_session):
 
@@ -207,4 +209,4 @@ def test_update_latest_input_data_last_updated_freeze_no_data(db_session):
 
     input_data_last_updated = get_latest_input_data_last_updated(session=db_session)
     assert input_data_last_updated.pv.replace(tzinfo=None) == now.replace(tzinfo=None)
-    assert input_data_last_updated.gsp.replace(tzinfo=None) == datetime(1960,1,1)
+    assert input_data_last_updated.gsp.replace(tzinfo=None) == datetime(1960, 1, 1)
