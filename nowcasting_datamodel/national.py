@@ -7,7 +7,7 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue, national_gb_label
-from nowcasting_datamodel.read.read import get_location
+from nowcasting_datamodel.read.read import get_latest_input_data_last_updated, get_location
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ def make_national_forecast(
     assert len(seen) == n_gsps, f"Found non unique GSP ids {dupes}"
 
     location = get_location(gsp_id=0, session=session, label=national_gb_label)
+    input_data_last_updated = get_latest_input_data_last_updated(session=session)
 
     # make pandas dataframe of all the forecast values with a gsp id
     forecast_values_flat = []
@@ -70,11 +71,13 @@ def make_national_forecast(
         forecast_values=forecast_values,
         location=location,
         model=forecasts[0].model,
-        input_data_last_updated=forecasts[0].input_data_last_updated,
+        input_data_last_updated=input_data_last_updated,
         forecast_creation_time=forecasts[0].forecast_creation_time,
     ).to_orm()
 
-    # make location is LocationSQL loaded from database
+    # make location is LocationSQL,
+    # and InputDataLastUpdatedSQL loaded from database
     national_forecast.location = location
+    national_forecast.input_data_last_updated = input_data_last_updated
 
     return national_forecast
