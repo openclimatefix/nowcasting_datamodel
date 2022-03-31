@@ -66,11 +66,11 @@ def get_latest_gsp_yield(
         logger.debug(f"Found {len(gsp_systems_with_gsp_yields)} gsps with yields")
 
         # add pv systems that dont have any pv yields
-        gsp_systems_with_gsp_yields_ids = [gsp.id for gsp in gsp_systems_with_gsp_yields]
+        gsp_ids_with_gsp_yields = [gsp.gsp_id for gsp in gsp_systems_with_gsp_yields]
 
         gsp_systems_with_no_gsp_yields = []
         for gsp in gsps:
-            if gsp.id not in gsp_systems_with_gsp_yields_ids:
+            if gsp.gsp_id not in gsp_ids_with_gsp_yields:
                 gsp.last_gsp_yield = None
 
                 gsp_systems_with_no_gsp_yields.append(gsp)
