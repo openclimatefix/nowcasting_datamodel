@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from nowcasting_datamodel.models import GSPYield, Location, LocationSQL
-from nowcasting_datamodel.read.read_gsp import get_latest_gsp_yield, get_gsp_yield
+from nowcasting_datamodel.read.read_gsp import get_gsp_yield, get_latest_gsp_yield
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ def test_get_gsp_yield(db_session):
     gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1)
     gsp_yield_1_sql = gsp_yield_1.to_orm()
 
-    gsp_yield_2 = GSPYield(datetime_utc=datetime(2022, 1, 1,12), solar_generation_kw=2)
+    gsp_yield_2 = GSPYield(datetime_utc=datetime(2022, 1, 1, 12), solar_generation_kw=2)
     gsp_yield_2_sql = gsp_yield_2.to_orm()
 
     gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=3)
@@ -130,17 +130,13 @@ def test_get_gsp_yield(db_session):
 
     db_session.commit()
 
-    gsps = get_gsp_yield(
-        session=db_session,
-        gsp_ids=[1],
-        start_datetime_utc=datetime(2022, 1, 1)
-    )
+    gsps = get_gsp_yield(session=db_session, gsp_ids=[1], start_datetime_utc=datetime(2022, 1, 1))
     assert len(gsps) == 3
 
     gsps = get_gsp_yield(
         session=db_session,
         gsp_ids=[1],
         start_datetime_utc=datetime(2022, 1, 1),
-        end_datetime_utc = datetime(2022, 1, 1, 12)
+        end_datetime_utc=datetime(2022, 1, 1, 12),
     )
     assert len(gsps) == 2
