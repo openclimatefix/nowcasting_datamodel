@@ -87,7 +87,7 @@ def get_gsp_yield(
     session: Session,
     gsp_ids: List[int],
     start_datetime_utc: datetime,
-    regime: str = "in-day",
+    regime: Optional[str] = None,
     end_datetime_utc: Optional[datetime] = None,
 ) -> List[GSPYieldSQL]:
     """
@@ -109,7 +109,8 @@ def get_gsp_yield(
     )
 
     # filter on regime
-    query = query.where(GSPYieldSQL.regime == regime)
+    if regime is not None:
+        query = query.where(GSPYieldSQL.regime == regime)
 
     # filter on datetime
     query = query.where(GSPYieldSQL.datetime_utc >= start_datetime_utc)
