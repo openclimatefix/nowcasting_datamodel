@@ -116,10 +116,10 @@ def get_gsp_yield(
     if end_datetime_utc is not None:
         query = query.where(GSPYieldSQL.datetime_utc <= end_datetime_utc)
 
-    # only select on results per pv system
+    # only select on results per gsp
     query = query.distinct(*[LocationSQL.gsp_id, GSPYieldSQL.datetime_utc])
 
-    # select only th epv systems we want
+    # select only the gsp systems we want
     query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
 
     # order by 'created_utc' desc, so we get the latest one
