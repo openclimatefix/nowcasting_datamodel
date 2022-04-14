@@ -1,6 +1,7 @@
 """ Read pv functions """
 import logging
-from typing import List, Union
+from datetime import datetime
+from typing import List, Optional, Union
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
@@ -80,3 +81,53 @@ def get_latest_gsp_yield(
         all_gsp_systems = gsp_systems_with_gsp_yields + gsp_systems_with_no_gsp_yields
 
         return all_gsp_systems
+
+
+def get_gsp_yield(
+    session: Session,
+    gsp_ids: List[int],
+    start_datetime_utc: datetime,
+    regime: str = "in-day",
+    end_datetime_utc: Optional[datetime] = None,
+) -> List[GSPYieldSQL]:
+    """
+    Get the gsp yield values.
+
+    :param session: sqlalmcy sessions
+    :param gsp_ids: list of gsp ids that we filter on
+    :param start_datetime_utc: filter values on this start datetime
+    :param regime: filter query on this regim. Can be "in-day" or "day-after"
+    :param end_datetime_utc: optional end datetime filter
+    :return: list of gsp yields
+    """
+
+    # start main query
+    query = session.query(GSPYieldSQL)
+    query = query.join(LocationSQL)
+    query = query.where(
+        LocationSQL.id == GSPYieldSQL.location_id,
+    )
+
+    # filter on regime
+    query = query.where(GSPYieldSQL.regime == regime)
+
+    # filter on datetime
+    query = query.where(GSPYieldSQL.datetime_utc >= start_datetime_utc)
+    if end_datetime_utc is not None:
+        query = query.where(GSPYieldSQL.datetime_utc <= end_datetime_utc)
+
+    # only select on results per pv system
+    query = query.distinct(*[LocationSQL.gsp_id, GSPYieldSQL.datetime_utc])
+
+    # select only th epv systems we want
+    query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
+
+    # order by 'created_utc' desc, so we get the latest one
+    query = query.order_by(
+        LocationSQL.gsp_id, desc(GSPYieldSQL.datetime_utc), desc(GSPYieldSQL.created_utc)
+    )
+
+    # get all results
+    gsp_yields: List[GSPYieldSQL] = query.all()
+
+    return gsp_yields

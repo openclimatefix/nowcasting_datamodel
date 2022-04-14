@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from nowcasting_datamodel.models import GSPYield, Location, LocationSQL
-from nowcasting_datamodel.read.read_gsp import get_latest_gsp_yield
+from nowcasting_datamodel.read.read_gsp import get_latest_gsp_yield, get_gsp_yield
 
 logger = logging.getLogger(__name__)
 
@@ -100,5 +100,47 @@ def test_get_latest_gsp_yield_append(db_session):
         session=db_session,
         gsps=[gsp_sql_1, gsp_sql_2],
         append_to_gsps=True,
+    )
+    assert len(gsps) == 2
+
+
+def test_get_gsp_yield(db_session):
+
+    gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1)
+    gsp_yield_1_sql = gsp_yield_1.to_orm()
+
+    gsp_yield_2 = GSPYield(datetime_utc=datetime(2022, 1, 1,12), solar_generation_kw=2)
+    gsp_yield_2_sql = gsp_yield_2.to_orm()
+
+    gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=3)
+    gsp_yield_3_sql = gsp_yield_3.to_orm()
+
+    gsp_sql_1: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
+
+    # add pv system to yield object
+    gsp_yield_1_sql.location = gsp_sql_1
+    gsp_yield_2_sql.location = gsp_sql_1
+    gsp_yield_3_sql.location = gsp_sql_1
+
+    # add to database
+    db_session.add(gsp_yield_1_sql)
+    db_session.add(gsp_yield_2_sql)
+    db_session.add(gsp_yield_3_sql)
+    db_session.add(gsp_sql_1)
+
+    db_session.commit()
+
+    gsps = get_gsp_yield(
+        session=db_session,
+        gsp_ids=[1],
+        start_datetime_utc=datetime(2022, 1, 1)
+    )
+    assert len(gsps) == 3
+
+    gsps = get_gsp_yield(
+        session=db_session,
+        gsp_ids=[1],
+        start_datetime_utc=datetime(2022, 1, 1),
+        end_datetime_utc = datetime(2022, 1, 1, 12)
     )
     assert len(gsps) == 2
