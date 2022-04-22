@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import (
+    make_fake_forecast,
     make_fake_forecasts,
     make_fake_national_forecast,
     make_fake_pv_system,
@@ -88,7 +89,8 @@ def test_get_forecast_values(db_session, forecasts):
     forecast_values_read = get_forecast_values(session=db_session)
     assert len(forecast_values_read) == 20
 
-    assert forecast_values_read[0] == forecasts[0].forecast_values[0]
+    # we have order so that the most recent forecast gets returned first
+    assert forecast_values_read[0] == forecasts[-1].forecast_values[0]
 
 
 def test_get_forecast_values_gsp_id(db_session, forecasts):
@@ -102,6 +104,21 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
     assert len(forecast_values_read) == 2
 
     assert forecast_values_read[0] == forecasts[0].forecast_values[0]
+
+
+def test_get_forecast_values_gsp_id_latest(db_session):
+    _ = make_fake_forecast(gsp_id=1,session=db_session, t0_datetime_utc=datetime(2022,1,1))
+    forecast_2 = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2))
+
+    forecast_values_read = get_forecast_values(
+        session=db_session, gsp_id=1, only_return_latest=True, start_datetime=datetime(2022, 1, 2)
+    )
+
+    _ = ForecastValue.from_orm(forecast_values_read[0])
+
+    assert len(forecast_values_read) == 2
+
+    assert forecast_values_read[0] == forecast_2.forecast_values[0]
 
 
 def test_get_all_gsp_ids_latest_forecast(db_session):
