@@ -150,6 +150,8 @@ def get_all_gsp_ids_latest_forecast(
 def get_forecast_values(
     session: Session,
     gsp_id: Optional[int] = None,
+    start_datetime: Optional[datetime] = None,
+    only_return_latest: Optional[bool] = False,
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
@@ -157,6 +159,10 @@ def get_forecast_values(
     :param session: database session
     :param gsp_id: optional to gsp id, to filter query on
         If None is given then all are returned.
+    :param start_datetime: optional to filterer target_time by start_datetime
+        If None is given then all are returned.
+    :param only_return_latest: Optional to only return the latest forecast, not all of them.
+        Default is False
 
     return: List of forecasts values objects from database
 
@@ -165,11 +171,20 @@ def get_forecast_values(
     # start main query
     query = session.query(ForecastValueSQL)
 
+    if only_return_latest:
+        query = query.distinct(ForecastValueSQL.target_time)
+
+    if start_datetime is not None:
+        query = query.filter(ForecastValueSQL.target_time >= start_datetime)
+
     # filter on gsp_id
     if gsp_id is not None:
         query = query.join(ForecastSQL)
         query = query.join(LocationSQL)
         query = query.filter(LocationSQL.gsp_id == gsp_id)
+
+    # order by target time and created time desc
+    query = query.order_by(ForecastValueSQL.target_time, ForecastValueSQL.created_utc.desc())
 
     # get all results
     forecasts = query.all()
