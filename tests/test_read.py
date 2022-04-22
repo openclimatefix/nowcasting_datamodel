@@ -107,8 +107,10 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
 
 
 def test_get_forecast_values_gsp_id_latest(db_session):
-    _ = make_fake_forecast(gsp_id=1,session=db_session, t0_datetime_utc=datetime(2022,1,1))
-    forecast_2 = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2))
+    _ = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 1))
+    forecast_2 = make_fake_forecast(
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2)
+    )
 
     forecast_values_read = get_forecast_values(
         session=db_session, gsp_id=1, only_return_latest=True, start_datetime=datetime(2022, 1, 2)

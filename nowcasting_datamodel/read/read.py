@@ -151,7 +151,7 @@ def get_forecast_values(
     session: Session,
     gsp_id: Optional[int] = None,
     start_datetime: Optional[datetime] = None,
-    only_return_latest: Optional[bool] = False
+    only_return_latest: Optional[bool] = False,
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
