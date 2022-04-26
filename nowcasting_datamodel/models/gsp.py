@@ -108,9 +108,6 @@ class GSPYield(EnhancedBaseModel):
         if v < 0:
             logger.debug(f"Changing solar_generation_kw ({v}) to 0")
             v = 0
-        if np.isnan(v):
-            logger.debug(f"Changing solar_generation_kw ({v}) to -1")
-            v = -1
         return v
 
     @validator("regime")
