@@ -127,11 +127,13 @@ def get_latest_forecast(
 
 def get_all_gsp_ids_latest_forecast(
     session: Session,
+    start_created_utc: Optional[datetime] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
 
     :param session: database session
+    :param start_created_utc: Filter: forecast creation time should be larger than this datetime
 
     return: List of forecasts objects from database
     """
@@ -140,6 +142,10 @@ def get_all_gsp_ids_latest_forecast(
     query = session.query(ForecastSQL)
     query = query.distinct(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
+
+    if start_created_utc is not None:
+        query = query.filter(ForecastSQL.created_utc > start_created_utc)
+
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     forecasts = query.all()
