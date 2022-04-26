@@ -8,8 +8,6 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-import numpy as np
-
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
