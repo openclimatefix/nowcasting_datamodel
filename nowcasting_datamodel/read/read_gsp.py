@@ -89,7 +89,7 @@ def get_gsp_yield(
     start_datetime_utc: datetime,
     regime: Optional[str] = None,
     end_datetime_utc: Optional[datetime] = None,
-    filter_nans: Optional[bool] = True
+    filter_nans: Optional[bool] = True,
 ) -> List[GSPYieldSQL]:
     """
     Get the gsp yield values.
