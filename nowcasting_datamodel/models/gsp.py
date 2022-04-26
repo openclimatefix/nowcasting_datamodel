@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
@@ -72,7 +72,7 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
 
     id = Column(Integer, primary_key=True)
     datetime_utc = Column(DateTime, index=True)
-    solar_generation_kw = Column(String)
+    solar_generation_kw = Column(Float)
     regime = Column(String, nullable=True)
 
     # many (forecasts) to one (location)
