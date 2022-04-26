@@ -1,6 +1,8 @@
-from nowcasting_datamodel.models.gsp import GSPYield
 from datetime import datetime
+
 import numpy as np
+
+from nowcasting_datamodel.models.gsp import GSPYield
 
 
 def test_gsp_validation():
