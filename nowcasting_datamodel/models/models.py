@@ -68,7 +68,7 @@ class ForecastValueSQL(Base_Forecast, CreatedMixin):
     __tablename__ = "forecast_value"
 
     id = Column(Integer, primary_key=True)
-    target_time = Column(DateTime(timezone=True))
+    target_time = Column(DateTime(timezone=True), index=True)
     expected_power_generation_megawatts = Column(Float)
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)

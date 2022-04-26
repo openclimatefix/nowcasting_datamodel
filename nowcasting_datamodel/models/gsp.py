@@ -31,7 +31,7 @@ class LocationSQL(Base_Forecast):
 
     id = Column(Integer, primary_key=True)
     label = Column(String)
-    gsp_id = Column(Integer)
+    gsp_id = Column(Integer, index=True)
     gsp_name = Column(String, nullable=True)
     gsp_group = Column(String, nullable=True)
     region_name = Column(String, nullable=True)
