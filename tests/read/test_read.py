@@ -136,10 +136,23 @@ def test_get_all_gsp_ids_latest_forecast(db_session):
     assert len(db_session.query(LocationSQL).all()) == 2
 
     forecast_values_read = get_all_gsp_ids_latest_forecast(session=db_session)
-    print(forecast_values_read)
     assert len(forecast_values_read) == 2
     assert forecast_values_read[0] == f2[0]
     assert forecast_values_read[1] == f2[1]
+
+
+def test_get_all_gsp_ids_latest_forecast_filter(db_session):
+
+    f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
+    db_session.add_all(f1)
+
+    start_created_utc = datetime.now() - timedelta(days=1)
+    forecast_values_read = get_all_gsp_ids_latest_forecast(
+        session=db_session, start_created_utc=start_created_utc
+    )
+    assert len(forecast_values_read) == 2
+    assert forecast_values_read[0] == f1[0]
+    assert forecast_values_read[1] == f1[1]
 
 
 def test_get_national_latest_forecast(db_session):

@@ -5,7 +5,7 @@
 3. get all forecast values
 """
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from sqlalchemy import desc
@@ -127,11 +127,13 @@ def get_latest_forecast(
 
 def get_all_gsp_ids_latest_forecast(
     session: Session,
+    start_created_utc: Optional[datetime] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
 
     :param session: database session
+    :param start_created_utc: Filter: forecast creation time should be larger than this datetime
 
     return: List of forecasts objects from database
     """
@@ -140,6 +142,10 @@ def get_all_gsp_ids_latest_forecast(
     query = session.query(ForecastSQL)
     query = query.distinct(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
+
+    if start_created_utc is not None:
+        query = query.filter(ForecastSQL.created_utc > start_created_utc)
+
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     forecasts = query.all()
@@ -176,6 +182,11 @@ def get_forecast_values(
 
     if start_datetime is not None:
         query = query.filter(ForecastValueSQL.target_time >= start_datetime)
+
+        # also filter on creation time, to speed up things
+        created_utc_filter = start_datetime - timedelta(days=1)
+        query = query.filter(ForecastValueSQL.created_utc >= created_utc_filter)
+        query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
 
     # filter on gsp_id
     if gsp_id is not None:
