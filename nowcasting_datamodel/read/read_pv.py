@@ -1,4 +1,5 @@
 """ Read pv functions """
+from datetime import datetime
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
@@ -99,3 +100,44 @@ def get_latest_pv_yield(
         all_pv_systems = pv_systems_with_pv_yields + pv_systems_with_no_pv_yields
 
         return all_pv_systems
+
+
+def get_pv_yield(
+    session: Session,
+    pv_systems_ids: List[int],
+    start_utc: Optional[datetime] = None,
+    end_utc: Optional[datetime] = None,
+) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
+    """
+    Get the last pv yield data
+
+    :param session: database sessions
+    :param pv_systems_ids: list of pv systems ids
+    :return: either list of pv yields, or pv systems
+    """
+
+    # start main query
+    query = session.query(PVYieldSQL)
+    query = query.join(PVSystemSQL)
+
+    # select only th pv systems we want
+    query = query.where(PVSystemSQL.id.in_(pv_systems_ids))
+
+    # filter on start time
+    if start_utc is not None:
+        query = query.filter(PVYieldSQL.datetime_utc >= start_utc)
+
+    # filter on end time
+    if end_utc is not None:
+        query = query.filter(PVYieldSQL.datetime_utc < end_utc)
+
+    # order by 'created_utc' desc, so we get the latest one
+    query = query.order_by(
+        PVSystemSQL.id,
+        PVYieldSQL.datetime_utc,
+    )
+
+    # get all results
+    pv_yields: List[PVYieldSQL] = query.all()
+
+    return pv_yields
