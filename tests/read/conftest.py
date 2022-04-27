@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import pytest
 
-from datetime import datetime
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield
 
 
