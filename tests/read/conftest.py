@@ -26,13 +26,13 @@ def pv_systems(db_session_pv):
 @pytest.fixture()
 def pv_yields_and_systems(db_session_pv):
 
-    pv_yield_1 = PVYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1)
+    pv_yield_1 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1)
     pv_yield_1_sql = pv_yield_1.to_orm()
 
-    pv_yield_2 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
+    pv_yield_2 = PVYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=2)
     pv_yield_2_sql = pv_yield_2.to_orm()
 
-    pv_yield_3 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
+    pv_yield_3 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=3)
     pv_yield_3_sql = pv_yield_3.to_orm()
 
     pv_system_sql_1: PVSystemSQL = PVSystem(
@@ -50,6 +50,7 @@ def pv_yields_and_systems(db_session_pv):
     # add to database
     db_session_pv.add(pv_yield_1_sql)
     db_session_pv.add(pv_yield_2_sql)
+    db_session_pv.add(pv_yield_3_sql)
     db_session_pv.add(pv_system_sql_1)
     db_session_pv.add(pv_system_sql_2)
 
@@ -57,5 +58,5 @@ def pv_yields_and_systems(db_session_pv):
 
     return {
         "pv_yields": [pv_yield_1_sql, pv_yield_2_sql, pv_yield_3_sql],
-        "pv_systems": [pv_system_sql_1, pv_system_sql_1],
+        "pv_systems": [pv_system_sql_1, pv_system_sql_2],
     }
