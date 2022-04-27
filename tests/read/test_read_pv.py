@@ -48,6 +48,7 @@ def test_get_latest_pv_yield(db_session_pv, pv_yields_and_systems):
     assert len(pv_yields) == 2
 
     assert pv_yields[0].datetime_utc == datetime(2022, 1, 2)
+    assert pv_yields[1].datetime_utc == datetime(2022, 1, 1)
 
     pv_systems = db_session_pv.query(PVSystemSQL).order_by(PVSystemSQL.created_utc).all()
     pv_yields[0].pv_system.id = pv_systems[0].id
@@ -93,4 +94,14 @@ def test_read_pv_yield_start_utc(db_session_pv, pv_yields_and_systems):
     assert (
         len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1], start_utc=datetime(2022, 1, 2)))
         == 1
+    )
+
+
+def test_read_pv_yield_end_utc(db_session_pv, pv_yields_and_systems):
+
+    assert (
+        len(
+            get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2], end_utc=datetime(2022, 1, 2))
+        )
+        == 2
     )
