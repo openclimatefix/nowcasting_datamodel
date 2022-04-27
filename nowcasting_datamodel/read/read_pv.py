@@ -115,7 +115,7 @@ def get_latest_pv_yield(
 
 def get_pv_yield(
     session: Session,
-    pv_systems_ids: List[int],
+    pv_systems_ids: Optional[List[int]] = None,
     start_utc: Optional[datetime] = None,
     end_utc: Optional[datetime] = None,
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
@@ -132,7 +132,8 @@ def get_pv_yield(
     query = query.join(PVSystemSQL)
 
     # select only th pv systems we want
-    query = query.where(PVSystemSQL.id.in_(pv_systems_ids))
+    if pv_systems_ids is not None:
+        query = query.where(PVSystemSQL.id.in_(pv_systems_ids))
 
     # filter on start time
     if start_utc is not None:
