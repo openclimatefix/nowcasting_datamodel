@@ -133,7 +133,7 @@ def get_pv_yield(
 
     # select only th pv systems we want
     if pv_systems_ids is not None:
-        query = query.where(PVSystemSQL.id.in_(pv_systems_ids))
+        query = query.where(PVSystemSQL.pv_system_id.in_(pv_systems_ids))
 
     # filter on start time
     if start_utc is not None:
