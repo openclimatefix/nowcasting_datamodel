@@ -233,6 +233,33 @@ def get_latest_national_forecast(
     return forecast
 
 
+def get_latest_forecast_created_utc(session: Session, gsp_id: int) -> datetime:
+    """
+    Get the latest forecast created utc value. Can choose for different gsps
+
+    :param session: database session
+    :param gsp_id: gsp id to filter query on
+    :return:
+    """
+
+    # start main query
+    query = session.query(ForecastSQL.created_utc)
+
+    # filter on gsp_id
+    query = query.join(LocationSQL)
+    query = query.filter(LocationSQL.gsp_id == gsp_id)
+
+    # order, so latest is at the top
+    query = query.order_by(ForecastSQL.created_utc.desc())
+
+    # get first results
+    created_utc = query.first()
+
+    assert len(created_utc) == 1
+
+    return created_utc[0]
+
+
 def get_location(session: Session, gsp_id: int, label: Optional[str] = None) -> LocationSQL:
     """
     Get location object from gsp id
