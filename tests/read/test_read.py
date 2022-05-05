@@ -107,13 +107,12 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
     assert forecast_values_read[0] == forecasts[0].forecast_values[0]
 
 
-
 def test_get_latest_forecast_created_utc_gsp(db_session):
     f1 = make_fake_forecast(gsp_id=1, session=db_session)
     f2 = make_fake_forecast(gsp_id=1, session=db_session)
     f3 = make_fake_forecast(gsp_id=2, session=db_session)
 
-    db_session.add_all([f1,f2, f3])
+    db_session.add_all([f1, f2, f3])
     db_session.commit()
 
     created_utc = get_latest_forecast_created_utc(session=db_session, gsp_id=1)
@@ -124,7 +123,7 @@ def test_get_latest_forecast_created_utc_national(db_session):
     f1 = make_fake_national_forecast()
     f2 = make_fake_national_forecast()
 
-    db_session.add_all([f2,f1])
+    db_session.add_all([f2, f1])
     db_session.commit()
 
     created_utc = get_latest_forecast_created_utc(session=db_session, gsp_id=0)
