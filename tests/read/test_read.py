@@ -23,6 +23,7 @@ from nowcasting_datamodel.read.read import (
     get_all_locations,
     get_forecast_values,
     get_latest_forecast,
+    get_latest_forecast_created_utc,
     get_latest_input_data_last_updated,
     get_latest_national_forecast,
     get_location,
@@ -104,6 +105,29 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
     assert len(forecast_values_read) == 2
 
     assert forecast_values_read[0] == forecasts[0].forecast_values[0]
+
+
+def test_get_latest_forecast_created_utc_gsp(db_session):
+    f1 = make_fake_forecast(gsp_id=1, session=db_session)
+    f2 = make_fake_forecast(gsp_id=1, session=db_session)
+    f3 = make_fake_forecast(gsp_id=2, session=db_session)
+
+    db_session.add_all([f1, f2, f3])
+    db_session.commit()
+
+    created_utc = get_latest_forecast_created_utc(session=db_session, gsp_id=1)
+    assert created_utc == f2.created_utc
+
+
+def test_get_latest_forecast_created_utc_national(db_session):
+    f1 = make_fake_national_forecast()
+    f2 = make_fake_national_forecast()
+
+    db_session.add_all([f2, f1])
+    db_session.commit()
+
+    created_utc = get_latest_forecast_created_utc(session=db_session, gsp_id=0)
+    assert created_utc == f1.created_utc
 
 
 def test_get_forecast_values_gsp_id_latest(db_session):
