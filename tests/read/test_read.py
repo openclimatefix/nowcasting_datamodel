@@ -40,6 +40,7 @@ def test_get_all_location(db_session):
 
     db_session.add(LocationSQL(label="GSP_1", gsp_id=1))
     db_session.add(LocationSQL(label="GSP_2", gsp_id=2))
+    db_session.add(LocationSQL(label='fake_location', gsp_id=None))
 
     locations = get_all_locations(session=db_session)
     assert len(locations) == 2
@@ -48,12 +49,14 @@ def test_get_all_location(db_session):
 def test_get_national_location(db_session):
 
     db_session.add(LocationSQL(label=national_gb_label, gsp_id=0))
+    db_session.add(LocationSQL(label='not_national', gsp_id=0))
 
     location = get_location(session=db_session, gsp_id=0)
     assert location.label == national_gb_label
 
     locations = get_all_locations(session=db_session)
     assert len(locations) == 1
+    assert locations[0].label == national_gb_label
 
     _ = get_location(session=db_session, gsp_id=0, label="test_label")
 
