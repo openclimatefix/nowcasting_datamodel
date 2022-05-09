@@ -47,6 +47,9 @@ class Location(EnhancedBaseModel):
     gsp_name: Optional[str] = Field(None, description="The GSP name")
     gsp_group: Optional[str] = Field(None, description="The GSP group name")
     region_name: Optional[str] = Field(None, description="The GSP region name")
+    installed_capacity_mw: Optional[int] = Field(
+        None, description="The installed capacity of the GSP in MW"
+    )
 
     rm_mode = True
 
