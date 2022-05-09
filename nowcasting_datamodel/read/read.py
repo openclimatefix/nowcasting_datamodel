@@ -343,7 +343,7 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
     locations = query.all()
 
     if get_national:
-        nation = get_location(session=session,gsp_id=0,label=national_gb_label)
+        nation = get_location(session=session, gsp_id=0, label=national_gb_label)
         locations = [nation] + locations
 
     return locations
