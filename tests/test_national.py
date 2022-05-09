@@ -2,9 +2,9 @@
 # Used constants
 import pytest
 
+from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import Forecast, ForecastSQL, LocationSQL
 from nowcasting_datamodel.national import make_national_forecast
-from nowcasting_datamodel import N_GSP
 
 
 def test_make_national_forecast(forecasts_all, db_session):

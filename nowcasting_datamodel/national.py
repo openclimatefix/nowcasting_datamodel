@@ -6,7 +6,13 @@ import pandas as pd
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue, national_gb_label, MLModel
+from nowcasting_datamodel.models import (
+    Forecast,
+    ForecastSQL,
+    ForecastValue,
+    MLModel,
+    national_gb_label,
+)
 from nowcasting_datamodel.read.read import get_latest_input_data_last_updated, get_location
 
 logger = logging.getLogger(__name__)
