@@ -47,7 +47,7 @@ def test_make_fake_forecast(db_session):
     _ = Forecast.from_orm(forecast_sql)
 
 
-def test_make_national_fake_forecast():
-    forecast_sql: ForecastSQL = make_fake_national_forecast()
+def test_make_national_fake_forecast(db_session):
+    forecast_sql: ForecastSQL = make_fake_national_forecast(session=db_session)
     forecast = Forecast.from_orm(forecast_sql)
     _ = Forecast.to_orm(forecast)
