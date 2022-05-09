@@ -317,14 +317,34 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
     query = session.query(LocationSQL)
     query = query.distinct(LocationSQL.gsp_id)
 
-    # filter on gsp_id
+    get_national = True
     if gsp_ids is not None:
-        query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
+        # see if gsp_id==0 is in list
+        # if gsp id 0 is in list, then get national gsp location
+        # if gsp id 0 is not in list, then don't get national gsp location
+        if 0 in gsp_ids:
+            get_national = True
+            gsp_ids.remove(0)
+        else:
+            get_national = False
 
+        # filter on gsp_id
+        query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
+    else:
+        query = query.filter(LocationSQL.gsp_id != 0)
+
+    # make sure gsp is not null
+    query = query.filter(LocationSQL.gsp_id.isnot(None))
+
+    # query
     query = query.order_by(LocationSQL.gsp_id)
 
     # get all results
     locations = query.all()
+
+    if get_national:
+        nation = get_location(session=session, gsp_id=0, label=national_gb_label)
+        locations = [nation] + locations
 
     return locations
 
