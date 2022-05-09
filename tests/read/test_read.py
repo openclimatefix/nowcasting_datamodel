@@ -128,14 +128,14 @@ def test_get_latest_forecast_created_utc_gsp(db_session):
 
 
 def test_get_latest_forecast_created_utc_national(db_session):
-    f1 = make_fake_national_forecast()
-    f2 = make_fake_national_forecast()
+    f1 = make_fake_national_forecast(session=db_session)
+    f2 = make_fake_national_forecast(session=db_session)
 
-    db_session.add_all([f2, f1])
+    db_session.add_all([f1, f2])
     db_session.commit()
 
     created_utc = get_latest_forecast_created_utc(session=db_session, gsp_id=0)
-    assert created_utc == f1.created_utc
+    assert created_utc == f2.created_utc
 
 
 def test_get_forecast_values_gsp_id_latest(db_session):
@@ -189,10 +189,10 @@ def test_get_all_gsp_ids_latest_forecast_filter(db_session):
 
 def test_get_national_latest_forecast(db_session):
 
-    f1 = make_fake_national_forecast()
+    f1 = make_fake_national_forecast(session=db_session)
     db_session.add(f1)
 
-    f2 = make_fake_national_forecast()
+    f2 = make_fake_national_forecast(session=db_session)
     db_session.add(f2)
     forecast_values_read = get_latest_national_forecast(session=db_session)
     assert forecast_values_read == f2
