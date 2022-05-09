@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+import numpy as np
+
 from nowcasting_datamodel.models import GSPYield, Location, LocationSQL
 from nowcasting_datamodel.read.read_gsp import get_gsp_yield, get_latest_gsp_yield
 
@@ -183,3 +185,23 @@ def test_get_gsp_yield_regime(db_session):
         regime="in-day",
     )
     assert len(gsps) == 1
+
+
+def test_get_gsp_yield_nan(db_session):
+    """Make sure nans are not read"""
+
+    gsp_yield_1_sql = GSPYield(
+        datetime_utc=datetime(2022, 1, 1), solar_generation_kw=np.nan, regime="in-day"
+    ).to_orm()
+
+    # add gsp to yield object
+    gsp_sql_1: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
+    gsp_yield_1_sql.location = gsp_sql_1
+
+    # add to database
+    db_session.add_all([gsp_sql_1, gsp_yield_1_sql])
+
+    db_session.commit()
+
+    gsps = get_gsp_yield(session=db_session, gsp_ids=[1], start_datetime_utc=datetime(2022, 1, 1))
+    assert len(gsps) == 0

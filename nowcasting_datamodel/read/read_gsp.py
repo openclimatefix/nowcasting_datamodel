@@ -89,6 +89,7 @@ def get_gsp_yield(
     start_datetime_utc: datetime,
     regime: Optional[str] = None,
     end_datetime_utc: Optional[datetime] = None,
+    filter_nans: Optional[bool] = True,
 ) -> List[GSPYieldSQL]:
     """
     Get the gsp yield values.
@@ -98,6 +99,7 @@ def get_gsp_yield(
     :param start_datetime_utc: filter values on this start datetime
     :param regime: filter query on this regim. Can be "in-day" or "day-after"
     :param end_datetime_utc: optional end datetime filter
+    :param filter_nans: optional filter out nans. Default is True
     :return: list of gsp yields
     """
 
@@ -116,6 +118,10 @@ def get_gsp_yield(
     query = query.where(GSPYieldSQL.datetime_utc >= start_datetime_utc)
     if end_datetime_utc is not None:
         query = query.where(GSPYieldSQL.datetime_utc <= end_datetime_utc)
+
+    # don't get any nans. (Note nan+1 > nan = False)
+    if filter_nans:
+        query = query.where(GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw)
 
     # only select on results per gsp
     query = query.distinct(*[LocationSQL.gsp_id, GSPYieldSQL.datetime_utc])
