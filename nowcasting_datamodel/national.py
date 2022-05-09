@@ -6,14 +6,14 @@ import pandas as pd
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue, national_gb_label
+from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue, national_gb_label, MLModel
 from nowcasting_datamodel.read.read import get_latest_input_data_last_updated, get_location
 
 logger = logging.getLogger(__name__)
 
 
 def make_national_forecast(
-    forecasts: List[Forecast], session: Session, n_gsps: int = N_GSP
+    forecasts: List[ForecastSQL], session: Session, n_gsps: int = N_GSP
 ) -> ForecastSQL:
     """This takes a list of forecast and adds up all the forecast values
 
@@ -67,17 +67,23 @@ def make_national_forecast(
         ForecastValue(**forecast_value) for forecast_value in forecast_values.to_dict("records")
     ]
 
-    national_forecast = Forecast(
+    # change to ForecastValueSQL
+    forecast_values = [forecast_value.to_orm() for forecast_value in forecast_values]
+
+    # change to sql
+    model = forecasts[0].model
+    if isinstance(model, MLModel):
+        model = model.to_orm()
+
+    national_forecast = ForecastSQL(
         forecast_values=forecast_values,
         location=location,
-        model=forecasts[0].model,
+        model=model,
         input_data_last_updated=input_data_last_updated,
         forecast_creation_time=forecasts[0].forecast_creation_time,
-    ).to_orm()
+    )
 
-    # make location is LocationSQL,
-    # and InputDataLastUpdatedSQL loaded from database
-    national_forecast.location = location
-    national_forecast.input_data_last_updated = input_data_last_updated
+    # validate
+    _ = Forecast.from_orm(national_forecast)
 
     return national_forecast

@@ -38,7 +38,7 @@ def forecasts(db_session) -> List[ForecastSQL]:
 def forecasts_all(db_session) -> List[ForecastSQL]:
 
     # create
-    f = make_fake_forecasts(gsp_ids=list(range(0, N_GSP)), session=db_session)
+    f = make_fake_forecasts(gsp_ids=list(range(1, N_GSP + 1)), session=db_session)
 
     # add
     db_session.add_all(f)
