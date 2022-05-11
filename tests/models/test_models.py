@@ -17,3 +17,16 @@ def test_normalize_forecasts(forecasts_all):
 
     m = ManyForecasts(forecasts=forecasts_all)
     m.normalize()
+
+
+def test_normalize_forecasts_no_installed_capacity(forecasts_all):
+
+    forecast = Forecast.from_orm(forecasts_all[0])
+    forecast.location.installed_capacity_mw = None
+
+    v = forecast.forecast_values[0].expected_power_generation_megawatts
+
+    # set installed capacity to None, and check no normalization takes place
+    forecast.location.installed_capacity_mw = None
+    forecast.normalize()
+    assert forecast.forecast_values[0].expected_power_generation_megawatts == v
