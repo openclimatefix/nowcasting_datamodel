@@ -100,6 +100,7 @@ class ForecastValue(EnhancedBaseModel):
         )
 
     def normalize(self, installed_capacity_mw):
+        """ Normalize forecasts by installed capacity mw """
         if installed_capacity_mw in [0, None]:
             logger.warning("Could not normalize ForecastValue object")
         else:
@@ -216,6 +217,7 @@ class Forecast(EnhancedBaseModel):
         )
 
     def normalize(self):
+        """ Normalize forecasts by installed capacity mw """
         self.forecast_values = [
             forecast_value.normalize(self.location.installed_capacity_mw)
             for forecast_value in self.forecast_values
@@ -233,4 +235,5 @@ class ManyForecasts(EnhancedBaseModel):
     )
 
     def normalize(self):
+        """ Normalize forecasts by installed capacity mw """
         self.forecasts = [forecast.normalize() for forecast in self.forecasts]
