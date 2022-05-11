@@ -8,7 +8,7 @@ The following class are made
 6. Forecasts, a forecast that is made for one gsp, for several time steps into the future
 
 """
-
+import logging
 from datetime import datetime
 from typing import List, Optional
 
@@ -22,6 +22,8 @@ from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 national_gb_label = "National-GB"
+
+logger = logging.getLogger(__name__)
 # TODO #3 Add forecast latest table, this make it easy to load the latest forecast
 
 
@@ -96,6 +98,16 @@ class ForecastValue(EnhancedBaseModel):
             target_time=self.target_time,
             expected_power_generation_megawatts=self.expected_power_generation_megawatts,
         )
+
+    def normalize(self, installed_capacity_mw):
+        if installed_capacity_mw in [0, None]:
+            logger.warning("Could not normalize ForecastValue object")
+        else:
+            self.expected_power_generation_megawatts = (
+                self.expected_power_generation_megawatts / installed_capacity_mw
+            )
+
+        return self
 
 
 ########
@@ -203,6 +215,14 @@ class Forecast(EnhancedBaseModel):
             forecast_values=[forecast_value.to_orm() for forecast_value in self.forecast_values],
         )
 
+    def normalize(self):
+        self.forecast_values = [
+            forecast_value.normalize(self.location.installed_capacity_mw)
+            for forecast_value in self.forecast_values
+        ]
+
+        return self
+
 
 class ManyForecasts(EnhancedBaseModel):
     """Many Forecasts"""
@@ -211,3 +231,6 @@ class ManyForecasts(EnhancedBaseModel):
         ...,
         description="List of forecasts for different GSPs",
     )
+
+    def normalize(self):
+        self.forecasts = [forecast.normalize() for forecast in self.forecasts]

@@ -46,6 +46,7 @@ def make_fake_forecast(
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
+    location.installed_capacity_mw = 2
     model = get_model(name="fake_model", session=session, version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
