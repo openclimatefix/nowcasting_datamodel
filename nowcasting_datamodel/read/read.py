@@ -20,6 +20,7 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     national_gb_label,
 )
+from sqlalchemy.orm import contains_eager
 
 logger = logging.getLogger(__name__)
 
@@ -128,13 +129,15 @@ def get_latest_forecast(
 def get_all_gsp_ids_latest_forecast(
     session: Session,
     start_created_utc: Optional[datetime] = None,
+    start_target_time: Optional[datetime] = None,
+    preload_children: Optional[bool] = False
 ) -> List[ForecastSQL]:
     """
     Read forecasts
 
     :param session: database session
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
-
+    :param start_target_time: Filter: forecast values target time should be larger than this datetime
     return: List of forecasts objects from database
     """
 
@@ -142,11 +145,20 @@ def get_all_gsp_ids_latest_forecast(
     query = session.query(ForecastSQL)
     query = query.distinct(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
+    query = query.join(ForecastValueSQL)
 
     if start_created_utc is not None:
         query = query.filter(ForecastSQL.created_utc > start_created_utc)
 
+    if start_target_time is not None:
+        query = query.filter(ForecastValueSQL.target_time > start_target_time)
+
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
+
+    if preload_children:
+        query = query.options(contains_eager(ForecastSQL.forecast_values))
+        query = query.options(contains_eager(ForecastSQL.location))
+        query = query.options(contains_eager(ForecastSQL.model))
 
     forecasts = query.all()
 
