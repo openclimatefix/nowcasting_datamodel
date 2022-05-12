@@ -175,7 +175,9 @@ def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
 
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
 
-    forecast_values_read = get_all_gsp_ids_latest_forecast(session=db_session, preload_children=True)
+    forecast_values_read = get_all_gsp_ids_latest_forecast(
+        session=db_session, preload_children=True
+    )
     assert len(forecast_values_read) == 2
     assert forecast_values_read[0] == f1[0]
     assert forecast_values_read[1] == f1[1]
@@ -183,11 +185,13 @@ def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
 
 def test_get_all_gsp_ids_latest_forecast_filter(db_session):
 
-    f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2020,1,1))
+    f1 = make_fake_forecasts(
+        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2020, 1, 1)
+    )
     db_session.add_all(f1)
 
     start_created_utc = datetime.now() - timedelta(days=1)
-    target_time = datetime(2020,1,1) - timedelta(days=1)
+    target_time = datetime(2020, 1, 1) - timedelta(days=1)
     forecast_values_read = get_all_gsp_ids_latest_forecast(
         session=db_session, start_created_utc=start_created_utc, start_target_time=target_time
     )

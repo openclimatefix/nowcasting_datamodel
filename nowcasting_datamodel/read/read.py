@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from sqlalchemy import desc
+from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import (
@@ -20,7 +21,6 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     national_gb_label,
 )
-from sqlalchemy.orm import contains_eager
 
 logger = logging.getLogger(__name__)
 
