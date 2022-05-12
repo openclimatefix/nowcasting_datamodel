@@ -64,11 +64,9 @@ def test_get_latest_pv_yield_filter(db_session_pv, pv_yields_and_systems):
     )
 
     # read database
-    # this is 3 for when using sqlite as 'distinct' does work
-    assert len(pv_yields) == 2
+    assert len(pv_yields) == 1
 
     assert pv_yields[0].datetime_utc == datetime(2022, 1, 2)
-    assert pv_yields[1].datetime_utc == datetime(2022, 1, 1)
 
     pv_systems = db_session_pv.query(PVSystemSQL).order_by(PVSystemSQL.created_utc).all()
     pv_yields[0].pv_system.id = pv_systems[0].id
