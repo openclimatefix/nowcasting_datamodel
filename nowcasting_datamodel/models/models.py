@@ -90,6 +90,10 @@ class ForecastValue(EnhancedBaseModel):
         ..., ge=0, description="The forecasted value in MW"
     )
 
+    expected_power_generation_normalized: float = Field(
+        None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
+    )
+
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
 
     def to_orm(self) -> ForecastValueSQL:
@@ -102,9 +106,9 @@ class ForecastValue(EnhancedBaseModel):
     def normalize(self, installed_capacity_mw):
         """Normalize forecasts by installed capacity mw"""
         if installed_capacity_mw in [0, None]:
-            logger.warning("Could not normalize ForecastValue object")
+            logger.warning(f"Could not normalize ForecastValue object {installed_capacity_mw}")
         else:
-            self.expected_power_generation_megawatts = (
+            self.expected_power_generation_normalized = (
                 self.expected_power_generation_megawatts / installed_capacity_mw
             )
 
