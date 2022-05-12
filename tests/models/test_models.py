@@ -11,7 +11,7 @@ def test_normalize_forecasts(forecasts_all):
 
     forecasts_all[0].normalize()
     assert (
-        forecasts_all[0].forecast_values[0].expected_power_generation_megawatts
+        forecasts_all[0].forecast_values[0].expected_power_generation_normalized
         == v / forecasts_all[0].location.installed_capacity_mw
     )
 
