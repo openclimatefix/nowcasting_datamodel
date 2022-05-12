@@ -58,9 +58,10 @@ def test_get_latest_pv_yield_filter(db_session_pv, pv_yields_and_systems):
     [pv_system_sql_1, pv_system_sql_2] = pv_yields_and_systems["pv_systems"]
 
     pv_yields = get_latest_pv_yield(
-        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2],
+        session=db_session_pv,
+        pv_systems=[pv_system_sql_1, pv_system_sql_2],
         start_datetime_utc=datetime(2022, 1, 2),
-        start_created_utc = datetime(2022, 1, 2)
+        start_created_utc=datetime(2022, 1, 2),
     )
 
     # read database
