@@ -44,7 +44,11 @@ def get_pv_systems(
 
 
 def get_latest_pv_yield(
-    session: Session, pv_systems: List[PVSystemSQL], append_to_pv_systems: bool = False
+    session: Session,
+    pv_systems: List[PVSystemSQL],
+    append_to_pv_systems: bool = False,
+    start_datetime_utc: Optional[datetime] = None,
+    start_created_utc: Optional[datetime] = None,
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
     Get the last pv yield data
@@ -53,6 +57,8 @@ def get_latest_pv_yield(
     :param pv_systems: list of pv systems
     :param append_to_pv_systems: append pv yield to pv systems, or return pv systems.
         If appended the yield is access by 'pv_system.last_pv_yield'
+    :param start_created_utc: search filters > on 'created_utc'. Can be None
+    :param start_datetime_utc: search filters > on 'datetime_utc'. Can be None
     :return: either list of pv yields, or pv systems
     """
 
@@ -72,6 +78,14 @@ def get_latest_pv_yield(
 
     # select only th epv systems we want
     query = query.where(PVSystemSQL.id.in_(pv_systems_ids))
+
+    # filter on datetime utc
+    if start_datetime_utc is not None:
+        query = query.filter(PVYieldSQL.datetime_utc >= start_datetime_utc)
+
+    # filter on created utc
+    if start_created_utc is not None:
+        query = query.filter(PVYieldSQL.created_utc >= start_created_utc)
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(

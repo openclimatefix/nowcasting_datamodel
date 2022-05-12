@@ -54,6 +54,26 @@ def test_get_latest_pv_yield(db_session_pv, pv_yields_and_systems):
     pv_yields[0].pv_system.id = pv_systems[0].id
 
 
+def test_get_latest_pv_yield_filter(db_session_pv, pv_yields_and_systems):
+    [pv_system_sql_1, pv_system_sql_2] = pv_yields_and_systems["pv_systems"]
+
+    pv_yields = get_latest_pv_yield(
+        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2],
+        start_datetime_utc=datetime(2022, 1, 2),
+        start_created_utc = datetime(2022, 1, 2)
+    )
+
+    # read database
+    # this is 3 for when using sqlite as 'distinct' does work
+    assert len(pv_yields) == 2
+
+    assert pv_yields[0].datetime_utc == datetime(2022, 1, 2)
+    assert pv_yields[1].datetime_utc == datetime(2022, 1, 1)
+
+    pv_systems = db_session_pv.query(PVSystemSQL).order_by(PVSystemSQL.created_utc).all()
+    pv_yields[0].pv_system.id = pv_systems[0].id
+
+
 def test_get_latest_pv_yield_append_no_yields(db_session_pv, pv_systems):
     [pv_system_sql_1, pv_system_sql_2] = pv_systems
 
