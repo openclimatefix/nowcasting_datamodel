@@ -138,6 +138,8 @@ def get_all_gsp_ids_latest_forecast(
     :param session: database session
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
     :param start_target_time: Filter: forecast values target time should be larger than this datetime
+    :param preload_children: Option to preload children. This is a speed up, if we need them.
+
     return: List of forecasts objects from database
     """
 
@@ -158,7 +160,6 @@ def get_all_gsp_ids_latest_forecast(
     if preload_children:
         query = query.options(contains_eager(ForecastSQL.forecast_values))
         query = query.options(contains_eager(ForecastSQL.location))
-        query = query.options(contains_eager(ForecastSQL.model))
 
     forecasts = query.all()
 
