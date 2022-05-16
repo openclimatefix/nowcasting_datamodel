@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from sqlalchemy import desc
-from sqlalchemy.orm import contains_eager
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import (
@@ -159,8 +159,10 @@ def get_all_gsp_ids_latest_forecast(
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     if preload_children:
-        query = query.options(contains_eager(ForecastSQL.forecast_values))
-        query = query.options(contains_eager(ForecastSQL.location))
+        query = query.options(joinedload(ForecastSQL.forecast_values))
+        query = query.options(joinedload(ForecastSQL.location))
+        query = query.options(joinedload(ForecastSQL.model))
+        query = query.options(joinedload(ForecastSQL.input_data_last_updated))
 
     forecasts = query.all()
 
