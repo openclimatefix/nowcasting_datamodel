@@ -26,6 +26,8 @@ class DatabaseConnection:
 
         self.Session = sessionmaker(bind=self.engine)
 
+        assert self.url is not None, Exception("Need to set url for database connection")
+
     def create_all(self):
         """Create all tables"""
         self.base.metadata.create_all(self.engine)
