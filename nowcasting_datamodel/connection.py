@@ -25,9 +25,8 @@ class DatabaseConnection:
         self.engine = create_engine(self.url, echo=echo)
 
         self.Session = sessionmaker(bind=self.engine)
-        
-        assert self.url is not None, \
-            Exception('Need to set url for database connection')
+
+        assert self.url is not None, Exception("Need to set url for database connection")
 
     def create_all(self):
         """Create all tables"""
