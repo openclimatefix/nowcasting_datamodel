@@ -175,9 +175,7 @@ def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
 
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
 
-    forecasts = get_all_gsp_ids_latest_forecast(
-        session=db_session, preload_children=True
-    )
+    forecasts = get_all_gsp_ids_latest_forecast(session=db_session, preload_children=True)
     assert len(forecasts) == 2
     assert forecasts[0] == f1[0]
     assert forecasts[1] == f1[1]

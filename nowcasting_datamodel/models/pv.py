@@ -38,6 +38,10 @@ class PVSystemSQL(Base_PV, CreatedMixin):
     name = Column(String, nullable=True)
     orientation = Column(Float, nullable=True)
     status_interval_minutes = Column(Integer, nullable=True)
+    installed_capacity_kw = Column(
+        Float,
+        nullable=True,
+    )
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
 
@@ -53,6 +57,9 @@ class PVSystem(EnhancedBaseModel):
     orientation: Optional[float] = Field(None, description="The orientation of the PV system")
     status_interval_minutes: Optional[float] = Field(
         None, description="The number of minutes for the pv data to be refreshed"
+    )
+    installed_capacity_kw: Optional[float] = Field(
+        None, description="The capacity of the pv system in kw."
     )
 
     @validator("provider")
