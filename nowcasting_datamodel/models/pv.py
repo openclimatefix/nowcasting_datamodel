@@ -39,7 +39,8 @@ class PVSystemSQL(Base_PV, CreatedMixin):
     orientation = Column(Float, nullable=True)
     status_interval_minutes = Column(Integer, nullable=True)
     installed_capacity_kw = Column(
-        Float, nullable=True,
+        Float,
+        nullable=True,
     )
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
