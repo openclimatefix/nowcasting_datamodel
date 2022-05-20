@@ -54,6 +54,9 @@ class PVSystem(EnhancedBaseModel):
     status_interval_minutes: Optional[float] = Field(
         None, description="The number of minutes for the pv data to be refreshed"
     )
+    installed_capacity_kw = Column(
+        Float, nullable=True, description="The capacity of the pv system in kw."
+    )
 
     @validator("provider")
     def validate_provider(cls, v):
