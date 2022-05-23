@@ -66,6 +66,7 @@ class Location(EnhancedBaseModel):
             gsp_name=self.gsp_name,
             gsp_group=self.gsp_group,
             region_name=self.region_name,
+            installed_capacity_mw=self.installed_capacity_mw
         )
 
 
