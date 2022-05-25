@@ -1,7 +1,8 @@
 """ Test Forecast Models"""
 # Used constants
+import pytest
 
-from nowcasting_datamodel.models import Forecast, ManyForecasts
+from nowcasting_datamodel.models import Forecast, ManyForecasts, Status
 
 
 def test_normalize_forecasts(forecasts_all):
@@ -30,3 +31,10 @@ def test_normalize_forecasts_no_installed_capacity(forecasts_all):
     forecast.location.installed_capacity_mw = None
     forecast.normalize()
     assert forecast.forecast_values[0].expected_power_generation_megawatts == v
+
+
+def test_status_validation():
+    status = Status(message="Testing", status="ok")
+
+    with pytest.raises(Exception):
+        _ = Status(message="test", status="TEst")
