@@ -267,7 +267,7 @@ class Forecast(EnhancedBaseModel):
 
     @classmethod
     def from_orm_latest(cls, forecast_sql: ForecastSQL):
-        """ Method to make Forecast object from ForecastSQL,
+        """Method to make Forecast object from ForecastSQL,
 
         but move 'forecast_values_latest' to 'forecast_values'
         This is useful as we want the API to still present a Forecast object.
