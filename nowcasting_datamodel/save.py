@@ -22,12 +22,12 @@ def save(forecasts: List[ForecastSQL], session: Session):
     """
 
     # save objects to database
-    logger.debug('Saving models')
+    logger.debug("Saving models")
     session.add_all(forecasts)
     session.commit()
 
-    logger.debug('Updating to latest')
-    update_all_forecast_latest(session=session,forecasts=forecasts)
+    logger.debug("Updating to latest")
+    update_all_forecast_latest(session=session, forecasts=forecasts)
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
