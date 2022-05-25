@@ -15,6 +15,7 @@ from sqlalchemy.orm.session import Session
 from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueSQL,
+    ForecastValueLatestSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModelSQL,
@@ -159,6 +160,7 @@ def get_all_gsp_ids_latest_forecast(
     start_created_utc: Optional[datetime] = None,
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
+    historic: bool = False
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -168,25 +170,34 @@ def get_all_gsp_ids_latest_forecast(
     :param start_target_time:
         Filter: forecast values target time should be larger than this datetime
     :param preload_children: Option to preload children. This is a speed up, if we need them.
+    :param historic: Option to load historic values or not
 
     return: List of forecasts objects from database
     """
+
+    if historic:
+        forecast_value_model = ForecastValueLatestSQL
+    else:
+        forecast_value_model = ForecastValueSQL
 
     # start main query
     query = session.query(ForecastSQL)
     query = query.distinct(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
-    query = query.join(ForecastValueSQL)
+    query = query.join(forecast_value_model)
+
+    query = query.filter(ForecastSQL.historic == historic)
 
     if start_created_utc is not None:
         query = query.filter(ForecastSQL.created_utc > start_created_utc)
 
     if start_target_time is not None:
-        query = query.filter(ForecastValueSQL.target_time > start_target_time)
+        query = query.filter(forecast_value_model.target_time > start_target_time)
 
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     if preload_children:
+        query = query.options(joinedload(ForecastSQL.forecast_values_latest))
         query = query.options(joinedload(ForecastSQL.forecast_values))
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))

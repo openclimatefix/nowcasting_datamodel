@@ -13,6 +13,7 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import (
     Forecast,
     ForecastValue,
+    ForecastValueLatestSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModel,
@@ -186,6 +187,22 @@ def test_get_all_gsp_ids_latest_forecast(db_session):
     assert len(forecast_values_read) == 2
     assert forecast_values_read[0] == f2[0]
     assert forecast_values_read[1] == f2[1]
+
+
+def test_get_all_gsp_ids_latest_forecast_historic(db_session):
+
+    f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
+    f1[0].historic = True
+    f1[0].forecast_values_latest = [
+        ForecastValueLatestSQL(
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
+        )
+    ]
+    db_session.add_all(f1)
+
+    forecast_values_read = get_all_gsp_ids_latest_forecast(session=db_session, historic=True)
+    assert len(forecast_values_read) == 1
+    assert forecast_values_read[0] == f1[0]
 
 
 def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
