@@ -241,3 +241,37 @@ class ManyForecasts(EnhancedBaseModel):
     def normalize(self):
         """Normalize forecasts by installed capacity mw"""
         self.forecasts = [forecast.normalize() for forecast in self.forecasts]
+
+
+########
+# 7. Status
+########
+
+class StatusSQL(CreatedMixin):
+    """Status SQL Model"""
+
+    __tablename__ = "status"
+
+    id = Column(Integer, primary_key=True)
+    status = Column(String)
+    message = Column(String)
+
+
+class Status(EnhancedBaseModel):
+    """Status Model for a single message"""
+
+    status: str = Field(...,description="Status description")
+    message: str = Field(..., description="Status Message")
+
+    def to_orm(self) -> StatusSQL:
+        """Change model to SQL"""
+        return StatusSQL(status=self.status, message=self.message)
+
+    @validator("status")
+    def validate_solar_generation_kw(cls, v):
+        """Validate the solar_generation_kw field"""
+        if v not in ["ok", "warning", "error"]:
+            message = f"Status is {v}, not one of 'ok', 'warning', 'error'"
+            logger.debug(message)
+            raise Exception(message)
+        return v
