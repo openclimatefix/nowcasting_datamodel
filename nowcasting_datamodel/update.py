@@ -7,8 +7,7 @@ from sqlalchemy import inspect
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models import ForecastSQL
-from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
+from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL
 from nowcasting_datamodel.read.read import get_latest_forecast, get_model
 
 logger = logging.getLogger(__name__)
@@ -83,14 +82,11 @@ def update_latest(forecast: ForecastSQL, session: Session):
     # 2. create forecast value latest
     forecast_values_dict = []
     for forecast_value in forecast.forecast_values:
-        forecast_values_dict.append(
-            ForecastValueLatestSQL(
-                gsp_id=forecast.location.gsp_id,
-                target_time=forecast_value.target_time,
-                expected_power_generation_megawatts=forecast_value.expected_power_generation_megawatts,
-                forecast_id=forecast_historic.id,
-            ).__dict__
-        )
+        forecast_value_dict = forecast_value.__dict__
+        forecast_value_dict["gsp_id"] = forecast.location.gsp_id
+        forecast_value_dict["forecast_id"] = forecast_historic.id
+
+        forecast_values_dict.append(ForecastValueLatestSQL(**forecast_value_dict).__dict__)
 
     # upsert forecast values
     upsert(session=session, model=ForecastValueLatestSQL, rows=forecast_values_dict)
