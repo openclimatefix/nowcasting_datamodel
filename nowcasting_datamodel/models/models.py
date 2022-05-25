@@ -248,7 +248,7 @@ class ManyForecasts(EnhancedBaseModel):
 ########
 
 
-class StatusSQL(CreatedMixin):
+class StatusSQL(Base_Forecast, CreatedMixin):
     """Status SQL Model"""
 
     __tablename__ = "status"
