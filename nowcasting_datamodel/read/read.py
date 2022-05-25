@@ -14,8 +14,8 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import (
     ForecastSQL,
-    ForecastValueSQL,
     ForecastValueLatestSQL,
+    ForecastValueSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModelSQL,
@@ -160,7 +160,7 @@ def get_all_gsp_ids_latest_forecast(
     start_created_utc: Optional[datetime] = None,
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
-    historic: bool = False
+    historic: bool = False,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
