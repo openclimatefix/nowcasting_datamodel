@@ -19,6 +19,7 @@ from nowcasting_datamodel.models import (
     LocationSQL,
     MLModelSQL,
     PVSystemSQL,
+    StatusSQL,
     national_gb_label,
 )
 
@@ -46,6 +47,31 @@ def get_latest_input_data_last_updated(
     input_data = query.first()
 
     logger.debug("Found latest input data")
+
+    return input_data
+
+
+def get_latest_status(
+        session: Session,
+) -> StatusSQL:
+    """
+    Read last input data last updated
+
+    :param session: database session
+
+    return: Latest input data object
+    """
+
+    # start main query
+    query = session.query(StatusSQL)
+
+    # this make the newest ones comes to the top
+    query = query.order_by(StatusSQL.created_utc.desc())
+
+    # get all results
+    input_data = query.first()
+
+    logger.debug("Found latest status")
 
     return input_data
 

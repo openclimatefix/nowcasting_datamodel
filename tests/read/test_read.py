@@ -17,6 +17,7 @@ from nowcasting_datamodel.models import (
     LocationSQL,
     MLModel,
     PVSystem,
+Status,
     national_gb_label,
 )
 from nowcasting_datamodel.read.read import (
@@ -24,6 +25,7 @@ from nowcasting_datamodel.read.read import (
     get_all_locations,
     get_forecast_values,
     get_latest_forecast,
+    get_latest_status,
     get_latest_forecast_created_utc,
     get_latest_input_data_last_updated,
     get_latest_national_forecast,
@@ -111,6 +113,20 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
     assert len(forecast_values_read) == 2
 
     assert forecast_values_read[0] == forecasts[0].forecast_values[0]
+
+def test_get_latest_status(db_session):
+    s1 = Status(message="Good", status="ok")
+    s1 = s1.to_orm()
+    s2 = Status(message="Bad", status="warning").to_orm()
+    db_session.add_all([s1])
+    db_session.commit()
+
+    db_session.add_all([s2])
+    db_session.commit()
+
+    status = get_latest_status(db_session)
+    assert status.status == 'warning'
+    assert status.message == 'Bad'
 
 
 def test_get_latest_forecast_created_utc_gsp(db_session):
