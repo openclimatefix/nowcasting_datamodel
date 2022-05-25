@@ -247,6 +247,7 @@ class ManyForecasts(EnhancedBaseModel):
 # 7. Status
 ########
 
+
 class StatusSQL(CreatedMixin):
     """Status SQL Model"""
 
@@ -260,7 +261,7 @@ class StatusSQL(CreatedMixin):
 class Status(EnhancedBaseModel):
     """Status Model for a single message"""
 
-    status: str = Field(...,description="Status description")
+    status: str = Field(..., description="Status description")
     message: str = Field(..., description="Status Message")
 
     def to_orm(self) -> StatusSQL:
