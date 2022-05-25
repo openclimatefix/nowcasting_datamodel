@@ -39,6 +39,7 @@ def test_status_validation():
     with pytest.raises(Exception):
         _ = Status(message="test", status="TEst")
 
+
 def test_status_orm():
     status = Status(message="testing", status="warning")
     ormed_status = status.to_orm()
