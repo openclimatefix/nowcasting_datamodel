@@ -13,7 +13,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
@@ -63,7 +63,11 @@ class MLModel(EnhancedBaseModel):
 
 ########
 # 4. ForecastValue
+# A. SQL table saves all forecast values
+# B. SQL table that save the latest forecast
+# C. Pydantic object
 ########
+
 class ForecastValueSQL(Base_Forecast, CreatedMixin):
     """One Forecast of generation at one timestamp"""
 
@@ -77,6 +81,35 @@ class ForecastValueSQL(Base_Forecast, CreatedMixin):
     forecast = relationship("ForecastSQL", back_populates="forecast_values")
 
     Index("index_forecast_value", CreatedMixin.created_utc.desc())
+
+
+class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
+    """One Forecast of generation at one timestamp
+
+    Thanks for the help from
+    https://www.johbo.com/2016/creating-a-partial-unique-index-with-sqlalchemy-in-postgresql.html
+    """
+
+    __tablename__ = "forecast_value_latest"
+    __table_args__ = (
+        Index(
+            'uix_1',  # Index name
+            'gsp_id', 'target_time',  # Columns which are part of the index
+            unique=True,
+            postgresql_where=Column('is_primary'),  # The condition
+        ),
+    )
+
+    target_time = Column(DateTime(timezone=True), index=True, primary_key=True)
+    expected_power_generation_megawatts = Column(Float)
+    gsp_id = Column(Integer, index=True, primary_key=True)
+    is_primary = Column(Boolean, default=True)
+
+    forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
+    forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
+
+    Index("index_forecast_value_latest", CreatedMixin.created_utc.desc())
+
 
 
 class ForecastValue(EnhancedBaseModel):
@@ -170,6 +203,8 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
 
     id = Column(Integer, primary_key=True)
     forecast_creation_time = Column(DateTime(timezone=True))
+    historic = Column(Boolean, default=False)
+
     model = relationship("MLModelSQL", back_populates="forecast")
     model_id = Column(Integer, ForeignKey("model.id"), index=True)
 
@@ -179,6 +214,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
 
     # one (forecasts) to many (forecast_value)
     forecast_values = relationship("ForecastValueSQL", back_populates="forecast")
+    forecast_values_latest = relationship("ForecastValueLatestSQL", back_populates="forecast_latest")
 
     # many (forecasts) to one (input_data_last_updated)
     input_data_last_updated = relationship("InputDataLastUpdatedSQL", back_populates="forecast")
@@ -197,6 +233,8 @@ class Forecast(EnhancedBaseModel):
     forecast_creation_time: datetime = Field(
         ..., description="The time when the forecaster was made"
     )
+    historic: bool = Field(False, description='if False, the forecast is just the latest forecast. '
+                                             'If True, historic values are also given')
     forecast_values: List[ForecastValue] = Field(
         ...,
         description="List of forecasted value objects. Each value has the datestamp and a value",
@@ -218,6 +256,7 @@ class Forecast(EnhancedBaseModel):
             location=self.location.to_orm(),
             input_data_last_updated=self.input_data_last_updated.to_orm(),
             forecast_values=[forecast_value.to_orm() for forecast_value in self.forecast_values],
+            historic=self.historic
         )
 
     def normalize(self):

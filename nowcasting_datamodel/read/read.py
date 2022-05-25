@@ -91,6 +91,7 @@ def update_latest_input_data_last_updated(
 def get_latest_forecast(
     session: Session,
     gsp_id: Optional[int] = None,
+    historic: bool = False
 ) -> ForecastSQL:
     """
     Read forecasts
@@ -99,6 +100,7 @@ def get_latest_forecast(
     :param gsp_id: optional to gsp id, to filter query on
         If None is given then all are returned.
     :param session: database session
+    :param historic: Option to load historic values or not
 
     return: List of forecasts objects from database
     """
@@ -106,6 +108,8 @@ def get_latest_forecast(
     # start main query
     query = session.query(ForecastSQL)
     order_by_items = []
+
+    query = query.filter(ForecastSQL.historic == historic)
 
     # filter on gsp_id
     if gsp_id is not None:
