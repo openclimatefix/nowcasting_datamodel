@@ -52,7 +52,7 @@ def get_latest_input_data_last_updated(
 
 
 def get_latest_status(
-        session: Session,
+    session: Session,
 ) -> StatusSQL:
     """
     Read last input data last updated
