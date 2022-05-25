@@ -265,6 +265,24 @@ class Forecast(EnhancedBaseModel):
             historic=self.historic,
         )
 
+    @classmethod
+    def from_orm_latest(cls, forecast_sql: ForecastSQL):
+        """ Method to make Forecast object from ForecastSQL,
+
+        but move 'forecast_values_latest' to 'forecast_values'
+        This is useful as we want the API to still present a Forecast object.
+        """
+        # do normal transform
+        forecast = cls.from_orm(forecast_sql)
+
+        # move 'forecast_values_latest' to 'forecast_values'
+        forecast.forecast_values = [
+            ForecastValue.from_orm(forecast_value)
+            for forecast_value in forecast_sql.forecast_values_latest
+        ]
+
+        return forecast
+
     def normalize(self):
         """Normalize forecasts by installed capacity mw"""
         self.forecast_values = [

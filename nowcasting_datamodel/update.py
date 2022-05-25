@@ -63,7 +63,7 @@ def upsert(session: Session, model, rows: List[dict]):
     session.execute(stmt, rows)
 
 
-def update_latest(forecast: ForecastSQL, session: Session):
+def update_forecast_latest(forecast: ForecastSQL, session: Session):
     """
     Update the forecast_values table
 
@@ -102,4 +102,4 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     """
 
     for forecast in forecasts:
-        update_latest(forecast=forecast, session=session)
+        update_forecast_latest(forecast=forecast, session=session)

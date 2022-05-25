@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
-from nowcasting_datamodel.update import update_latest
+from nowcasting_datamodel.update import update_forecast_latest
 
 
 def test_model_duplicate_key(db_session):
@@ -37,7 +37,7 @@ def test_update_one_gsp(forecast_sql, db_session):
 
     forecast_sql.forecast_values = [f1, f2]
 
-    update_latest(forecast=forecast_sql, session=db_session)
+    update_forecast_latest(forecast=forecast_sql, session=db_session)
 
     assert len(db_session.query(ForecastValueSQL).all()) == 2
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
@@ -53,7 +53,7 @@ def test_update_one_gsp(forecast_sql, db_session):
 
     forecast_sql.forecast_values = [f3, f4]
 
-    update_latest(forecast=forecast_sql, session=db_session)
+    update_forecast_latest(forecast=forecast_sql, session=db_session)
 
     latest = db_session.query(ForecastValueLatestSQL).all()
     import logging
