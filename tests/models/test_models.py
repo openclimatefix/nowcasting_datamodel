@@ -34,7 +34,7 @@ def test_normalize_forecasts_no_installed_capacity(forecasts_all):
 
 
 def test_status_validation():
-    status = Status(message="Testing", status="ok")
+    _ = Status(message="Testing", status="ok")
 
     with pytest.raises(Exception):
         _ = Status(message="test", status="TEst")
