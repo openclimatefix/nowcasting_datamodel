@@ -84,8 +84,8 @@ def update_latest(forecast: ForecastSQL, session: Session):
     for forecast_value in forecast.forecast_values:
 
         forecast_value_dict = {}
-        for v in ['target_time','expected_power_generation_megawatts']:
-            forecast_value_dict[v] = getattr(forecast_value,v)
+        for v in ["target_time", "expected_power_generation_megawatts"]:
+            forecast_value_dict[v] = getattr(forecast_value, v)
 
         forecast_value_dict["gsp_id"] = forecast.location.gsp_id
         forecast_value_dict["forecast_id"] = forecast_historic.id
