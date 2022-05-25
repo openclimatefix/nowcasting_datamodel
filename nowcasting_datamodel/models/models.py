@@ -13,16 +13,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from pydantic import Field, validator
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Float,
-    ForeignKey,
-    Index,
-    Integer,
-    String,
-)
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
