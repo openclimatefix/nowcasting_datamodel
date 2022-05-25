@@ -89,9 +89,7 @@ def update_latest_input_data_last_updated(
 
 
 def get_latest_forecast(
-    session: Session,
-    gsp_id: Optional[int] = None,
-    historic: bool = False
+    session: Session, gsp_id: Optional[int] = None, historic: bool = False
 ) -> ForecastSQL:
     """
     Read forecasts

@@ -1,17 +1,16 @@
 """ Method to update latest forecast values """
-from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueSQL, ForecastValueLatestSQL
 import logging
 from datetime import datetime, timezone
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import inspect
-
 from typing import List
 
-
+from sqlalchemy import inspect
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import ForecastSQL
+from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
 from nowcasting_datamodel.read.read import get_latest_forecast, get_model
+
 logger = logging.getLogger(__name__)
 
 
@@ -26,16 +25,18 @@ def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQ
 
     gsp_id = forecast.location.gsp_id
 
-    forecast_historic = get_latest_forecast(session=session,gsp_id=gsp_id,historic=True)
+    forecast_historic = get_latest_forecast(session=session, gsp_id=gsp_id, historic=True)
 
     if forecast_historic is None:
-        logger.debug('Could not find a historic forecast, so will make one')
+        logger.debug("Could not find a historic forecast, so will make one")
 
-        forecast = ForecastSQL(historic=True,
-                               forecast_creation_time=datetime.now(timezone.utc),
-                               location=forecast.location,
-                               input_data_last_updated = forecast.input_data_last_updated,
-                               model=get_model(session=session, name='historic', version='all'))
+        forecast = ForecastSQL(
+            historic=True,
+            forecast_creation_time=datetime.now(timezone.utc),
+            location=forecast.location,
+            input_data_last_updated=forecast.input_data_last_updated,
+            model=get_model(session=session, name="historic", version="all"),
+        )
     return forecast
 
 
@@ -59,8 +60,7 @@ def upsert(session: Session, model, rows: List[dict]):
     if not update_dict:
         raise ValueError("insert_or_update resulted in an empty update_dict")
 
-    stmt = stmt.on_conflict_do_update(index_elements=primary_keys,
-                                      set_=update_dict)
+    stmt = stmt.on_conflict_do_update(index_elements=primary_keys, set_=update_dict)
     session.execute(stmt, rows)
 
 
@@ -85,7 +85,7 @@ def update_latest(forecast: ForecastSQL, session: Session):
     for forecast_value in forecast.forecast_values:
         forecast_values_dict.append(
             ForecastValueLatestSQL(
-                gsp_id= forecast.location.gsp_id,
+                gsp_id=forecast.location.gsp_id,
                 target_time=forecast_value.target_time,
                 expected_power_generation_megawatts=forecast_value.expected_power_generation_megawatts,
                 forecast_id=forecast_historic.id,
@@ -103,10 +103,3 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
 
     for forecast in forecasts:
         update_latest(forecast=forecast, session=session)
-
-
-
-
-
-
-

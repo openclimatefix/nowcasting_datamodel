@@ -1,7 +1,8 @@
+from datetime import datetime
+
 import pytest
 
-from nowcasting_datamodel.models.models import ForecastValueSQL, ForecastSQL, ForecastValueLatestSQL
-from datetime import datetime
+from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
 from nowcasting_datamodel.update import update_latest
 
 
@@ -28,15 +29,13 @@ def test_update_one_gsp(forecast_sql, db_session):
 
     forecast_sql = forecast_sql[0]
 
-    f1 = ForecastValueSQL(
-                                target_time=datetime(2022,1,1),
-                                expected_power_generation_megawatts=1)
+    f1 = ForecastValueSQL(target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1)
 
     f2 = ForecastValueSQL(
-                                target_time=datetime(2022, 1, 1, 0, 30),
-                                expected_power_generation_megawatts=2)
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2
+    )
 
-    forecast_sql.forecast_values = [f1,f2]
+    forecast_sql.forecast_values = [f1, f2]
 
     update_latest(forecast=forecast_sql, session=db_session)
 
@@ -46,13 +45,11 @@ def test_update_one_gsp(forecast_sql, db_session):
 
     # new forecast is made
 
-    f3 = ForecastValueSQL(
-                                target_time=datetime(2022,1,1),
-                                expected_power_generation_megawatts=3)
+    f3 = ForecastValueSQL(target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=3)
 
     f4 = ForecastValueSQL(
-                                target_time=datetime(2022, 1, 1, 0, 30),
-                                expected_power_generation_megawatts=4)
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=4
+    )
 
     forecast_sql.forecast_values = [f3, f4]
 
@@ -60,6 +57,7 @@ def test_update_one_gsp(forecast_sql, db_session):
 
     latest = db_session.query(ForecastValueLatestSQL).all()
     import logging
+
     logger = logging.getLogger(__name__)
     for f in latest:
         logger.info(f.__dict__)
@@ -67,8 +65,3 @@ def test_update_one_gsp(forecast_sql, db_session):
     assert len(db_session.query(ForecastValueSQL).all()) == 4
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
     assert len(db_session.query(ForecastSQL).all()) == 2
-
-
-
-
-
