@@ -92,6 +92,8 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     """
 
     __tablename__ = "forecast_value_latest"
+
+    # add a unique condition on 'gsp_id' and 'target_time'
     __table_args__ = (
         Index(
             "uix_1",  # Index name
