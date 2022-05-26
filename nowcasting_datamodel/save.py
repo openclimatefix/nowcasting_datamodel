@@ -5,6 +5,7 @@ from typing import List
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import ForecastSQL, PVSystem, PVSystemSQL
+from nowcasting_datamodel.update import update_all_forecast_latest
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +14,20 @@ def save(forecasts: List[ForecastSQL], session: Session):
     """
     Save forecast to database
 
-    1. Change pydantic object to sqlalchemy objects
-    2. Add sqlalchemy onjects to database
+    1. Add sqlalchemy onjects to database
+    2. Saves to 'latest' table aswell
 
-    :param forecasts: list of pydantic forecasts
+    :param forecasts: list of sql forecasts
     :param session: database session
     """
 
     # save objects to database
+    logger.debug("Saving models")
     session.add_all(forecasts)
     session.commit()
+
+    logger.debug("Updating to latest")
+    update_all_forecast_latest(session=session, forecasts=forecasts)
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
