@@ -28,6 +28,7 @@ def save(forecasts: List[ForecastSQL], session: Session):
 
     logger.debug("Updating to latest")
     update_all_forecast_latest(session=session, forecasts=forecasts)
+    session.commit()
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
