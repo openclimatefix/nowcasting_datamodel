@@ -1,6 +1,6 @@
 from nowcasting_datamodel.fake import make_fake_forecasts, make_fake_pv_system
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
 from nowcasting_datamodel.models.models import ForecastSQL
+from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
 from nowcasting_datamodel.save import save, save_pv_system
 
 
