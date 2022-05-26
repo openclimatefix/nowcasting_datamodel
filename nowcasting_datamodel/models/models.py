@@ -209,7 +209,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
 
     # Two distinuise between
     # 1. a Forecast with some forecast values, for that moment,
-    # 2. a Forecast with all the historic latest value. 
+    # 2. a Forecast with all the historic latest value.
     # we use this boolean.
     # This make it easier to load the forecast showing historic values very easily
     historic = Column(Boolean, default=False)
