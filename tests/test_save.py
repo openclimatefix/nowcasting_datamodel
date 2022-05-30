@@ -22,6 +22,12 @@ def test_save(db_session):
     assert len(db_session.query(ForecastValueSQL).all()) == 40
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 20
 
+    # check that for gsp_id the results look right
+    forecast_latest_values = (
+        db_session.query(ForecastValueLatestSQL).filter(ForecastValueLatestSQL.gsp_id == 2).all()
+    )
+    assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
+
 
 def test_save_pv_system(db_session_pv):
 
