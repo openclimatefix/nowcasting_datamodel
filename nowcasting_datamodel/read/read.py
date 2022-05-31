@@ -164,9 +164,6 @@ def get_latest_forecast(
     if start_target_time is not None:
         query = query.filter(data_model_forecast_value.target_time >= start_target_time)
 
-    # order by target_time
-    order_by_items.append(data_model_forecast_value.target_time)
-
     order_by_items.append(ForecastSQL.created_utc.desc())
 
     # this make the newest ones comes to the top
