@@ -46,6 +46,7 @@ def make_fake_forecast(
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
     forecast_values: Optional = None,
+    forecast_values_latest: Optional = None
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
@@ -63,12 +64,16 @@ def make_fake_forecast(
             f = make_fake_forecast_value(target_time=target_datetime_utc)
             forecast_values.append(f)
 
+    if forecast_values_latest is None:
+        forecast_values_latest = []
+
     forecast = ForecastSQL(
         model=model,
         forecast_creation_time=t0_datetime_utc,
         location=location,
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
+        forecast_values_latest=forecast_values_latest,
     )
 
     return forecast
