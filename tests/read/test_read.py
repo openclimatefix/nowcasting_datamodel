@@ -94,6 +94,27 @@ def test_read_gsp_id(db_session, forecasts):
     assert forecast_read.location.gsp_id == forecasts[1].location.gsp_id
 
 
+def test_read_target_time(db_session):
+
+    f1 = ForecastValueLatestSQL(
+        target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
+    )
+    f2 = ForecastValueLatestSQL(
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
+    )
+    f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2])
+    f.historic = True
+
+    forecast_read = get_latest_forecast(
+        session=db_session,
+        gsp_id=f.location.gsp_id,
+        historic=True,
+        start_target_time=datetime(2022, 1, 1),
+    )
+    assert forecast_read is not None
+    assert forecast_read.location.gsp_id == f.location.gsp_id
+
+
 def test_get_forecast_values(db_session, forecasts):
 
     forecast_values_read = get_forecast_values(session=db_session)

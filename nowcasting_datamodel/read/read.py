@@ -117,7 +117,10 @@ def update_latest_input_data_last_updated(
 
 
 def get_latest_forecast(
-    session: Session, gsp_id: Optional[int] = None, historic: bool = False
+    session: Session,
+    gsp_id: Optional[int] = None,
+    historic: bool = False,
+    start_target_time: Optional[datetime] = None,
 ) -> ForecastSQL:
     """
     Read forecasts
@@ -127,6 +130,8 @@ def get_latest_forecast(
         If None is given then all are returned.
     :param session: database session
     :param historic: Option to load historic values or not
+    :param start_target_time:
+        Filter: forecast values target time should be larger than this datetime
 
     return: List of forecasts objects from database
     """
@@ -146,6 +151,22 @@ def get_latest_forecast(
         query = query.filter(LocationSQL.gsp_id == gsp_id)
         order_by_items.append(LocationSQL.gsp_id)
 
+    # get the correct forecast value table
+    if historic:
+        data_model_forecast_value = ForecastValueLatestSQL
+    else:
+        data_model_forecast_value = ForecastValueSQL
+
+    # join forecast values
+    query = query.join(data_model_forecast_value)
+
+    # filter by target time
+    if start_target_time is not None:
+        query = query.filter(data_model_forecast_value.target_time >= start_target_time)
+
+    # order by target_time
+    order_by_items.append(data_model_forecast_value.target_time)
+
     order_by_items.append(ForecastSQL.created_utc.desc())
 
     # this make the newest ones comes to the top
@@ -154,7 +175,11 @@ def get_latest_forecast(
     # get all results
     forecasts = query.first()
 
-    logger.debug(f"Found forecasts for gsp id: {gsp_id}")
+    if forecasts is not None:
+        assert forecasts.historic == historic
+        logger.debug(f"{forecasts.historic=} {historic=} {forecasts.id}")
+
+    logger.debug(f"Found forecasts for gsp id: {gsp_id} {historic=} {forecasts=}")
 
     return forecasts
 
