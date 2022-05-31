@@ -176,7 +176,7 @@ def get_latest_forecast(
     forecasts = query.first()
 
     # sort list
-    if historic:
+    if forecasts.forecast_values_latest is not None:
         forecasts.forecast_values_latest = sorted(
             forecasts.forecast_values_latest, key=lambda d: d.target_time
         )
