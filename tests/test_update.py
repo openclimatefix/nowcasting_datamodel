@@ -2,9 +2,9 @@ from datetime import datetime
 
 import pytest
 
+from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
 from nowcasting_datamodel.update import update_forecast_latest
-from nowcasting_datamodel.fake import make_fake_forecasts
 
 
 def test_model_duplicate_key(db_session):
@@ -35,7 +35,7 @@ def test_update_one_gsp(db_session):
     f2 = ForecastValueSQL(
         target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2
     )
-    f = make_fake_forecasts(gsp_ids=[1], session=db_session,forecast_values=[f1,f2])
+    f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f1, f2])
     forecast_sql = f[0]
     assert len(db_session.query(ForecastSQL).all()) == 1
 
@@ -69,6 +69,7 @@ def test_update_one_gsp(db_session):
     assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
     assert forecast_latest_values[0].forecast_id == forecast_latest_values[1].forecast_id
 
+
 def test_update_one_gsp_wtih_time_step(db_session):
 
     db_session.query(ForecastValueSQL).delete()
@@ -80,7 +81,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
     f2 = ForecastValueSQL(
         target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2
     )
-    f = make_fake_forecasts(gsp_ids=[1], session=db_session,forecast_values=[f1,f2])
+    f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f1, f2])
     forecast_sql = f[0]
     assert len(db_session.query(ForecastSQL).all()) == 1
 
@@ -91,11 +92,13 @@ def test_update_one_gsp_wtih_time_step(db_session):
     assert len(db_session.query(ForecastValueSQL).all()) == 2
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
     assert len(db_session.query(ForecastSQL).all()) == 2
-    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic==True).all()) == 1
+    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).all()) == 1
 
     # new forecast is made
     # create and add
-    f3 = ForecastValueSQL(target_time=datetime(2022, 1, 1,0,30), expected_power_generation_megawatts=3)
+    f3 = ForecastValueSQL(
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=3
+    )
 
     f4 = ForecastValueSQL(
         target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=4
@@ -103,7 +106,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
     f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f3, f4])
     forecast_sql = f[0]
 
-    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic==True).all()) == 1
+    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).all()) == 1
 
     update_forecast_latest(forecast=forecast_sql, session=db_session)
 
@@ -117,4 +120,3 @@ def test_update_one_gsp_wtih_time_step(db_session):
     )
     assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
     assert forecast_latest_values[0].forecast_id == forecast_latest_values[1].forecast_id
-

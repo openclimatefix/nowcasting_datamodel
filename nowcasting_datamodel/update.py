@@ -37,7 +37,7 @@ def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQ
             model=get_model(session=session, name="historic", version="all"),
         )
     else:
-        logger.debug('Found historic forecast')
+        logger.debug("Found historic forecast")
 
     return forecast_historic
 
