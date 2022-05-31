@@ -134,4 +134,3 @@ def test_update_one_gsp_wtih_time_step(db_session):
             forecasts_historic[0].forecast_creation_time.isoformat()
             == datetime(2022, 1, 1, 0, 30, tzinfo=timezone.utc).isoformat()
         )
-
