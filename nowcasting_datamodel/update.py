@@ -98,6 +98,10 @@ def update_forecast_latest(forecast: ForecastSQL, session: Session):
     # upsert forecast values
     upsert(session=session, model=ForecastValueLatestSQL, rows=forecast_values_dict)
 
+    # update forecast creation time
+    forecast_historic.forecast_creation_time = datetime.now(tz=timezone.utc)
+    session.commit()
+
 
 def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     """
