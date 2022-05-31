@@ -175,6 +175,12 @@ def get_latest_forecast(
     # get all results
     forecasts = query.first()
 
+    # sort list
+    if historic:
+        forecasts.forecast_values_latest = sorted(
+            forecasts.forecast_values_latest, key=lambda d: d.target_time
+        )
+
     if forecasts is not None:
         assert forecasts.historic == historic
         logger.debug(f"{forecasts.historic=} {historic=} {forecasts.id}")
