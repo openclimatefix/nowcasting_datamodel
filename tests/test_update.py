@@ -91,6 +91,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
     assert len(db_session.query(ForecastValueSQL).all()) == 2
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
     assert len(db_session.query(ForecastSQL).all()) == 2
+    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic==True).all()) == 1
 
     # new forecast is made
     # create and add
@@ -101,6 +102,9 @@ def test_update_one_gsp_wtih_time_step(db_session):
     )
     f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f3, f4])
     forecast_sql = f[0]
+
+    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic==True).all()) == 1
+
     update_forecast_latest(forecast=forecast_sql, session=db_session)
 
     assert len(db_session.query(ForecastValueSQL).all()) == 4

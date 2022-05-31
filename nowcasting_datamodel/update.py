@@ -29,7 +29,7 @@ def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQ
     if forecast_historic is None:
         logger.debug("Could not find a historic forecast, so will make one")
 
-        forecast = ForecastSQL(
+        forecast_historic = ForecastSQL(
             historic=True,
             forecast_creation_time=datetime.now(timezone.utc),
             location=forecast.location,
@@ -39,7 +39,7 @@ def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQ
     else:
         logger.debug('Found historic forecast')
 
-    return forecast
+    return forecast_historic
 
 
 def upsert(session: Session, model, rows: List[dict]):
