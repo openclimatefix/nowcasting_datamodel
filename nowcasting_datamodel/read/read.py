@@ -11,6 +11,7 @@ from typing import List, Optional
 from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.expression import false, true
 
 from nowcasting_datamodel.models import (
     ForecastSQL,
@@ -134,7 +135,10 @@ def get_latest_forecast(
     query = session.query(ForecastSQL)
     order_by_items = []
 
-    query = query.filter(ForecastSQL.historic == historic)
+    if historic:
+        query = query.filter(ForecastSQL.historic == true())
+    else:
+        query = query.filter(ForecastSQL.historic == false())
 
     # filter on gsp_id
     if gsp_id is not None:

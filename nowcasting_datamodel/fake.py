@@ -42,7 +42,10 @@ def make_fake_forecast_value(target_time) -> ForecastValueSQL:
 
 
 def make_fake_forecast(
-    gsp_id: int, session: Session, t0_datetime_utc: Optional[datetime] = None
+    gsp_id: int,
+    session: Session,
+    t0_datetime_utc: Optional[datetime] = None,
+    forecast_values: Optional = None,
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
@@ -54,10 +57,11 @@ def make_fake_forecast(
         t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
 
     # create
-    forecast_values = []
-    for target_datetime_utc in [t0_datetime_utc, t0_datetime_utc + timedelta(minutes=30)]:
-        f = make_fake_forecast_value(target_time=target_datetime_utc)
-        forecast_values.append(f)
+    if forecast_values is None:
+        forecast_values = []
+        for target_datetime_utc in [t0_datetime_utc, t0_datetime_utc + timedelta(minutes=30)]:
+            f = make_fake_forecast_value(target_time=target_datetime_utc)
+            forecast_values.append(f)
 
     forecast = ForecastSQL(
         model=model,
@@ -71,13 +75,21 @@ def make_fake_forecast(
 
 
 def make_fake_forecasts(
-    gsp_ids: List[int], session: Session, t0_datetime_utc: Optional[datetime] = None
+    gsp_ids: List[int],
+    session: Session,
+    t0_datetime_utc: Optional[datetime] = None,
+    forecast_values: Optional = None,
 ) -> List[ForecastSQL]:
     """Make many fake forecast"""
     forecasts = []
     for gsp_id in gsp_ids:
         forecasts.append(
-            make_fake_forecast(gsp_id=gsp_id, t0_datetime_utc=t0_datetime_utc, session=session)
+            make_fake_forecast(
+                gsp_id=gsp_id,
+                t0_datetime_utc=t0_datetime_utc,
+                session=session,
+                forecast_values=forecast_values,
+            )
         )
 
     return forecasts
