@@ -146,11 +146,6 @@ def get_latest_forecast(
         query = query.filter(LocationSQL.gsp_id == gsp_id)
         order_by_items.append(LocationSQL.gsp_id)
 
-    if historic:
-        order_by_items.append(ForecastValueLatestSQL.target_time)
-    else:
-        order_by_items.append(ForecastValueSQL.target_time)
-
     order_by_items.append(ForecastSQL.created_utc.desc())
 
     # this make the newest ones comes to the top
