@@ -46,7 +46,7 @@ def make_fake_forecast(
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
     forecast_values: Optional = None,
-    forecast_values_latest: Optional = None
+    forecast_values_latest: Optional = None,
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
