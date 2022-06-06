@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from sqlalchemy import desc
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import false, true
 
@@ -168,11 +168,13 @@ def get_latest_forecast(
         else:
             data_model_forecast_value = ForecastValueSQL
 
-        forecast_values = session.query(data_model_forecast_value).\
-            filter(data_model_forecast_value.target_time >= start_target_time).\
-            filter(forecasts.id == data_model_forecast_value.forecast_id). \
-            order_by(data_model_forecast_value.target_time).\
-            all()
+        forecast_values = (
+            session.query(data_model_forecast_value)
+            .filter(data_model_forecast_value.target_time >= start_target_time)
+            .filter(forecasts.id == data_model_forecast_value.forecast_id)
+            .order_by(data_model_forecast_value.target_time)
+            .all()
+        )
 
         forecasts.forecast_values_latest = forecast_values
 
@@ -210,22 +212,30 @@ def get_all_gsp_ids_latest_forecast(
 
     if historic:
         forecast_value_model = ForecastValueLatestSQL
+        join_object = ForecastSQL.forecast_values_latest
     else:
         forecast_value_model = ForecastValueSQL
+        join_object = ForecastSQL.forecast_values
 
     # start main query
     query = session.query(ForecastSQL)
-    query = query.distinct(LocationSQL.gsp_id)
-    query = query.join(LocationSQL)
-    query = query.join(forecast_value_model)
-
-    query = query.filter(ForecastSQL.historic == historic)
 
     if start_created_utc is not None:
-        query = query.filter(ForecastSQL.created_utc > start_created_utc)
+        query = query.filter(ForecastSQL.created_utc >= start_created_utc)
 
     if start_target_time is not None:
-        query = query.filter(forecast_value_model.target_time > start_target_time)
+        query = (
+            query.join(join_object)
+            .filter(forecast_value_model.target_time >= start_target_time)
+            .options(contains_eager(join_object))
+            .populate_existing()
+        )
+
+    # join with tables
+    query = query.distinct(LocationSQL.gsp_id)
+    query = query.join(LocationSQL)
+
+    query = query.filter(ForecastSQL.historic == historic)
 
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
@@ -236,7 +246,7 @@ def get_all_gsp_ids_latest_forecast(
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
 
-    forecasts = query.all()
+    forecasts = query.limit(339).all()
 
     return forecasts
 
