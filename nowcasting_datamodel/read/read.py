@@ -233,7 +233,14 @@ def get_all_gsp_ids_latest_forecast(
 
 
 def filter_query_on_target_time(query, start_target_time, historic: bool):
+    """
+    Filter query on start target time
 
+    :param query: sql query
+    :param start_target_time: datetime, target times only included after this
+    :param historic: bool, if data is historic or latest
+    :return: query
+    """
     if historic:
         forecast_value_model = ForecastValueLatestSQL
         join_object = ForecastSQL.forecast_values_latest
