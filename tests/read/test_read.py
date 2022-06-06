@@ -256,6 +256,31 @@ def test_get_all_gsp_ids_latest_forecast_filter(db_session):
     assert forecast_values_read[1] == f1[1]
 
 
+def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
+    """Test get all historic forecast from all gsp "but filter on starttime"""
+
+    f1 = make_fake_forecasts(
+        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2020, 1, 1)
+    )
+    f1[0].historic = True
+    f1[0].forecast_values_latest = [
+        ForecastValueLatestSQL(
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
+        ),
+        ForecastValueLatestSQL(
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1, 0, 30)
+        ),
+    ]
+
+    db_session.add_all(f1)
+
+    target_time = datetime(2022, 1, 1, 0, 30)
+    forecast = get_all_gsp_ids_latest_forecast(
+        session=db_session, start_target_time=target_time, historic=True
+    )[0]
+    assert len(forecast.forecast_values_latest) == 1
+
+
 def test_get_national_latest_forecast(db_session):
 
     f1 = make_fake_national_forecast(session=db_session)
