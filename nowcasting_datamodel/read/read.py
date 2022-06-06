@@ -235,8 +235,9 @@ def get_all_gsp_ids_latest_forecast(
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
-        query = query.options(joinedload(ForecastSQL.forecast_values))
-        query = query.options(joinedload(ForecastSQL.forecast_values_latest))
+        if not historic:
+            query = query.options(joinedload(ForecastSQL.forecast_values))
+            query = query.options(joinedload(ForecastSQL.forecast_values_latest))
 
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
