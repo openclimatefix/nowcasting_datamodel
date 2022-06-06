@@ -114,6 +114,8 @@ def test_read_target_time(db_session):
     assert forecast_read is not None
     assert forecast_read.location.gsp_id == f.location.gsp_id
 
+    assert len(forecast_read.forecast_values_latest) == 1
+
 
 def test_get_forecast_values(db_session, forecasts):
 
@@ -341,4 +343,3 @@ def test_update_latest_input_data_last_updated_freeze_no_data(db_session):
     input_data_last_updated = get_latest_input_data_last_updated(session=db_session)
     assert input_data_last_updated.pv.replace(tzinfo=None) == now.replace(tzinfo=None)
     assert input_data_last_updated.gsp.replace(tzinfo=None) == datetime(1960, 1, 1)
-    assert len(forecast_read.forecast_values_latest) == 1
