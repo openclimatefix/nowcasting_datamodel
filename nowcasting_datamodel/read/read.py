@@ -136,20 +136,34 @@ def get_latest_forecast(
     return: List of forecasts objects from database
     """
 
+    logger.debug("getting latest forecast")
+
     # start main query
     query = session.query(ForecastSQL)
     order_by_items = []
 
     if historic:
         query = query.filter(ForecastSQL.historic == true())
+        join_object = ForecastSQL.forecast_values_latest
+        forecast_value_model = ForecastValueLatestSQL
     else:
         query = query.filter(ForecastSQL.historic == false())
+        join_object = ForecastSQL.forecast_values
+        forecast_value_model = ForecastValueSQL
 
     # filter on gsp_id
     if gsp_id is not None:
         query = query.join(LocationSQL)
         query = query.filter(LocationSQL.gsp_id == gsp_id)
         order_by_items.append(LocationSQL.gsp_id)
+
+    if start_target_time is not None:
+        query = (
+            query.join(join_object)
+            .filter(forecast_value_model.target_time >= start_target_time)
+            .options(contains_eager(join_object))
+            .populate_existing()
+        )
 
     order_by_items.append(ForecastSQL.created_utc.desc())
 
@@ -159,27 +173,9 @@ def get_latest_forecast(
     # get all results
     forecasts = query.first()
 
-    # filter on target time
-    if start_target_time is not None:
-
-        # get the correct forecast value table
-        if historic:
-            data_model_forecast_value = ForecastValueLatestSQL
-        else:
-            data_model_forecast_value = ForecastValueSQL
-
-        forecast_values = (
-            session.query(data_model_forecast_value)
-            .filter(data_model_forecast_value.target_time >= start_target_time)
-            .filter(forecasts.id == data_model_forecast_value.forecast_id)
-            .order_by(data_model_forecast_value.target_time)
-            .all()
-        )
-
-        forecasts.forecast_values_latest = forecast_values
-
     # sort list
     if forecasts is not None:
+        logger.debug("sorting 'forecast_values_latest' values")
         if forecasts.forecast_values_latest is not None:
             forecasts.forecast_values_latest = sorted(
                 forecasts.forecast_values_latest, key=lambda d: d.target_time
