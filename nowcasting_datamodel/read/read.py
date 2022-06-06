@@ -168,6 +168,8 @@ def get_latest_forecast(
 
     if forecasts is None:
         return None
+    if len(forecasts) == 0:
+        return None
 
     forecast = forecasts[0]
 
