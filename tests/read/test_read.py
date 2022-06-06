@@ -109,10 +109,12 @@ def test_read_target_time(db_session):
         session=db_session,
         gsp_id=f.location.gsp_id,
         historic=True,
-        start_target_time=datetime(2022, 1, 1),
+        start_target_time=datetime(2022, 1, 1, 0, 30),
     )
     assert forecast_read is not None
     assert forecast_read.location.gsp_id == f.location.gsp_id
+
+    assert len(forecast_read.forecast_values_latest) == 1
 
 
 def test_get_forecast_values(db_session, forecasts):
