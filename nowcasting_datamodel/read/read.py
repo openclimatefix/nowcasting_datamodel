@@ -148,9 +148,9 @@ def get_latest_forecast(
         query = query.filter(ForecastSQL.historic == false())
 
     if start_target_time is not None:
-        query = filter_query_on_target_time(query=query,
-                                            start_target_time=start_target_time,
-                                            historic=historic)
+        query = filter_query_on_target_time(
+            query=query, start_target_time=start_target_time, historic=historic
+        )
 
     # filter on gsp_id
     if gsp_id is not None:
@@ -159,13 +159,14 @@ def get_latest_forecast(
         order_by_items.append(LocationSQL.gsp_id)
 
     order_by_items.append(ForecastSQL.created_utc.desc())
+    if not historic:
+        created_utc = get_latest_forecast_created_utc(session=session, gsp_id=gsp_id)
+        query = query.filter(ForecastSQL.created_utc == created_utc)
 
     # this make the newest ones comes to the top
     query = query.order_by(*order_by_items)
 
     # get all results
-    if not historic:
-        query = query.limit(1)
     forecasts = query.all()
 
     if forecasts is None:
@@ -176,8 +177,10 @@ def get_latest_forecast(
     forecast = forecasts[0]
 
     # sort list
-    logger.debug(f"sorting 'forecast_values_latest' values. "
-                 f"There are {len(forecast.forecast_values_latest)}")
+    logger.debug(
+        f"sorting 'forecast_values_latest' values. "
+        f"There are {len(forecast.forecast_values_latest)}"
+    )
     if forecast.forecast_values_latest is not None:
         forecast.forecast_values_latest = sorted(
             forecast.forecast_values_latest, key=lambda d: d.target_time
@@ -216,11 +219,6 @@ def get_all_gsp_ids_latest_forecast(
     if start_created_utc is not None:
         query = query.filter(ForecastSQL.created_utc >= start_created_utc)
 
-    if start_target_time is not None:
-        query = filter_query_on_target_time(query=query,
-                                            start_target_time=start_target_time,
-                                            historic=historic)
-
     # join with tables
     if not historic:
         query = query.distinct(LocationSQL.gsp_id)
@@ -228,14 +226,26 @@ def get_all_gsp_ids_latest_forecast(
 
     query = query.filter(ForecastSQL.historic == historic)
 
-    query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
+    if start_target_time is not None:
+        query = filter_query_on_target_time(
+            query=query, start_target_time=start_target_time, historic=historic
+        )
 
     if preload_children:
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
+        if not historic:
+            query = query.options(joinedload(ForecastSQL.forecast_values))
+            query = query.options(joinedload(ForecastSQL.forecast_values_latest))
 
-    forecasts = query.all()
+    query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
+
+    forecasts = query.populate_existing().all()
+
+    logger.debug(f"Found {len(forecasts)} forecasts")
+    if len(forecasts) > 0:
+        logger.debug(f"The first forecast has {len(forecasts[0].forecast_values)} forecast_values")
 
     return forecasts
 
@@ -257,12 +267,13 @@ def filter_query_on_target_time(query, start_target_time, historic: bool):
         join_object = ForecastSQL.forecast_values
 
     if start_target_time is not None:
-        query = (
-            query.join(join_object)
-            .filter(forecast_value_model.target_time >= start_target_time)
-            .options(contains_eager(join_object))
-            .populate_existing()
+        logger.debug(f"Filtering '{start_target_time=}'")
+        query = query.join(join_object).filter(
+            forecast_value_model.target_time >= start_target_time
         )
+
+        if historic:
+            query = query.options(contains_eager(join_object)).populate_existing()
 
     return query
 
@@ -347,7 +358,7 @@ def get_latest_national_forecast(
     return forecast
 
 
-def get_latest_forecast_created_utc(session: Session, gsp_id: int) -> datetime:
+def get_latest_forecast_created_utc(session: Session, gsp_id: Optional[int] = None) -> datetime:
     """
     Get the latest forecast created utc value. Can choose for different gsps
 
@@ -360,8 +371,9 @@ def get_latest_forecast_created_utc(session: Session, gsp_id: int) -> datetime:
     query = session.query(ForecastSQL.created_utc)
 
     # filter on gsp_id
-    query = query.join(LocationSQL)
-    query = query.filter(LocationSQL.gsp_id == gsp_id)
+    if gsp_id is not None:
+        query = query.join(LocationSQL)
+        query = query.filter(LocationSQL.gsp_id == gsp_id)
 
     # order, so latest is at the top
     query = query.order_by(ForecastSQL.created_utc.desc())
