@@ -164,19 +164,24 @@ def get_latest_forecast(
     query = query.order_by(*order_by_items)
 
     # get all results
-    forecasts = query.first()
+    forecasts = query.all()
+
+    if forecasts is None:
+        return None
+
+    forecast = forecasts[0]
 
     # sort list
-    if forecasts is not None:
-        logger.debug("sorting 'forecast_values_latest' values")
-        if forecasts.forecast_values_latest is not None:
-            forecasts.forecast_values_latest = sorted(
-                forecasts.forecast_values_latest, key=lambda d: d.target_time
-            )
+    logger.debug(f"sorting 'forecast_values_latest' values. "
+                 f"There are {len(forecast.forecast_values_latest)}")
+    if forecast.forecast_values_latest is not None:
+        forecast.forecast_values_latest = sorted(
+            forecast.forecast_values_latest, key=lambda d: d.target_time
+        )
 
-    logger.debug(f"Found forecasts for gsp id: {gsp_id} {historic=} {forecasts=}")
+    logger.debug(f"Found forecasts for gsp id: {gsp_id} {historic=} {forecast=}")
 
-    return forecasts
+    return forecast
 
 
 def get_all_gsp_ids_latest_forecast(
@@ -199,7 +204,7 @@ def get_all_gsp_ids_latest_forecast(
     return: List of forecasts objects from database
     """
 
-    logger.debug(f"Getting latest forecast for all gsps")
+    logger.debug("Getting latest forecast for all gsps")
 
     # start main query
     query = session.query(ForecastSQL)
@@ -221,13 +226,13 @@ def get_all_gsp_ids_latest_forecast(
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     if preload_children:
-        query = query.options(joinedload(ForecastSQL.forecast_values_latest))
-        query = query.options(joinedload(ForecastSQL.forecast_values))
+        # query = query.options(joinedload(ForecastSQL.forecast_values_latest))
+        # query = query.options(joinedload(ForecastSQL.forecast_values))
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
 
-    forecasts = query.limit(339).all()
+    forecasts = query.all()
 
     return forecasts
 
