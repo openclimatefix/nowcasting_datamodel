@@ -102,7 +102,10 @@ def test_read_target_time(db_session):
     f2 = ForecastValueLatestSQL(
         target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
     )
-    f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2])
+    f3 = ForecastValueLatestSQL(
+        target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=3, gsp_id=1
+    )
+    f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2, f3])
     f.historic = True
 
     forecast_read = get_latest_forecast(
@@ -114,7 +117,7 @@ def test_read_target_time(db_session):
     assert forecast_read is not None
     assert forecast_read.location.gsp_id == f.location.gsp_id
 
-    assert len(forecast_read.forecast_values_latest) == 1
+    assert len(forecast_read.forecast_values_latest) == 2
 
 
 def test_get_forecast_values(db_session, forecasts):
@@ -257,7 +260,7 @@ def test_get_all_gsp_ids_latest_forecast_filter(db_session):
 
 
 def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
-    """Test get all historic forecast from all gsp "but filter on starttime"""
+    """Test get all historic forecast from all gsp but filter on starttime"""
 
     f1 = make_fake_forecasts(
         gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2020, 1, 1)
@@ -268,7 +271,10 @@ def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
             gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
         ),
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1, 0, 30)
+            gsp_id=1, expected_power_generation_megawatts=2, target_time=datetime(2022, 1, 1, 0, 30)
+        ),
+        ForecastValueLatestSQL(
+            gsp_id=1, expected_power_generation_megawatts=3, target_time=datetime(2022, 1, 1, 1)
         ),
     ]
 
@@ -278,7 +284,7 @@ def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
     forecast = get_all_gsp_ids_latest_forecast(
         session=db_session, start_target_time=target_time, historic=True
     )[0]
-    assert len(forecast.forecast_values_latest) == 1
+    assert len(forecast.forecast_values_latest) == 2
 
 
 def test_get_national_latest_forecast(db_session):
