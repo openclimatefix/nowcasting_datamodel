@@ -164,6 +164,8 @@ def get_latest_forecast(
     query = query.order_by(*order_by_items)
 
     # get all results
+    if not historic:
+        query = query.limit(1)
     forecasts = query.all()
 
     if forecasts is None:
@@ -220,7 +222,8 @@ def get_all_gsp_ids_latest_forecast(
                                             historic=historic)
 
     # join with tables
-    query = query.distinct(LocationSQL.gsp_id)
+    if not historic:
+        query = query.distinct(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
 
     query = query.filter(ForecastSQL.historic == historic)
@@ -228,8 +231,6 @@ def get_all_gsp_ids_latest_forecast(
     query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
 
     if preload_children:
-        # query = query.options(joinedload(ForecastSQL.forecast_values_latest))
-        # query = query.options(joinedload(ForecastSQL.forecast_values))
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
