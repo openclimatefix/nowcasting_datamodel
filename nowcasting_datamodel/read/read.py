@@ -214,6 +214,27 @@ def get_latest_forecast_for_gsps(
     historic: bool = False,
     gsp_ids: List[int] = None,
 ):
+    """
+    Read forecasts
+
+    :param session: database session
+    :param start_created_utc: Filter: forecast creation time should be larger than this datetime
+    :param start_target_time:
+        Filter: forecast values target time should be larger than this datetime
+    :param preload_children: Option to preload children. This is a speed up, if we need them.
+    :param historic: Option to load historic values or not
+    :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
+
+    return: List of forecasts objects from database
+
+    :param session:
+    :param start_created_utc:
+    :param start_target_time:
+    :param preload_children:
+    :param historic:
+    :param gsp_ids:
+    :return:
+    """
     order_by_cols = []
 
     # start main query
