@@ -13,6 +13,7 @@ from sqlalchemy.orm import contains_eager, joinedload
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import false, true
 
+from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import (
     ForecastSQL,
     ForecastValueLatestSQL,
@@ -23,9 +24,7 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     StatusSQL,
     national_gb_label,
-
 )
-from nowcasting_datamodel import N_GSP
 
 logger = logging.getLogger(__name__)
 
@@ -146,10 +145,7 @@ def get_latest_forecast(
         gsp_ids = None
 
     forecasts = get_latest_forecast_for_gsps(
-        session=session,
-        start_target_time=start_target_time,
-        historic=historic,
-        gsp_ids=gsp_ids
+        session=session, start_target_time=start_target_time, historic=historic, gsp_ids=gsp_ids
     )
 
     if forecasts is None:
@@ -202,7 +198,7 @@ def get_all_gsp_ids_latest_forecast(
         start_target_time=start_target_time,
         preload_children=preload_children,
         historic=historic,
-        gsp_ids=list(range(0,N_GSP+1))
+        gsp_ids=list(range(0, N_GSP + 1)),
     )
 
 
