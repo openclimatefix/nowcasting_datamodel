@@ -11,7 +11,6 @@ from typing import List, Optional
 from sqlalchemy import desc
 from sqlalchemy.orm import contains_eager, joinedload
 from sqlalchemy.orm.session import Session
-from sqlalchemy.sql.expression import false, true
 
 from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import (
