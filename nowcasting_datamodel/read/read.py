@@ -23,7 +23,9 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     StatusSQL,
     national_gb_label,
+
 )
+from nowcasting_datamodel import N_GSP
 
 logger = logging.getLogger(__name__)
 
@@ -138,36 +140,17 @@ def get_latest_forecast(
 
     logger.debug(f"Getting latest forecast for gsp {gsp_id}")
 
-    # start main query
-    query = session.query(ForecastSQL)
-    order_by_items = []
-
-    if historic:
-        query = query.filter(ForecastSQL.historic == true())
-    else:
-        query = query.filter(ForecastSQL.historic == false())
-
-    if start_target_time is not None:
-        query = filter_query_on_target_time(
-            query=query, start_target_time=start_target_time, historic=historic
-        )
-
-    # filter on gsp_id
     if gsp_id is not None:
-        query = query.join(LocationSQL)
-        query = query.filter(LocationSQL.gsp_id == gsp_id)
-        order_by_items.append(LocationSQL.gsp_id)
+        gsp_ids = [gsp_id]
+    else:
+        gsp_ids = None
 
-    order_by_items.append(ForecastSQL.created_utc.desc())
-    if not historic:
-        created_utc = get_latest_forecast_created_utc(session=session, gsp_id=gsp_id)
-        query = query.filter(ForecastSQL.created_utc == created_utc)
-
-    # this make the newest ones comes to the top
-    query = query.order_by(*order_by_items)
-
-    # get all results
-    forecasts = query.all()
+    forecasts = get_latest_forecast_for_gsps(
+        session=session,
+        start_target_time=start_target_time,
+        historic=historic,
+        gsp_ids=gsp_ids
+    )
 
     if forecasts is None:
         return None
@@ -213,35 +196,63 @@ def get_all_gsp_ids_latest_forecast(
 
     logger.debug("Getting latest forecast for all gsps")
 
+    return get_latest_forecast_for_gsps(
+        session=session,
+        start_created_utc=start_created_utc,
+        start_target_time=start_target_time,
+        preload_children=preload_children,
+        historic=historic,
+        gsp_ids=list(range(0,N_GSP+1))
+    )
+
+
+def get_latest_forecast_for_gsps(
+    session: Session,
+    start_created_utc: Optional[datetime] = None,
+    start_target_time: Optional[datetime] = None,
+    preload_children: Optional[bool] = False,
+    historic: bool = False,
+    gsp_ids: List[int] = None,
+):
+    order_by_cols = []
+
     # start main query
     query = session.query(ForecastSQL)
 
+    # filter on created_utc
     if start_created_utc is not None:
         query = query.filter(ForecastSQL.created_utc >= start_created_utc)
 
-    # join with tables
-    if not historic:
-        query = query.distinct(LocationSQL.gsp_id)
+    # join with location table and filter
+    if gsp_ids is not None:
+        if not historic:
+            # for historic they are already distinct
+            query = query.distinct(LocationSQL.gsp_id)
+        query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
+        order_by_cols.append(LocationSQL.gsp_id)
     query = query.join(LocationSQL)
 
+    # filter on historic
     query = query.filter(ForecastSQL.historic == historic)
 
+    # filter on target time
     if start_target_time is not None:
         query = filter_query_on_target_time(
             query=query, start_target_time=start_target_time, historic=historic
         )
 
+    # option to preload values, makes querying quicker
     if preload_children:
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
         if not historic:
             query = query.options(joinedload(ForecastSQL.forecast_values))
-            query = query.options(joinedload(ForecastSQL.forecast_values_latest))
 
-    query = query.order_by(LocationSQL.gsp_id, desc(ForecastSQL.created_utc))
+    order_by_cols.append(desc(ForecastSQL.created_utc))
+    query = query.order_by(*order_by_cols)
 
-    forecasts = query.populate_existing().all()
+    forecasts = query.all()
 
     logger.debug(f"Found {len(forecasts)} forecasts")
     if len(forecasts) > 0:
