@@ -13,8 +13,8 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import (
     Forecast,
     ForecastValue,
-ForecastValueSQL,
     ForecastValueLatestSQL,
+    ForecastValueSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModel,
