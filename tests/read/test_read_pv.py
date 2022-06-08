@@ -138,9 +138,7 @@ def test_read_pv_yield_correct_data(db_session_pv, pv_yields_and_systems):
     pv_yields_and_systems["pv_systems"][0].correct_data = False
 
     assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1], correct_data=True)) == 0
-    assert (
-            len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2], correct_data=True)) == 1
-    )
+    assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2], correct_data=True)) == 1
 
 
 def test_read_pv_yield_start_utc(db_session_pv, pv_yields_and_systems):

@@ -62,8 +62,9 @@ class PVSystem(EnhancedBaseModel):
     installed_capacity_kw: Optional[float] = Field(
         None, description="The capacity of the pv system in kw."
     )
-    correct_data: Optional[bool] \
-        = Field(True, description="If the data from the pv system is not broken in some way")
+    correct_data: Optional[bool] = Field(
+        True, description="If the data from the pv system is not broken in some way"
+    )
 
     @validator("provider")
     def validate_provider(cls, v):
@@ -82,7 +83,7 @@ class PVSystem(EnhancedBaseModel):
             name=self.name,
             orientation=self.orientation,
             status_interval_minutes=self.status_interval_minutes,
-            correct_data = self.correct_data
+            correct_data=self.correct_data,
         )
 
 
