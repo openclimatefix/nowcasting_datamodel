@@ -169,6 +169,45 @@ def get_latest_forecast(
     return forecast
 
 
+def sort_forecast_values(forecast: ForecastSQL):
+    """ Sort forecast values"""
+    if forecast.historic:
+        variable = 'forecast_values_latest'
+    else:
+        variable = 'forecast_values'
+
+    if getattr(forecast,variable) is not None:
+        setattr(forecast, variable, sorted(
+            getattr(forecast,variable), key=lambda d: d.target_time
+        ))
+
+    return forecast
+
+
+def sort_all_forecast_value(forecasts: List[ForecastSQL]):
+    """
+    Sorting all forecasts
+
+    This may be possible in the sql query, but so far have found it hard to do it.
+    Can't just add it to ORDER BY items, due to sub query.
+
+    :param forecasts:  list of forecasts
+    :return: list of forecasts, but with sorted forecat values
+    """
+    """ Sorting all forecasts"""
+
+    logger.debug(
+        f"sorting 'forecast_values_latest' or 'forecast_values' values. "
+    )
+
+    for forecast in forecasts:
+        sort_forecast_values(forecast=forecast)
+
+    logger.debug('sorting done')
+
+    return forecasts
+
+
 def get_all_gsp_ids_latest_forecast(
     session: Session,
     start_created_utc: Optional[datetime] = None,
@@ -274,6 +313,8 @@ def get_latest_forecast_for_gsps(
     if len(forecasts) > 0:
         logger.debug(f"The first forecast has {len(forecasts[0].forecast_values)} forecast_values")
 
+    forecasts = sort_all_forecast_value(forecasts)
+
     return forecasts
 
 
@@ -301,6 +342,7 @@ def filter_query_on_target_time(query, start_target_time, historic: bool):
 
         if historic:
             query = query.options(contains_eager(join_object)).populate_existing()
+        query.order_by(join_object)
 
     return query
 
