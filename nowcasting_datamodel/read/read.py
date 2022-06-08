@@ -170,16 +170,16 @@ def get_latest_forecast(
 
 
 def sort_forecast_values(forecast: ForecastSQL):
-    """ Sort forecast values"""
+    """Sort forecast values"""
     if forecast.historic:
-        variable = 'forecast_values_latest'
+        variable = "forecast_values_latest"
     else:
-        variable = 'forecast_values'
+        variable = "forecast_values"
 
-    if getattr(forecast,variable) is not None:
-        setattr(forecast, variable, sorted(
-            getattr(forecast,variable), key=lambda d: d.target_time
-        ))
+    if getattr(forecast, variable) is not None:
+        setattr(
+            forecast, variable, sorted(getattr(forecast, variable), key=lambda d: d.target_time)
+        )
 
     return forecast
 
@@ -196,14 +196,12 @@ def sort_all_forecast_value(forecasts: List[ForecastSQL]):
     """
     """ Sorting all forecasts"""
 
-    logger.debug(
-        f"sorting 'forecast_values_latest' or 'forecast_values' values. "
-    )
+    logger.debug(f"sorting 'forecast_values_latest' or 'forecast_values' values. ")
 
     for forecast in forecasts:
         sort_forecast_values(forecast=forecast)
 
-    logger.debug('sorting done')
+    logger.debug("sorting done")
 
     return forecasts
 

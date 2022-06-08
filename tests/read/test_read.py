@@ -104,7 +104,7 @@ def test_read_target_time(db_session):
         target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=3, gsp_id=1
     )
     f3 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1, 0,30), expected_power_generation_megawatts=2, gsp_id=1
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
     )
     f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2, f3])
     f.historic = True
