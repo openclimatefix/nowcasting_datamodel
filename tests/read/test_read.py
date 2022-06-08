@@ -316,6 +316,8 @@ def test_get_pv_system(db_session_pv):
     pv_system_get = get_pv_system(
         session=db_session_pv, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
     )
+    # this get defaulted to True when adding to the database
+    pv_system.correct_data = True
     assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
 
 

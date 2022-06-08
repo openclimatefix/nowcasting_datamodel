@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_PV
@@ -42,6 +42,7 @@ class PVSystemSQL(Base_PV, CreatedMixin):
         Float,
         nullable=True,
     )
+    correct_data = Column(Boolean, default=True)
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
 
@@ -61,6 +62,9 @@ class PVSystem(EnhancedBaseModel):
     installed_capacity_kw: Optional[float] = Field(
         None, description="The capacity of the pv system in kw."
     )
+    correct_data: Optional[bool] = Field(
+        True, description="If the data from the pv system is not broken in some way"
+    )
 
     @validator("provider")
     def validate_provider(cls, v):
@@ -79,6 +83,7 @@ class PVSystem(EnhancedBaseModel):
             name=self.name,
             orientation=self.orientation,
             status_interval_minutes=self.status_interval_minutes,
+            correct_data=self.correct_data,
         )
 
 

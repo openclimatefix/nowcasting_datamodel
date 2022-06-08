@@ -15,6 +15,7 @@ def get_pv_systems(
     session: Session,
     pv_systems_ids: Optional[List[int]] = None,
     provider: Optional[str] = "pvoutput.org",
+    correct_data: Optional[bool] = None,
 ) -> List[PVSystemSQL]:
     """
     Get all pv systems
@@ -22,12 +23,17 @@ def get_pv_systems(
     :param session:
     :param pv_systems_ids: optional list of ids
     :param provider: optional provider name
+    :param correct_data: Filters on incorrect_data in pv_systems
     :return: list of pv systems
     """
 
     # start main query
     query = session.query(PVSystemSQL)
     query = query.distinct(PVSystemSQL.id)
+
+    # only select correct data pv systems
+    if correct_data is not None:
+        query = query.filter(PVSystemSQL.correct_data == correct_data)
 
     # filter on pv_system_id and provider
     if pv_systems_ids is not None:
@@ -49,6 +55,7 @@ def get_latest_pv_yield(
     append_to_pv_systems: bool = False,
     start_datetime_utc: Optional[datetime] = None,
     start_created_utc: Optional[datetime] = None,
+    correct_data: Optional[bool] = None,
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
     Get the last pv yield data
@@ -59,6 +66,7 @@ def get_latest_pv_yield(
         If appended the yield is access by 'pv_system.last_pv_yield'
     :param start_created_utc: search filters > on 'created_utc'. Can be None
     :param start_datetime_utc: search filters > on 'datetime_utc'. Can be None
+    :param correct_data: Filters on incorrect_data in pv_systems
     :return: either list of pv yields, or pv systems
     """
 
@@ -78,6 +86,10 @@ def get_latest_pv_yield(
 
     # select only th epv systems we want
     query = query.where(PVSystemSQL.id.in_(pv_systems_ids))
+
+    # only select correct data pv systems
+    if correct_data is not None:
+        query = query.filter(PVSystemSQL.correct_data == correct_data)
 
     # filter on datetime utc
     if start_datetime_utc is not None:
@@ -132,18 +144,26 @@ def get_pv_yield(
     pv_systems_ids: Optional[List[int]] = None,
     start_utc: Optional[datetime] = None,
     end_utc: Optional[datetime] = None,
+    correct_data: Optional[bool] = None,
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
     Get the last pv yield data
 
     :param session: database sessions
     :param pv_systems_ids: list of pv systems ids
+    :param end_utc: search filters < on 'datetime_utc'. Can be None
+    :param start_utc: search filters >= on 'datetime_utc'. Can be None
+    :param correct_data: Filters on incorrect_data in pv_systems
     :return: either list of pv yields, or pv systems
     """
 
     # start main query
     query = session.query(PVYieldSQL)
     query = query.join(PVSystemSQL)
+
+    # only select correct data pv systems
+    if correct_data is not None:
+        query = query.filter(PVSystemSQL.correct_data == correct_data)
 
     # select only th pv systems we want
     if pv_systems_ids is not None:
