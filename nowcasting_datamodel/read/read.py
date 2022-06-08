@@ -196,7 +196,7 @@ def sort_all_forecast_value(forecasts: List[ForecastSQL]):
     """
     """ Sorting all forecasts"""
 
-    logger.debug(f"sorting 'forecast_values_latest' or 'forecast_values' values. ")
+    logger.debug("sorting 'forecast_values_latest' or 'forecast_values' values.")
 
     for forecast in forecasts:
         sort_forecast_values(forecast=forecast)
