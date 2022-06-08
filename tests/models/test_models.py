@@ -39,6 +39,7 @@ def test_normalize_forecasts_no_installed_capacity(forecasts_all):
     forecast.location.installed_capacity_mw = None
     forecast.normalize()
     assert forecast.forecast_values[0].expected_power_generation_megawatts == v
+    assert forecast.forecast_values[0].expected_power_generation_normalized == 0
 
 
 def test_status_validation():

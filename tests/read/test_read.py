@@ -101,10 +101,10 @@ def test_read_target_time(db_session):
         target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
     )
     f2 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
+        target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=3, gsp_id=1
     )
     f3 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=3, gsp_id=1
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
     )
     f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2, f3])
     f.historic = True
@@ -119,6 +119,7 @@ def test_read_target_time(db_session):
     assert forecast_read.location.gsp_id == f.location.gsp_id
 
     assert len(forecast_read.forecast_values_latest) == 2
+    assert forecast_read.forecast_values_latest[-1].expected_power_generation_megawatts == 3
 
 
 def test_get_forecast_values(db_session, forecasts):
@@ -279,10 +280,10 @@ def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
             gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
         ),
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=2, target_time=datetime(2022, 1, 1, 0, 30)
+            gsp_id=1, expected_power_generation_megawatts=3, target_time=datetime(2022, 1, 1, 1)
         ),
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=3, target_time=datetime(2022, 1, 1, 1)
+            gsp_id=1, expected_power_generation_megawatts=2, target_time=datetime(2022, 1, 1, 0, 30)
         ),
     ]
 
@@ -293,6 +294,7 @@ def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
         session=db_session, start_target_time=target_time, historic=True
     )[0]
     assert len(forecast.forecast_values_latest) == 2
+    assert forecast.forecast_values_latest[-1].expected_power_generation_megawatts == 3
 
 
 def test_get_national_latest_forecast(db_session):

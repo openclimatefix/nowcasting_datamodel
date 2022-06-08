@@ -142,7 +142,11 @@ class ForecastValue(EnhancedBaseModel):
     def normalize(self, installed_capacity_mw):
         """Normalize forecasts by installed capacity mw"""
         if installed_capacity_mw in [0, None]:
-            logger.warning(f"Could not normalize ForecastValue object {installed_capacity_mw}")
+            logger.warning(
+                f"Could not normalize ForecastValue object {installed_capacity_mw}"
+                f"So will set to zero"
+            )
+            self.expected_power_generation_normalized = 0
         else:
             self.expected_power_generation_normalized = (
                 self.expected_power_generation_megawatts / installed_capacity_mw
