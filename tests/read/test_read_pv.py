@@ -26,6 +26,19 @@ def test_save_pv_system_repeat(db_session_pv, pv_systems):
     assert len(pv_systems_get) == 2
 
 
+def test_save_pv_system_correct_data(db_session_pv, pv_systems):
+
+    pv_systems[0].correct_data = False
+    pv_systems_get = get_pv_systems(session=db_session_pv, correct_data=True)
+    assert len(pv_systems_get) == 1
+
+    pv_systems_get = get_pv_systems(
+        session=db_session_pv, pv_systems_ids=[pv_systems_get[0].id], correct_data=True
+    )
+
+    assert len(pv_systems_get) == 1
+
+
 def test_get_pv_system(db_session_pv, pv_systems):
 
     pv_systems_get = get_pv_systems(session=db_session_pv)
@@ -52,6 +65,19 @@ def test_get_latest_pv_yield(db_session_pv, pv_yields_and_systems):
 
     pv_systems = db_session_pv.query(PVSystemSQL).order_by(PVSystemSQL.created_utc).all()
     pv_yields[0].pv_system.id = pv_systems[0].id
+
+
+def test_get_latest_pv_yield_correct_data(db_session_pv, pv_yields_and_systems):
+    [pv_system_sql_1, pv_system_sql_2] = pv_yields_and_systems["pv_systems"]
+    pv_system_sql_1.correct_data = False
+
+    pv_yields = get_latest_pv_yield(
+        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2], correct_data=True
+    )
+
+    # read database
+    # this is 2 for when using sqlite as 'distinct' does work
+    assert len(pv_yields) == 1
 
 
 def test_get_latest_pv_yield_filter(db_session_pv, pv_yields_and_systems):
@@ -106,6 +132,15 @@ def test_read_pv_yield(db_session_pv, pv_yields_and_systems):
 
     assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1])) == 2
     assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2])) == 3
+
+
+def test_read_pv_yield_correct_data(db_session_pv, pv_yields_and_systems):
+    pv_yields_and_systems["pv_systems"][0].correct_data = False
+
+    assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1], correct_data=True)) == 0
+    assert (
+            len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2], correct_data=True)) == 1
+    )
 
 
 def test_read_pv_yield_start_utc(db_session_pv, pv_yields_and_systems):
