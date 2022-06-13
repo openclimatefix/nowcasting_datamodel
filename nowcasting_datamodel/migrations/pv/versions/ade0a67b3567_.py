@@ -1,4 +1,4 @@
-"""empty message
+"""change installed capacity to float
 
 Revision ID: ade0a67b3567
 Revises: e1dd779648d2
