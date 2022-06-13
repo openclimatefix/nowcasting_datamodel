@@ -30,12 +30,21 @@ logger.setLevel(os.getenv("LOGLEVEL", "INFO"))
     type=click.BOOL,
     is_flag=True,
 )
-def app(make_migrations: bool, run_migrations: bool):
+@click.option(
+    "--run-pv",
+    default=False,
+    envvar="RUN_PV",
+    help="Option to run the database migrations for PV databse as well",
+    type=click.BOOL,
+    is_flag=True,
+)
+def app(make_migrations: bool, run_migrations: bool, run_pv: bool):
     """
     Make migrations and run them
 
     :param make_migrations: option to make the database migrations
     :param run_migrations: option to run migrations
+    :param run_pv: option to run PV database as well
     """
 
     # some times need 1 second for the data base to get started
@@ -43,11 +52,13 @@ def app(make_migrations: bool, run_migrations: bool):
 
     if make_migrations:
         make_all_migrations("forecast")
-        # make_all_migrations("pv")
+        if run_pv:
+            make_all_migrations("pv")
 
     if run_migrations:
         run_all_migrations("forecast")
-        # run_all_migrations("pv")
+        if run_pv:
+            run_all_migrations("pv")
 
 
 def make_all_migrations(database: str):
