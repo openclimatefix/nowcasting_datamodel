@@ -99,7 +99,7 @@ class PVYieldSQL(Base_PV, CreatedMixin):
 
     id = Column(Integer, primary_key=True)
     datetime_utc = Column(DateTime, index=True)
-    solar_generation_kw = Column(String)
+    solar_generation_kw = Column(Float)
 
     # many (forecasts) to one (location)
     pv_system = relationship("PVSystemSQL", back_populates="pv_yield")
