@@ -22,7 +22,7 @@ def upgrade():  # noqa 103
         sa.Column("created_utc", sa.DateTime(timezone=True), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("datetime_utc", sa.DateTime(), nullable=True),
-        sa.Column("solar_generation_kw", sa.String(), nullable=True),
+        sa.Column("solar_generation_kw", sa.Float(), nullable=True),
         sa.Column("regime", sa.String(), nullable=True),
         sa.Column("location_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
