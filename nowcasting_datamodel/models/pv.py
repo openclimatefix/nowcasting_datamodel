@@ -17,8 +17,9 @@ from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 logger = logging.getLogger(__name__)
-
-providers = ["pvoutput.org"]
+pv_output = "pvoutput.org"
+solar_sheffield_passiv = "solar_sheffield_passiv"
+providers = [pv_output, solar_sheffield_passiv]
 
 ########
 # 7. PV Metadata
