@@ -38,6 +38,8 @@ def get_pv_systems(
     # filter on pv_system_id and provider
     if pv_systems_ids is not None:
         query = query.filter(PVSystemSQL.pv_system_id.in_(pv_systems_ids))
+
+    if provider is not None:
         query = query.filter(PVSystemSQL.provider == provider)
 
     # order by 'created_utc' desc, so we get the latest one
