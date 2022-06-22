@@ -148,7 +148,7 @@ def get_pv_yield(
     start_utc: Optional[datetime] = None,
     end_utc: Optional[datetime] = None,
     correct_data: Optional[bool] = None,
-    provider: Optional[str] = None,
+    providers: Optional[List[str]] = None,
 
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
@@ -159,6 +159,7 @@ def get_pv_yield(
     :param end_utc: search filters < on 'datetime_utc'. Can be None
     :param start_utc: search filters >= on 'datetime_utc'. Can be None
     :param correct_data: Filters on incorrect_data in pv_systems
+    :param providers: optional list of provider names
     :return: either list of pv yields, or pv systems
     """
 
@@ -183,8 +184,8 @@ def get_pv_yield(
     if end_utc is not None:
         query = query.filter(PVYieldSQL.datetime_utc < end_utc)
 
-    if provider is not None:
-        query = query.filter(PVSystemSQL.provider == provider)
+    if providers is not None:
+        query = query.filter(PVSystemSQL.provider.in_(providers))
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
