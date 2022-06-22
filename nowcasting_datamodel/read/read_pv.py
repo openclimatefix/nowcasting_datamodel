@@ -4,8 +4,7 @@ from datetime import datetime
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Session, joinedload
 
 from nowcasting_datamodel.models import PVSystemSQL, PVYieldSQL
 
@@ -149,7 +148,6 @@ def get_pv_yield(
     end_utc: Optional[datetime] = None,
     correct_data: Optional[bool] = None,
     providers: Optional[List[str]] = None,
-
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
     Get the last pv yield data
