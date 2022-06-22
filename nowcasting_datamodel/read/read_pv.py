@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 
 from nowcasting_datamodel.models import PVSystemSQL, PVYieldSQL
 
@@ -147,6 +148,8 @@ def get_pv_yield(
     start_utc: Optional[datetime] = None,
     end_utc: Optional[datetime] = None,
     correct_data: Optional[bool] = None,
+    provider: Optional[str] = None,
+
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
     """
     Get the last pv yield data
@@ -162,6 +165,7 @@ def get_pv_yield(
     # start main query
     query = session.query(PVYieldSQL)
     query = query.join(PVSystemSQL)
+    query = query.options(joinedload(PVYieldSQL.pv_system))
 
     # only select correct data pv systems
     if correct_data is not None:
@@ -178,6 +182,9 @@ def get_pv_yield(
     # filter on end time
     if end_utc is not None:
         query = query.filter(PVYieldSQL.datetime_utc < end_utc)
+
+    if provider is not None:
+        query = query.filter(PVSystemSQL.provider == provider)
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
