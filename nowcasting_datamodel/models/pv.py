@@ -18,8 +18,8 @@ from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 logger = logging.getLogger(__name__)
 pv_output = "pvoutput.org"
-solar_sheffield_passiv = "solar_sheffield_passiv"
-providers = [pv_output, solar_sheffield_passiv]
+sheffield_solar_passiv = "sheffield_solar_passiv"
+providers = [pv_output, sheffield_solar_passiv]
 
 ########
 # 7. PV Metadata
@@ -85,7 +85,7 @@ class PVSystem(EnhancedBaseModel):
             orientation=self.orientation,
             status_interval_minutes=self.status_interval_minutes,
             correct_data=self.correct_data,
-            installed_capacity_kw=self.installed_capacity_kw
+            installed_capacity_kw=self.installed_capacity_kw,
         )
 
 
