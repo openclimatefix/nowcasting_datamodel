@@ -85,7 +85,7 @@ class PVSystem(EnhancedBaseModel):
             orientation=self.orientation,
             status_interval_minutes=self.status_interval_minutes,
             correct_data=self.correct_data,
-            installed_capacity_kw=self.installed_capacity_kw
+            installed_capacity_kw=self.installed_capacity_kw,
         )
 
 
