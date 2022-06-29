@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, pv_output, solar_sheffield_passiv
+from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, pv_output, sheffield_solar_passiv
 from nowcasting_datamodel.read.read_pv import get_latest_pv_yield, get_pv_systems, get_pv_yield
 from nowcasting_datamodel.save import save_pv_system
 
@@ -136,7 +136,7 @@ def test_read_pv_yield(db_session_pv, pv_yields_and_systems):
 
 def test_read_pv_yield_providers(db_session_pv, pv_yields_and_systems):
     assert len(get_pv_yield(session=db_session_pv, providers=[pv_output])) == 3
-    assert len(get_pv_yield(session=db_session_pv, providers=[solar_sheffield_passiv])) == 0
+    assert len(get_pv_yield(session=db_session_pv, providers=[sheffield_solar_passiv])) == 0
 
 
 def test_read_pv_yield_correct_data(db_session_pv, pv_yields_and_systems):
