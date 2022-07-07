@@ -43,6 +43,10 @@ class PVSystemSQL(Base_PV, CreatedMixin):
         Float,
         nullable=True,
     )
+    ml_capacity_kw = Column(
+        Float,
+        nullable=True,
+    )
     correct_data = Column(Boolean, default=True)
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
@@ -62,6 +66,10 @@ class PVSystem(EnhancedBaseModel):
     )
     installed_capacity_kw: Optional[float] = Field(
         None, description="The capacity of the pv system in kw."
+    )
+    ml_capacity_kw: Optional[float] = Field(
+        None, description="The capacity of the pv system in kw, user for ML models. "
+                          "This may be different from the installed capacity"
     )
     correct_data: Optional[bool] = Field(
         True, description="If the data from the pv system is not broken in some way"
@@ -85,7 +93,8 @@ class PVSystem(EnhancedBaseModel):
             orientation=self.orientation,
             status_interval_minutes=self.status_interval_minutes,
             correct_data=self.correct_data,
-            installed_capacity_kw=self.installed_capacity_kw
+            installed_capacity_kw=self.installed_capacity_kw,
+            ml_capacity_kw = self.ml_capacity_kw
         )
 
 
