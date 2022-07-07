@@ -47,7 +47,7 @@ class PVSystemSQL(Base_PV, CreatedMixin):
         Float,
         nullable=True,
     )
-    ocf_id = Column(Integer,nullable=True)
+    ocf_id = Column(Integer, nullable=True)
     correct_data = Column(Boolean, default=True)
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
