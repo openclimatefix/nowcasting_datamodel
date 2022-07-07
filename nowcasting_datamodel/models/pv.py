@@ -76,7 +76,7 @@ class PVSystem(EnhancedBaseModel):
     correct_data: Optional[bool] = Field(
         True, description="If the data from the pv system is not broken in some way"
     )
-    pv_system_ocf_id: int = Field(None, description="The PV system id that is unique to OCF")
+    ocf_id: int = Field(None, description="The PV system id that is unique to OCF")
 
     @validator("provider")
     def validate_provider(cls, v):
@@ -97,11 +97,8 @@ class PVSystem(EnhancedBaseModel):
             status_interval_minutes=self.status_interval_minutes,
             correct_data=self.correct_data,
             installed_capacity_kw=self.installed_capacity_kw,
-<<<<<<< HEAD
             ml_capacity_kw=self.ml_capacity_kw,
-            pv_system_ocf_id=self.pv_system_ocf_id,
-=======
->>>>>>> main
+            ocf_id=self.ocf_id,
         )
 
 
