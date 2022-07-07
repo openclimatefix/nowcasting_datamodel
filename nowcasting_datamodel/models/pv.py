@@ -43,6 +43,11 @@ class PVSystemSQL(Base_PV, CreatedMixin):
         Float,
         nullable=True,
     )
+    ml_capacity_kw = Column(
+        Float,
+        nullable=True,
+    )
+    ocf_id = Column(Integer, nullable=True)
     correct_data = Column(Boolean, default=True)
 
     pv_yield = relationship("PVYieldSQL", back_populates="pv_system")
@@ -63,9 +68,15 @@ class PVSystem(EnhancedBaseModel):
     installed_capacity_kw: Optional[float] = Field(
         None, description="The capacity of the pv system in kw."
     )
+    ml_capacity_kw: Optional[float] = Field(
+        None,
+        description="The capacity of the pv system in kw, user for ML models. "
+        "This may be different from the installed capacity",
+    )
     correct_data: Optional[bool] = Field(
         True, description="If the data from the pv system is not broken in some way"
     )
+    ocf_id: int = Field(None, description="The PV system id that is unique to OCF")
 
     @validator("provider")
     def validate_provider(cls, v):
@@ -86,6 +97,8 @@ class PVSystem(EnhancedBaseModel):
             status_interval_minutes=self.status_interval_minutes,
             correct_data=self.correct_data,
             installed_capacity_kw=self.installed_capacity_kw,
+            ml_capacity_kw=self.ml_capacity_kw,
+            ocf_id=self.ocf_id,
         )
 
 
