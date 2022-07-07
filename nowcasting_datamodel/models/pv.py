@@ -97,8 +97,11 @@ class PVSystem(EnhancedBaseModel):
             status_interval_minutes=self.status_interval_minutes,
             correct_data=self.correct_data,
             installed_capacity_kw=self.installed_capacity_kw,
+<<<<<<< HEAD
             ml_capacity_kw=self.ml_capacity_kw,
             pv_system_ocf_id=self.pv_system_ocf_id,
+=======
+>>>>>>> main
         )
 
 
