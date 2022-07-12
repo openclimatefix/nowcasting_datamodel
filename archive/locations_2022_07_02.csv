@@ -1,0 +1,340 @@
+"id","label","gsp_id","gsp_name","gsp_group","region_name","installed_capacity_mw"
+1,"National-GB",0,"National","National","National",13080
+2,"GSP_1",1,"COWL_1","COWL_1","Cowley",342
+3,"GSP_2",2,"ECLA_1","ECLA_1","East Claydon",135
+4,"GSP_3",3,"ENDE_1","ENDE_1","Enderby",94
+5,"GSP_4",4,"GREN_1","GREN_1","Grendon",253
+6,"GSP_5",5,"RATS_1","RATS_1","Ratcliffe",101
+7,"GSP_6",6,"STAY_1","STAY_1","Staythorpe",182
+8,"GSP_7",7,"SBAR","SBAR","Stoke Bardolph",38
+9,"GSP_8",8,"WBUR_1","WBUR_1","West Burton",86
+10,"GSP_9",9,"BRWA1","BRWA1","Bridgewater",268
+11,"GSP_10",10,"MITY_1","MITY_1","Minety",308
+12,"GSP_11",11,"TAUN1","TAUN1","Taunton",73
+13,"GSP_12",12,"CAMB_01","CAMB_01","Camblesforth",6
+14,"GSP_13",13,"DRAX_1","DRAX_1","Drax",6
+15,"GSP_14",14,"GRIW_1","GRIW_1","Grimsby West",53
+16,"GSP_15",15,"KEAD_1","KEAD_1","Keadby",139
+17,"GSP_16",16,"OSBA_1","OSBA_1","Osbaldwick",26
+18,"GSP_17",17,"BARKC1","BARKC1","Barking",6
+19,"GSP_18",18,"BARKW3","BARKW3","Barking",0
+20,"GSP_19",19,"BEDDT1","BEDDT1","Beddington (_C)",6
+21,"GSP_20",20,"BEDD_1","BEDD_1","Beddington (_J)",22
+22,"GSP_21",21,"BRIM_1","BRIM_1","Brimsdown",5
+23,"GSP_22",22,"CITR_1","CITR_1","City Road",5
+24,"GSP_23",23,"EALI_6","EALI_6","Ealing",3
+25,"GSP_24",24,"HACK_1","HACK_1","Hackney",5
+26,"GSP_25",25,"HACK_6","HACK_6","Hackney",0
+27,"GSP_26",26,"HURS_1","HURS_1","Hurst",4
+28,"GSP_27",27,"NFLE","NFLE","Northfleet East",61
+29,"GSP_28",28,"REBR_3","REBR_3","Redbridge",5
+30,"GSP_29",29,"SJOW_1","SJOW_1","St Johns Wood",2
+31,"GSP_30",30,"TOTT_1","TOTT_1","Tottenham",5
+32,"GSP_31",31,"WHAM_1","WHAM_1","West Ham",7
+33,"GSP_32",32,"WISD_1","WISD_1","Willesden 132kV",2
+34,"GSP_33",33,"WIMBS1","WIMBS1","Wimbledon",7
+35,"GSP_34",34,"WIMBN1","WIMBN1","Wimbledon",0
+36,"GSP_35",35,"BIRK_1","BIRK_1","Birkenhead",12
+37,"GSP_36",36,"FIDF_1","FIDF_1","Fiddlers Ferry",24
+38,"GSP_37",37,"KIBY_1","KIBY_1","Kirkby (_D)",12
+39,"GSP_38",38,"KIBY_G","KIBY_G","Kirkby (_G)",14
+40,"GSP_39",39,"LISD_1","LISD_1","Lister Drive",23
+41,"GSP_40",40,"PENW_1","PENW_1","Penwortham",63
+42,"GSP_41",41,"PENE_1","PENE_1","Penwortham",0
+43,"GSP_42",42,"RAIN_1","RAIN_1","Rainhill",9
+44,"GSP_43",43,"WASF_1","WASF_1","Washway Farm",4
+45,"GSP_44",44,"CHIC_1","CHIC_1","Chickerell",79
+46,"GSP_45",45,"FOUR_1","FOUR_1","Fourstones",4
+47,"GSP_46",46,"FROD_1","FROD_1","Frodsham",76
+48,"GSP_47",47,"IMPK_1","IMPK_1","Imperial Park",0
+49,"GSP_48",48,"MAGA_6","MAGA_6","Margam",2
+50,"GSP_49",49,"PYLE_1","PYLE_1","Pyle",37
+51,"GSP_50",50,"SALH_1","SALH_1","Saltholme",0
+52,"GSP_51",51,"TEMP_3","TEMP_3","Templeborough",4
+53,"GSP_52",52,"TRAW_1","TRAW_1","Trawsfynydd",20
+54,"GSP_53",53,"TYNE_2","TYNE_2","Tynemouth",14
+55,"GSP_54",54,"BICF_1","BICF_1","Bicker Fen",135
+56,"GSP_55",55,"BRAI_1","BRAI_1","Braintree",129
+57,"GSP_56",56,"BURM_1","BURM_1","Burwell Main",292
+58,"GSP_57",57,"EASO_1","EASO_1","Eaton Socon",255
+59,"GSP_58",58,"IVER_1","IVER_1","Iver 132kV",8
+60,"GSP_59",59,"IVER_6","IVER_6","Iver 66kV",4
+61,"GSP_60",60,"KINO_1","KINO_1","Kingsnorth",39
+62,"GSP_61",61,"LALE1SG003","LALE1SG003","Laleham",9
+63,"GSP_62",62,"LODR_6","LODR_6","Lodge Road",2
+64,"GSP_63",63,"MILH_1","MILH_1","Mill Hill",20
+65,"GSP_64",64,"NHYD_6","NHYD_6","North Hyde",6
+66,"GSP_65",65,"PELH_1","PELH_1","Pelham",153
+67,"GSP_66",66,"RAYL_1","RAYL_1","Rayleigh",49
+68,"GSP_67",67,"RYEH_1","RYEH_1","Rye House",20
+69,"GSP_68",68,"SUND_1","SUND_1","Sundon",89
+70,"GSP_69",69,"WARL_1","WARL_1","Warley",28
+71,"GSP_70",70,"WATFS_1","WATFS_1","Watford South",18
+72,"GSP_71",71,"WTHU31","WTHU31","West Thurrock",4
+73,"GSP_72",72,"WWEY_1","WWEY_1","West Weybridge",15
+74,"GSP_73",73,"WYMOM_1","WYMOM_1","Wymondley",47
+75,"GSP_74",74,"BRED_1","BRED_1","Bredbury",17
+76,"GSP_75",75,"KEAR_1","KEAR_1","Kearsley",32
+77,"GSP_76",76,"KEAR_3","KEAR_3","Kearsley",0
+78,"GSP_77",77,"MACC_3","MACC_3","Macclesfield",5
+79,"GSP_78",78,"SMAN_1","SMAN_1","South Manchester",18
+80,"GSP_79",79,"STAL_1","STAL_1","Stalybridge",18
+81,"GSP_80",80,"WHGA_1","WHGA_1","Whitegate",21
+82,"GSP_81",81,"BLYTB1","BLYTB1","Blyth 66kV",13
+83,"GSP_82",82,"HARM_6","HARM_6","Hart Moor",7
+84,"GSP_83",83,"HAWP_6","HAWP_6","Hawthorn Pit",19
+85,"GSP_84",84,"LACK_6","LACK_6","Lackenby",18
+86,"GSP_85",85,"NORT_1","NORT_1","Norton",98
+87,"GSP_86",86,"OFFE_3","OFFE_3","Offerton",9
+88,"GSP_87",87,"SSHI_3","SSHI_3","South Shields",1
+89,"GSP_88",88,"SPEN_1","SPEN_1","Spennymoor",22
+90,"GSP_89",89,"TYNE_1","TYNE_1","Tynemouth",0
+91,"GSP_90",90,"WBOL_6","WBOL_6","West Boldon",46
+92,"GSP_91",91,"HUTT_1","HUTT_1","Hutton",20
+93,"GSP_92",92,"PADIB1","PADIB1","Padiham",32
+94,"GSP_93",93,"ROCH_1","ROCH_1","Rochdale",13
+95,"GSP_94",94,"CELL_1","CELL_1","Cellarhead",81
+96,"GSP_95",95,"LEGA_1","LEGA_1","Legacy",117
+97,"GSP_96",96,"PENT_1","PENT_1","Pentir",53
+98,"GSP_97",97,"BOLN_1","BOLN_1","Bolney",102
+99,"GSP_98",98,"BOTW_1","BOTW_1","Botley Wood",60
+100,"GSP_99",99,"FAWL_1","FAWL_1","Fawley",130
+101,"GSP_100",100,"FLEE_1","FLEE_1","Fleet",198
+102,"GSP_101",101,"LOVE_1","LOVE_1","Lovedean",251
+103,"GSP_102",102,"NINF_1","NINF_1","Ninfield",97
+104,"GSP_103",103,"NURS_1","NURS_1","Nursling",120
+105,"GSP_104",104,"ABTH_1","ABTH_1","Aberthaw",86
+106,"GSP_105",105,"CARE_1","CARE_1","Cardiff East",14
+107,"GSP_106",106,"IROA1","IROA1","Iron Acton",199
+108,"GSP_107",107,"PEMB_1","PEMB_1","Pembroke",187
+109,"GSP_108",108,"RASS_1","RASS_1","Rassau",111
+110,"GSP_109",109,"SEAB1","SEAB1","Seabank",108
+111,"GSP_110",110,"SWAN_1","SWAN_1","Swansea North",262
+112,"GSP_111",111,"UPPB_1","UPPB_1","Upper Boat",75
+113,"GSP_112",112,"UPPB_3","UPPB_3","Upper Boat",0
+114,"GSP_113",113,"USKM_1","USKM_1","Uskmouth",88
+115,"GSP_114",114,"ALST_3","ALST_3","Uskmouth",0
+116,"GSP_115",115,"WALH_1","WALH_1","Walham",116
+117,"GSP_116",116,"ABHA1","ABHA1","Abham",193
+118,"GSP_117",117,"ALVE1","ALVE1","Alverdiscott",277
+119,"GSP_118",118,"AXMI1","AXMI1","Axminster",133
+120,"GSP_119",119,"EXET1","EXET1","Exeter",182
+121,"GSP_120",120,"INDQ1","INDQ1","Indian Queens",449
+122,"GSP_121",121,"LAND1","LAND1","Landulph",120
+123,"GSP_122",122,"MANN_1","MANN_1","Mannington",411
+124,"GSP_123",123,"CHTE_1","CHTE_1","Chesterfield",220
+125,"GSP_124",124,"JORD_3","JORD_3","Jordanthorpe",4
+126,"GSP_125",125,"NEEP_3","NEEP_3","Neepsend",2
+127,"GSP_126",126,"NORL_3","NORL_3","Norton Lees",3
+128,"GSP_127",127,"SHEC_3","SHEC_3","Sheffield City",2
+129,"GSP_128",128,"THOM_6","THOM_6","Thorpe Marsh",57
+130,"GSP_129",129,"THUR_6","THUR_6","Thurcroft",17
+131,"GSP_130",130,"WMEL_1","WMEL_1","West Melton",38
+132,"GSP_131",131,"WIBA_3","WIBA_3","Wincobank",2
+133,"GSP_132",132,"BESW_1","BESW_1","Berkswell",63
+134,"GSP_133",133,"BISW_1","BISW_1","Bishops Wood",140
+135,"GSP_134",134,"BUSH_1","BUSH_1","Bushbury",42
+136,"GSP_135",135,"BUST_1","BUST_1","Bustleholme",10
+137,"GSP_136",136,"COVE_1","COVE_1","Coventry",45
+138,"GSP_137",137,"DRAK_1","DRAK_1","Drakelow",97
+139,"GSP_138",138,"FECK_6","FECK_6","Feckenham",207
+140,"GSP_139",139,"IRONB1","IRONB1","Ironbridge",52
+141,"GSP_140",140,"KITW_1","KITW_1","Kitwell",10
+142,"GSP_141",141,"HAMHC1","HAMHC1","Hams Hall",41
+143,"GSP_142",142,"OCKH_1","OCKH_1","Ocker Hill",7
+144,"GSP_143",143,"OLDB_1","OLDB_1","Oldbury",5
+145,"GSP_144",144,"PENN_1","PENN_1","Penn",6
+146,"GSP_145",145,"RUGEB1","RUGEB1","Rugeley",8
+147,"GSP_146",146,"SHRW_1","SHRW_1","Shrewsbury",134
+148,"GSP_147",147,"WIEN_1","WIEN_1","Willenhall",11
+149,"GSP_148",148,"WILL_1","WILL_1","Willington",145
+150,"GSP_149",149,"BRAW_1","BRAW_1","Bradford West",27
+151,"GSP_150",150,"ELLA_1","ELLA_1","Elland",25
+152,"GSP_151",151,"FERRB1","FERRB1","Ferrybridge (_F)",43
+153,"GSP_152",152,"FERRA2","FERRA2","Ferrybridge (_M)",5
+154,"GSP_153",153,"KIRKB1","KIRKB1","Kirkstall",18
+155,"GSP_154",154,"POPP_3","POPP_3","Poppleton",7
+156,"GSP_155",155,"SKLGB1","SKLGB1","Skelton Grange",31
+157,"GSP_156",156,"COUA_P","COUA_P","Coupar Angus",3
+158,"GSP_157",157,"MACD_P","MACD_P","Macduff",6
+159,"GSP_158",158,"MYBS_P","MYBS_P","Mybster",1
+160,"GSP_159",159,"STIR","STIR","Stirling",8
+161,"GSP_160",160,"THSO_P","THSO_P","Thurso",10
+162,"GSP_161",161,"ABNE_P","ABNE_P","Abernethy",15
+163,"GSP_162",162,"ALNE_P","ALNE_P","Alness",1
+164,"GSP_163",163,"ARBR_P","ARBR_P","Arbroath",29
+165,"GSP_164",164,"ARMO_P","ARMO_P","Ardmore",2
+166,"GSP_165",165,"AYRR","AYRR","Ayr",2
+167,"GSP_166",166,"BAIN","BAIN","Bainsford",2
+168,"GSP_167",167,"BAGA","BAGA","Bathgate",3
+169,"GSP_168",168,"BEAU_P","BEAU_P","Beauly",3
+170,"GSP_169",169,"BERW","BERW","Berwick",4
+171,"GSP_170",170,"BOAG_P","BOAG_P","Boat of Garten",1
+172,"GSP_171",171,"BONN","BONN","Bonnybridge",2
+173,"GSP_172",172,"BRAC_P","BRAC_P","Braco West",6
+174,"GSP_173",173,"BRAP","BRAP","Braehead Park",1
+175,"GSP_174",174,"BRID_P","BRID_P","Bridge of Dun",5
+176,"GSP_175",175,"BROA_P","BROA_P","Broadford",2
+177,"GSP_176",176,"BROR_P","BROR_P","Brora",1
+178,"GSP_177",177,"BROX","BROX","Broxburn",1
+179,"GSP_178",178,"BUMU_P","BUMU_P","Burghmuir",7
+180,"GSP_179",179,"CATY","CATY","Carntyne",3
+181,"GSP_180",180,"CAAD_P","CAAD_P","Carradale",3
+182,"GSP_181",181,"WISH","WISH","Wishaw",2
+183,"GSP_182",182,"CASS_P","CASS_P","Cassley",0
+184,"GSP_183",183,"CEAN_P","CEAN_P","Ceannacroc",0
+185,"GSP_184",184,"CHAP","CHAP","Chapelcross",3
+186,"GSP_185",185,"CHAR_P","CHAR_P","Charleston",0
+187,"GSP_186",186,"CHAS","CHAS","Charlotte Street",0
+188,"GSP_187",187,"CLAY_P","CLAY_P","Clayhills",0
+189,"GSP_188",188,"CLYM","CLYM","Clydeâ??s Mill",2
+190,"GSP_189",189,"COCK","COCK","Cockenzie",4
+191,"GSP_190",190,"COYL","COYL","Coylton",3
+192,"GSP_191",191,"CRAI_P","CRAI_P","Craigiebuckler",2
+193,"GSP_192",192,"CUMB","CUMB","Cumbernauld",2
+194,"GSP_193",193,"CUPA","CUPA","Cupar",9
+195,"GSP_194",194,"CURR","CURR","Currie",1
+196,"GSP_195",195,"DEVM","DEVM","Devol Moor",1
+197,"GSP_196",196,"DEVO","DEVO","Devonside",13
+198,"GSP_197",197,"DEWP","DEWP","Dewar Place",0
+199,"GSP_198",198,"DOUN_P","DOUN_P","Dounreay",0
+200,"GSP_199",199,"DRUM","DRUM","Drumchapel",1
+201,"GSP_200",200,"DRCR","DRCR","Drumcross",2
+202,"GSP_201",201,"DUDH_P","DUDH_P","Dudhope",2
+203,"GSP_202",202,"DUNB","DUNB","Dunbar",4
+204,"GSP_203",203,"DUBE_P","DUBE_P","Dunbeath",0
+205,"GSP_204",204,"DUNF","DUNF","Dunfermline",2
+206,"GSP_205",205,"DUNO_P","DUNO_P","Dunoon",1
+207,"GSP_206",206,"DUGR_P","DUGR_P","Dunvegan",0
+208,"GSP_207",207,"DYCE_P","DYCE_P","Dyce",3
+209,"GSP_208",208,"EKIL","EKIL","East Kilbride",1
+210,"GSP_209",209,"EKIS","EKIS","East Kilbride South",1
+211,"GSP_210",210,"EERH","EERH","Easterhouse",2
+212,"GSP_211",211,"ECCL","ECCL","Eccles",5
+213,"GSP_212",212,"ELDE","ELDE","Elderslie",1
+214,"GSP_213",213,"ELGI_P","ELGI_P","Elgin",7
+215,"GSP_214",214,"ERSK","ERSK","Erskine",1
+216,"GSP_215",215,"FASN_P","FASN_P","Fasnakyle",0
+217,"GSP_216",216,"FIDD_P","FIDD_P","Fiddes",1
+218,"GSP_217",217,"FRAS_P","FRAS_P","Fraserburgh",13
+219,"GSP_218",218,"FAUG_P","FAUG_P","Fort Augustus",0
+220,"GSP_219",219,"FWIL_P","FWIL_P","Fort William",1
+221,"GSP_220",220,"GALA","GALA","Galashiels",5
+222,"GSP_221",221,"GIFF","GIFF","Giffnock",1
+223,"GSP_222",222,"GLAG_P","GLAG_P","Glenagnes",0
+224,"GSP_223",223,"GLNI","GLNI","Glenniston",0
+225,"GSP_224",224,"GLLU","GLLU","Glenluce",1
+226,"GSP_225",225,"GLRO","GLRO","Glenrothes",5
+227,"GSP_226",226,"GORG","GORG","Gorgie",0
+228,"GSP_227",227,"GOVA","GOVA","Govan",1
+229,"GSP_228",228,"GRUB_P","GRUB_P","Grudie Bridge",0
+230,"GSP_229",229,"HAGR","HAGR","Haggs Road",0
+231,"GSP_230",230,"HAWI","HAWI","Hawick",2
+232,"GSP_231",231,"HELE","HELE","Helensburgh",1
+233,"GSP_232",232,"HUER","HUER","Hunterston Farm",1
+234,"GSP_233",233,"INKE","INKE","Inverkeithing",3
+235,"GSP_234",234,"INNE_P","INNE_P","Inverness",5
+236,"GSP_235",235,"JOHN","JOHN","Johnstone",2
+237,"GSP_236",236,"KAIM","KAIM","Kaimes",5
+238,"GSP_237",237,"KEIT_P","KEIT_P","Keith",3
+239,"GSP_238",238,"KIIN_P","KIIN_P","Killin",0
+240,"GSP_239",239,"KIER","KIER","Killermont",0
+241,"GSP_240",240,"KILS","KILS","Kilmarnock South",0
+242,"GSP_241",241,"KILT","KILT","Kilmarnock Town",3
+243,"GSP_242",242,"KILW","KILW","Kilwinning",3
+244,"GSP_243",243,"KINL_P","KINL_P","Kinlochleven",0
+245,"GSP_244",244,"KINT_P","KINT_P","Kintore",13
+246,"GSP_245",245,"LAIR_P","LAIR_P","Lairg",0
+247,"GSP_246",246,"LEVE","LEVE","Leven",1
+248,"GSP_247",247,"LINM","LINM","Linnmill",5
+249,"GSP_248",248,"LING","LING","Livingston East",2
+250,"GSP_249",249,"LUNA_P","LUNA_P","Lunanhead",15
+251,"GSP_250",250,"LYND_P","LYND_P","Lyndhurst",2
+252,"GSP_251",251,"MAYB","MAYB","Maybole",1
+253,"GSP_252",252,"MILC_P","MILC_P","Milton of Craigie",3
+254,"GSP_253",253,"NAIR_P","NAIR_P","Nairn",3
+255,"GSP_254",254,"NEAR","NEAR","Newarthill",3
+256,"GSP_255",255,"NETS","NETS","Newton Stewart",1
+257,"GSP_256",256,"PAIS","PAIS","Paisley",2
+258,"GSP_257",257,"PART","PART","Partick",0
+259,"GSP_258",258,"PEHS_P","PEHS_P","Peterhead Shell",0
+260,"GSP_259",259,"PERS_P","PERS_P","Persley",1
+261,"GSP_260",260,"PEHG_P","PEHG_P","Peterhead Grange",0
+262,"GSP_261",261,"PORA_P","PORA_P","Port Ann",1
+263,"GSP_262",262,"PORD","PORD","Port Dundas",2
+264,"GSP_263",263,"POOB","POOB","Portobello",3
+265,"GSP_264",264,"RANN_P","RANN_P","Rannoch",0
+266,"GSP_265",265,"RAVE","RAVE","Ravenscraig",6
+267,"GSP_266",266,"REDH","REDH","Redhouse",6
+268,"GSP_267",267,"REDM_P","REDM_P","Redmoss",1
+269,"GSP_268",268,"SHIN_P","SHIN_P","Shin",0
+270,"GSP_269",269,"SHRU","SHRU","Shrubhill",2
+271,"GSP_270",270,"SIGH","SIGH","Sighthill",0
+272,"GSP_271",271,"SLOY_P","SLOY_P","Sloy",2
+273,"GSP_272",272,"SPAV","SPAV","Spango Valley",1
+274,"GSP_273",273,"SFEG_P","SFEG_P","St Fergus Gas Terminal",3
+275,"GSP_274",274,"SFIL_P","SFIL_P","St Fillans",1
+276,"GSP_275",275,"SANX","SANX","St Andrews Cross",0
+277,"GSP_276",276,"STHA","STHA","Strathaven",2
+278,"GSP_277",277,"STLE","STLE","Strathleven",2
+279,"GSP_278",278,"STRI_P","STRI_P","Strichen",0
+280,"GSP_279",279,"TARL_P","TARL_P","Tarland",7
+281,"GSP_280",280,"TAYN_P","TAYN_P","Taynuilt",2
+282,"GSP_281",281,"TELR","TELR","Telford Road",2
+283,"GSP_282",282,"TONG","TONG","Tongland",2
+284,"GSP_283",283,"TUMB_P","TUMB_P","Tummel Bridge",1
+285,"GSP_284",284,"WGEO","WGEO","West George Street",0
+286,"GSP_285",285,"WFIE","WFIE","Westfield",1
+287,"GSP_286",286,"WHHO","WHHO","Whitehouse",1
+288,"GSP_287",287,"WIOW_P","WIOW_P","Willowdale",3
+289,"GSP_288",288,"WOHI_P","WOHI_P","Woodhill",1
+290,"GSP_289",289,"BRLE_1","BRLE_1","Bramley",110
+291,"GSP_290",290,"NEWX_6","NEWX_6","New Cross",4
+292,"GSP_291",291,"CAPEA1","CAPEA1","Capenhurst",12
+293,"GSP_292",292,"BLYTH132","BLYTH132","Blyth 132kV",5
+294,"GSP_293",293,"PITS_3","PITS_3","Pitsmoor",1
+295,"GSP_294",294,"SELL_1","SELL_1","Sellindge",62
+296,"GSP_295",295,"CHSI_1","CHSI_1","Chessington",20
+297,"GSP_296",296,"ELST_1","ELST_1","Elstree",7
+298,"GSP_297",297,"KEMS_1","KEMS_1","Kemsley",92
+299,"GSP_298",298,"TILBB_1","TILBB_1","Tilbury",7
+300,"GSP_299",299,"CARR_1","CARR_1","Carrington",17
+301,"GSP_300",300,"CONQA1","CONQA1","Connahs Quay",75
+302,"GSP_301",301,"NECE_1","NECE_1","Nechells",25
+303,"GSP_302",302,"COAT","COAT","Coatbridge",1
+304,"GSP_303",303,"CROO","CROO","Crookston",1
+305,"GSP_304",304,"DUMF","DUMF","Dumfries",6
+306,"GSP_305",305,"GRMO","GRMO","Grangemouth",1
+307,"GSP_306",306,"KILB","KILB","Kilbowie",2
+308,"GSP_307",307,"SACO","SACO","Saltcoats",7
+309,"GSP_308",308,"CREB_1","CREB_1","Creyke Beck",61
+310,"GSP_309",309,"SALT_1","SALT_1","Saltend North",6
+311,"GSP_310",310,"LITT_C","LITT_C","Littlebrook (_C)",3
+312,"GSP_311",311,"LITT_J","LITT_J","Littlebrook (_J)",7
+313,"GSP_312",312,"STAH_1","STAH_1","Stanah",39
+314,"GSP_313",313,"WISD_6","WISD_6","Willesden 66kV (_C)",0
+315,"GSP_314",314,"ACTL_C","ACTL_C","Willesden 66kV (_C)",0
+316,"GSP_315",315,"ACTL_2","ACTL_2","Willesden 66kV (_H)",2
+317,"GSP_316",316,"CBNK_H","CBNK_H","Willesden 66kV (_H)",0
+318,"GSP_317",317,"GREE_H","GREE_H","Willesden 66kV (_H)",0
+319,"GSP_318",318,"PERI_H","PERI_H","Willesden 66kV (_H)",0
+320,"GSP_319",319,"AMEM_1","AMEM_1","Amersham Main",89
+321,"GSP_320",320,"LOUD_H","LOUD_H","Loudwater",2
+322,"GSP_321",321,"BRFO_1","BRFO_1","Bramford",291
+323,"GSP_322",322,"CANTN1","CANTN1","Canterbury",106
+324,"GSP_323",323,"RICH1","RICH1","Richborough",103
+325,"GSP_324",324,"NORM_1","NORM_1","Norwich Main",420
+326,"GSP_325",325,"WALP_1","WALP_1","Walpole (_A)",166
+327,"GSP_326",326,"WALP_B","WALP_B","Walpole (_B)",98
+328,"GSP_327",327,"STEN_1","STEN_1","Stella North",17
+329,"GSP_328",328,"STES_1","STES_1","Stella South",18
+330,"GSP_329",329,"HARK_1","HARK_1","Harker",86
+331,"GSP_330",330,"HEYS_1","HEYS_1","Heysham",39
+332,"GSP_331",331,"HEYS1","HEYS1","Heysham",0
+333,"GSP_332",332,"CLAC_P","CLAC_P","Clachan",0
+334,"GSP_333",333,"ARDK_P","ARDK_P","Ardkinglas",0
+335,"GSP_334",334,"MELK_1","MELK_1","Melksham",519
+336,"GSP_335",335,"KNAR","KNAR","Knaresborough",29
+337,"GSP_336",336,"WYLF_1","WYLF_1","Wylfa",31
+338,"GSP_337",337,"DALM3","DALM3","Dalmarnock",2
+339,"GSP_338",338,"FINN","FINN","Finnieston",0
