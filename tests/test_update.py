@@ -44,9 +44,11 @@ def test_update_one_gsp(db_session):
 
     update_forecast_latest(forecast=forecast_sql, session=db_session)
 
+    forecast_values_latest = db_session.query(ForecastValueLatestSQL).all()
     assert len(db_session.query(ForecastValueSQL).all()) == 2
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
+    assert len(forecast_values_latest) == 2
     assert len(db_session.query(ForecastSQL).all()) == 2
+    assert forecast_values_latest[0].expected_power_generation_megawatts == 2
 
     # new forecast is made
     # create and add
