@@ -1,14 +1,14 @@
 """ Method to update latest forecast values """
 import logging
 from datetime import datetime, timezone
-from typing import List
+from typing import Optional, List
 
 from sqlalchemy import inspect
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL
-from nowcasting_datamodel.read.read import get_latest_forecast, get_model
+from nowcasting_datamodel.read.read import get_latest_forecast, get_model, get_latest_forecast_for_gsps
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ def upsert(session: Session, model, rows: List[dict]):
     session.execute(stmt, rows)
 
 
-def update_forecast_latest(forecast: ForecastSQL, session: Session):
+def update_forecast_latest(forecast: ForecastSQL, session: Session, forecast_historic: Optional[ForecastSQL] = None):
     """
     Update the forecast_values table
 
@@ -80,7 +80,8 @@ def update_forecast_latest(forecast: ForecastSQL, session: Session):
     """
 
     # 1. get forecast object
-    forecast_historic = get_historic_forecast(session=session, forecast=forecast)
+    if forecast_historic is None:
+        forecast_historic = get_historic_forecast(session=session, forecast=forecast)
 
     # 2. create forecast value latest
     forecast_values_dict = []
@@ -108,5 +109,14 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     Update all latest forecasts
     """
 
+    # get all latest forecasts
+    forecasts_historic = get_latest_forecast_for_gsps(session=session, historic=True)
+
     for forecast in forecasts:
-        update_forecast_latest(forecast=forecast, session=session)
+
+        # chose the correct forecast historic
+        gsp_id = forecast.location.gsp_id
+        forecast_historic = [forecast for forecast in forecasts_historic if forecast.location.gsp_id == gsp_id]
+        forecast_historic = forecast_historic[0]
+
+        update_forecast_latest(forecast=forecast, session=session, forecast_historic=forecast_historic)
