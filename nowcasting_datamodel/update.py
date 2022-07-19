@@ -10,8 +10,8 @@ from sqlalchemy.orm.session import Session
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL
 from nowcasting_datamodel.read.read import (
     get_latest_forecast,
-    get_model,
     get_latest_forecast_for_gsps,
+    get_model,
 )
 
 logger = logging.getLogger(__name__)
