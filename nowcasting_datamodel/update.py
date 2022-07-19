@@ -116,14 +116,16 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     """
 
     # get all latest forecasts
-    forecasts_historic = get_latest_forecast_for_gsps(session=session, historic=True)
+    forecasts_historic_all_gsps = get_latest_forecast_for_gsps(session=session, historic=True)
 
     for forecast in forecasts:
 
         # chose the correct forecast historic
         gsp_id = forecast.location.gsp_id
         forecast_historic = [
-            forecast for forecast in forecasts_historic if forecast.location.gsp_id == gsp_id
+            forecast_historic_one_gsps
+            for forecast_historic_one_gsps in forecasts_historic_all_gsps
+            if forecast.location.gsp_id == gsp_id
         ]
         if len(forecast_historic) == 0:
             forecast_historic = None
