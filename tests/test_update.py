@@ -32,9 +32,9 @@ def test_update_one_gsp(db_session):
 
     assert len(db_session.query(ForecastSQL).all()) == 0
 
-    f1 = ForecastValueSQL(target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1)
+    f1 = ForecastValueSQL(target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1.1)
     f2 = ForecastValueSQL(
-        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2
+        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2.1
     )
     f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f1, f2])
     forecast_sql = f[0]
@@ -48,7 +48,7 @@ def test_update_one_gsp(db_session):
     assert len(db_session.query(ForecastValueSQL).all()) == 2
     assert len(forecast_values_latest) == 2
     assert len(db_session.query(ForecastSQL).all()) == 2
-    assert forecast_values_latest[0].expected_power_generation_megawatts == 2
+    assert forecast_values_latest[0].expected_power_generation_megawatts == 1.1
 
     # new forecast is made
     # create and add
@@ -61,9 +61,11 @@ def test_update_one_gsp(db_session):
     forecast_sql = f[0]
     update_forecast_latest(forecast=forecast_sql, session=db_session)
 
+    forecast_values_latest = db_session.query(ForecastValueLatestSQL).all()
     assert len(db_session.query(ForecastValueSQL).all()) == 4
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
+    assert len(forecast_values_latest) == 2
     assert len(db_session.query(ForecastSQL).all()) == 3
+    assert forecast_values_latest[0].expected_power_generation_megawatts == 3
 
     # check that for gsp_id the results look right
     forecast_latest_values = (
