@@ -116,7 +116,9 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     """
 
     # get all latest forecasts
-    forecasts_historic_all_gsps = get_latest_forecast_for_gsps(session=session, historic=True)
+    forecasts_historic_all_gsps = get_latest_forecast_for_gsps(
+        session=session, historic=True, preload_children=True
+    )
 
     for forecast in forecasts:
 
