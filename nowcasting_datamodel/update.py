@@ -1,7 +1,7 @@
 """ Method to update latest forecast values """
 import logging
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import List, Optional
 
 from sqlalchemy import inspect
 from sqlalchemy.dialects.postgresql import insert
