@@ -8,7 +8,11 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL
-from nowcasting_datamodel.read.read import get_latest_forecast, get_model, get_latest_forecast_for_gsps
+from nowcasting_datamodel.read.read import (
+    get_latest_forecast,
+    get_model,
+    get_latest_forecast_for_gsps,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +70,9 @@ def upsert(session: Session, model, rows: List[dict]):
     session.execute(stmt, rows)
 
 
-def update_forecast_latest(forecast: ForecastSQL, session: Session, forecast_historic: Optional[ForecastSQL] = None):
+def update_forecast_latest(
+    forecast: ForecastSQL, session: Session, forecast_historic: Optional[ForecastSQL] = None
+):
     """
     Update the forecast_values table
 
@@ -116,7 +122,11 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
 
         # chose the correct forecast historic
         gsp_id = forecast.location.gsp_id
-        forecast_historic = [forecast for forecast in forecasts_historic if forecast.location.gsp_id == gsp_id]
+        forecast_historic = [
+            forecast for forecast in forecasts_historic if forecast.location.gsp_id == gsp_id
+        ]
         forecast_historic = forecast_historic[0]
 
-        update_forecast_latest(forecast=forecast, session=session, forecast_historic=forecast_historic)
+        update_forecast_latest(
+            forecast=forecast, session=session, forecast_historic=forecast_historic
+        )
