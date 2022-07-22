@@ -283,7 +283,6 @@ def get_latest_forecast_for_gsps(
             query = query.distinct(LocationSQL.gsp_id)
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
         order_by_cols.append(LocationSQL.gsp_id)
-    query = query.join(LocationSQL)
 
     # filter on historic
     query = query.filter(ForecastSQL.historic == historic)
@@ -301,6 +300,8 @@ def get_latest_forecast_for_gsps(
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
         if not historic:
             query = query.options(joinedload(ForecastSQL.forecast_values))
+    else:
+        query = query.join(LocationSQL)
 
     order_by_cols.append(desc(ForecastSQL.created_utc))
     query = query.order_by(*order_by_cols)
