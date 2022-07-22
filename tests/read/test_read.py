@@ -307,7 +307,6 @@ def test_get_national_latest_forecast(db_session):
     forecast_values_read = get_latest_national_forecast(session=db_session)
     assert forecast_values_read == f2
 
-
 def test_get_pv_system(db_session_pv):
 
     pv_system = PVSystem.from_orm(make_fake_pv_system())

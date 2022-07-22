@@ -117,31 +117,38 @@ def test_get_gsp_yield(db_session):
     gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=3)
     gsp_yield_3_sql = gsp_yield_3.to_orm()
 
-    gsp_sql_1: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
+    location: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
 
     # add pv system to yield object
-    gsp_yield_1_sql.location = gsp_sql_1
-    gsp_yield_2_sql.location = gsp_sql_1
-    gsp_yield_3_sql.location = gsp_sql_1
+    gsp_yield_1_sql.location = location
+    gsp_yield_2_sql.location = location
+    gsp_yield_3_sql.location = location
 
     # add to database
     db_session.add(gsp_yield_1_sql)
     db_session.add(gsp_yield_2_sql)
     db_session.add(gsp_yield_3_sql)
-    db_session.add(gsp_sql_1)
+    db_session.add(location)
 
     db_session.commit()
 
-    gsps = get_gsp_yield(session=db_session, gsp_ids=[1], start_datetime_utc=datetime(2022, 1, 1))
-    assert len(gsps) == 3
+    gsp_yields = get_gsp_yield(session=db_session, gsp_ids=[1], start_datetime_utc=datetime(2022, 1, 1))
+    assert len(gsp_yields) == 3
+    logger.debug('Check location ids')
+    gsp_yields[0].location.id = location.id
+    gsp_yields[1].location.id = location.id
+    gsp_yields[2].location.id = location.id
 
-    gsps = get_gsp_yield(
+    gsp_yields = get_gsp_yield(
         session=db_session,
         gsp_ids=[1],
         start_datetime_utc=datetime(2022, 1, 1),
         end_datetime_utc=datetime(2022, 1, 1, 12),
     )
-    assert len(gsps) == 2
+    assert len(gsp_yields) == 2
+    logger.debug('Check location ids')
+    gsp_yields[0].location.id = location.id
+    gsp_yields[1].location.id = location.id
 
 
 def test_get_gsp_yield_regime(db_session):

@@ -293,6 +293,8 @@ def get_latest_forecast_for_gsps(
             query=query, start_target_time=start_target_time, historic=historic
         )
 
+    query = query.join(LocationSQL)
+
     # option to preload values, makes querying quicker
     if preload_children:
         query = query.options(joinedload(ForecastSQL.location))
@@ -300,8 +302,6 @@ def get_latest_forecast_for_gsps(
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
         if not historic:
             query = query.options(joinedload(ForecastSQL.forecast_values))
-    else:
-        query = query.join(LocationSQL)
 
     order_by_cols.append(desc(ForecastSQL.created_utc))
     query = query.order_by(*order_by_cols)
