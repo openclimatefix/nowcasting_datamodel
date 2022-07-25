@@ -129,7 +129,7 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     for forecast in forecasts:
 
         # chose the correct forecast historic
-        logger.debug(f"Getting gsp")
+        logger.debug("Getting gsp")
         gsp_id = forecast.location.gsp_id
         logger.debug(f"Updating forecast for gsp_id {gsp_id}")
 
