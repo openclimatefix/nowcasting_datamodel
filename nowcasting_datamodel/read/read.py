@@ -300,8 +300,7 @@ def get_latest_forecast_for_gsps(
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
-        if not historic:
-            query = query.options(joinedload(ForecastSQL.forecast_values))
+        query = query.options(joinedload(ForecastSQL.forecast_values))
 
     order_by_cols.append(desc(ForecastSQL.created_utc))
     query = query.order_by(*order_by_cols)
