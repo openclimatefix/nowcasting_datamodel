@@ -4,8 +4,7 @@ from datetime import datetime
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Session, joinedload
 
 from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
