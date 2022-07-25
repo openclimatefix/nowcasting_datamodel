@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
-from sqlalchemy.orm import contains_eager, joinedload
+from sqlalchemy.orm import joinedload
 
 from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
