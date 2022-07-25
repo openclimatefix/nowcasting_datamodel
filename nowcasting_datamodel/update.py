@@ -120,6 +120,7 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     forecasts_historic_all_gsps = get_latest_forecast_for_gsps(
         session=session, historic=True, preload_children=True
     )
+    # get all these ids, so we onl have to load it once
     historic_gsp_ids = [forecast.location.gsp_id for forecast in forecasts_historic_all_gsps]
     logger.debug(f"Found {len(forecasts_historic_all_gsps)} historic forecasts")
 
