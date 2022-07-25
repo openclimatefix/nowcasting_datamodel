@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
@@ -106,6 +106,7 @@ def get_gsp_yield(
     # start main query
     query = session.query(GSPYieldSQL)
     query = query.join(LocationSQL)
+    query = query.options(joinedload(GSPYieldSQL.location))
     query = query.where(
         LocationSQL.id == GSPYieldSQL.location_id,
     )

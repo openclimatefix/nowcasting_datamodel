@@ -116,29 +116,37 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
     """
 
     # get all latest forecasts
-    logger.debug('Getting all latest forecasts')
+    logger.debug("Getting all latest forecasts")
     forecasts_historic_all_gsps = get_latest_forecast_for_gsps(
         session=session, historic=True, preload_children=True
     )
+    # get all these ids, so we onl have to load it once
+    historic_gsp_ids = [forecast.location.gsp_id for forecast in forecasts_historic_all_gsps]
+    logger.debug(f"Found {len(forecasts_historic_all_gsps)} historic forecasts")
+
+    logger.debug(f"There are {len(forecasts)} forecasts that we will update")
 
     for forecast in forecasts:
 
         # chose the correct forecast historic
+        logger.debug("Getting gsp")
         gsp_id = forecast.location.gsp_id
-        logger.debug(f'Updating forecast for gsp_id {gsp_id}')
+        logger.debug(f"Updating forecast for gsp_id {gsp_id}")
 
         forecast_historic = [
             forecast_historic_one_gsps
-            for forecast_historic_one_gsps in forecasts_historic_all_gsps
-            if forecast_historic_one_gsps.location.gsp_id == gsp_id
+            for forecast_historic_one_gsps, historic_gsp_id in zip(
+                forecasts_historic_all_gsps, historic_gsp_ids
+            )
+            if historic_gsp_id == gsp_id
         ]
         if len(forecast_historic) == 0:
             forecast_historic = None
-            logger.debug(f'Could not find historic, so will be creating one (GSP id{gsp_id})')
+            logger.debug(f"Could not find historic, so will be creating one (GSP id{gsp_id})")
         else:
             forecast_historic = forecast_historic[0]
 
-            logger.debug(f'Found historic for GSP id {gsp_id}')
+            logger.debug(f"Found historic for GSP id {gsp_id}")
 
         update_forecast_latest(
             forecast=forecast, session=session, forecast_historic=forecast_historic

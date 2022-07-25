@@ -5,7 +5,7 @@ from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
-from nowcasting_datamodel.update import update_forecast_latest
+from nowcasting_datamodel.update import update_all_forecast_latest, update_forecast_latest
 
 
 def test_model_duplicate_key(db_session):
@@ -73,6 +73,17 @@ def test_update_one_gsp(db_session):
     )
     assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
     assert forecast_latest_values[0].forecast_id == forecast_latest_values[1].forecast_id
+
+
+def test_update_all_forecast_latest(db_session):
+    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f1)
+
+    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f2)
+
+    update_all_forecast_latest(forecasts=f1, session=db_session)
+    update_all_forecast_latest(forecasts=f2, session=db_session)
 
 
 def test_update_one_gsp_wtih_time_step(db_session):
