@@ -132,9 +132,11 @@ def test_get_gsp_yield(db_session):
 
     db_session.commit()
 
-    gsp_yields = get_gsp_yield(session=db_session, gsp_ids=[1], start_datetime_utc=datetime(2022, 1, 1))
+    gsp_yields = get_gsp_yield(
+        session=db_session, gsp_ids=[1], start_datetime_utc=datetime(2022, 1, 1)
+    )
     assert len(gsp_yields) == 3
-    logger.debug('Check location ids')
+    logger.debug("Check location ids")
     gsp_yields[0].location.id = location.id
     gsp_yields[1].location.id = location.id
     gsp_yields[2].location.id = location.id
@@ -146,7 +148,7 @@ def test_get_gsp_yield(db_session):
         end_datetime_utc=datetime(2022, 1, 1, 12),
     )
     assert len(gsp_yields) == 2
-    logger.debug('Check location ids')
+    logger.debug("Check location ids")
     gsp_yields[0].location.id = location.id
     gsp_yields[1].location.id = location.id
 
