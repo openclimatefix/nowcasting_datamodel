@@ -5,7 +5,7 @@ from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models.models import ForecastSQL, ForecastValueLatestSQL, ForecastValueSQL
-from nowcasting_datamodel.update import update_forecast_latest, update_all_forecast_latest
+from nowcasting_datamodel.update import update_all_forecast_latest, update_forecast_latest
 
 
 def test_model_duplicate_key(db_session):
