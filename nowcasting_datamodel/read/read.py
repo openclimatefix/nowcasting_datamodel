@@ -121,6 +121,7 @@ def get_latest_forecast(
     gsp_id: Optional[int] = None,
     historic: bool = False,
     start_target_time: Optional[datetime] = None,
+    forecast_horizon_minutes: Optional[int] = None,
 ) -> ForecastSQL:
     """
     Read forecasts
@@ -144,7 +145,11 @@ def get_latest_forecast(
         gsp_ids = None
 
     forecasts = get_latest_forecast_for_gsps(
-        session=session, start_target_time=start_target_time, historic=historic, gsp_ids=gsp_ids
+        session=session,
+        start_target_time=start_target_time,
+        historic=historic,
+        gsp_ids=gsp_ids,
+        forecast_horizon_minutes=forecast_horizon_minutes,
     )
 
     if forecasts is None:
@@ -310,7 +315,7 @@ def get_latest_forecast_for_gsps(
         )
         query = query.join(ForecastValueSQL).filter(
             ForecastValueSQL.target_time - ForecastValueSQL.created_utc
-            >= text(f"interval '{forecast_horizon_minutes} hour'")
+            >= text(f"interval '{forecast_horizon_minutes} minute'")
         )
 
     query = query.join(LocationSQL)
