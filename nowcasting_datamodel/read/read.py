@@ -212,6 +212,7 @@ def get_all_gsp_ids_latest_forecast(
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
+    forecast_horizon_hours: Optional[int] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -235,6 +236,7 @@ def get_all_gsp_ids_latest_forecast(
         preload_children=preload_children,
         historic=historic,
         gsp_ids=list(range(0, N_GSP + 1)),
+        forecast_horizon_hours=forecast_horizon_hours,
     )
 
 
@@ -244,6 +246,7 @@ def get_latest_forecast_for_gsps(
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
+    forecast_horizon_hours: Optional[int] = None,
     gsp_ids: List[int] = None,
 ):
     """
@@ -256,6 +259,9 @@ def get_latest_forecast_for_gsps(
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
+    :param forecast_horizon_hours: Optional filter on forecast horizon. For example
+        forecast_horizon_hours=2, means load the forecast than was made 2 hours before the
+        target time. Note this only works for non-historic data.
 
     return: List of forecasts objects from database
 
@@ -291,6 +297,17 @@ def get_latest_forecast_for_gsps(
     if start_target_time is not None:
         query = filter_query_on_target_time(
             query=query, start_target_time=start_target_time, historic=historic
+        )
+
+    from sqlalchemy import text
+
+    if forecast_horizon_hours is not None:
+        assert historic is False, Exception(
+            "Loading a forecast horizon only works on non latest data."
+        )
+        query = query.join(ForecastValueSQL).filter(
+            ForecastValueSQL.target_time - ForecastValueSQL.created_utc
+            >= text(f"interval '{forecast_horizon_hours} hour'")
         )
 
     query = query.join(LocationSQL)
