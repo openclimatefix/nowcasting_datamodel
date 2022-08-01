@@ -8,7 +8,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 from sqlalchemy.orm import contains_eager, joinedload
 from sqlalchemy.orm.session import Session
 
@@ -307,13 +307,16 @@ def get_latest_forecast_for_gsps(
             query=query, start_target_time=start_target_time, historic=historic
         )
 
-    from sqlalchemy import text
-
     if forecast_horizon_minutes is not None:
         assert historic is False, Exception(
             "Loading a forecast horizon only works on non latest data."
         )
-        query = query.join(ForecastValueSQL).filter(
+
+        # need to join the ForecastValueSQL table
+        if start_target_time is None:
+            query = query.join(ForecastValueSQL)
+                
+        query = query.filter(
             ForecastValueSQL.target_time - ForecastValueSQL.created_utc
             >= text(f"interval '{forecast_horizon_minutes} minute'")
         )
