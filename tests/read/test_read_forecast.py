@@ -57,7 +57,7 @@ def test_get_latest_forecast_created_utc_gsp(db_session):
     db_session.add_all([f1, f2])
     db_session.commit()
 
-    f = get_latest_forecast_for_gsps(session=db_session, forecast_horizon_hours=2, gsp_ids=[1])
+    f = get_latest_forecast_for_gsps(session=db_session, forecast_horizon_minutes=120, gsp_ids=[1])
     assert len(f) == 1
     assert f[0].forecast_values[0].created_utc == datetime(2022, 1, 1, 10, tzinfo=timezone.utc)
     assert f[0].forecast_values[0].target_time == datetime(2022, 1, 1, 12, tzinfo=timezone.utc)
