@@ -261,8 +261,8 @@ def get_latest_forecast_for_gsps(
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
     :param forecast_horizon_hours: Optional filter on forecast horizon. For example
-        forecast_horizon_hours=2, means load the forecast than was made 2 hours before the target time.
-        Note this only works for non-historic data.
+        forecast_horizon_hours=2, means load the forecast than was made 2 hours before the
+        target time. Note this only works for non-historic data.
 
     return: List of forecasts objects from database
 
