@@ -12,7 +12,6 @@ from sqlalchemy import desc
 from sqlalchemy.orm import contains_eager, joinedload
 from sqlalchemy.orm.session import Session
 
-
 from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import (
     ForecastSQL,
@@ -301,6 +300,7 @@ def get_latest_forecast_for_gsps(
         )
 
     from sqlalchemy import text
+
     if forecast_horizon_hours is not None:
         assert historic is False, Exception(
             "Loading a forecast horizon only works on non latest data."

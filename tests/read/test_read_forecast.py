@@ -24,11 +24,11 @@ from nowcasting_datamodel.models import (
 )
 from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
-    get_latest_forecast_for_gsps,
     get_all_locations,
     get_forecast_values,
     get_latest_forecast,
     get_latest_forecast_created_utc,
+    get_latest_forecast_for_gsps,
     get_latest_input_data_last_updated,
     get_latest_national_forecast,
     get_latest_status,
