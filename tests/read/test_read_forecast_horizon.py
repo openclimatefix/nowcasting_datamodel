@@ -1,12 +1,8 @@
 import logging
 from datetime import datetime, timezone
 
-from nowcasting_datamodel.fake import (
-    make_fake_forecast,
-)
-from nowcasting_datamodel.read.read import (
-    get_forecast_values,
-)
+from nowcasting_datamodel.fake import make_fake_forecast
+from nowcasting_datamodel.read.read import get_forecast_values
 
 logger = logging.getLogger(__name__)
 
