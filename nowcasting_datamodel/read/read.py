@@ -121,7 +121,6 @@ def get_latest_forecast(
     gsp_id: Optional[int] = None,
     historic: bool = False,
     start_target_time: Optional[datetime] = None,
-    forecast_horizon_minutes: Optional[int] = None,
 ) -> ForecastSQL:
     """
     Read forecasts
@@ -149,7 +148,6 @@ def get_latest_forecast(
         start_target_time=start_target_time,
         historic=historic,
         gsp_ids=gsp_ids,
-        forecast_horizon_minutes=forecast_horizon_minutes,
     )
 
     if forecasts is None:
@@ -217,7 +215,6 @@ def get_all_gsp_ids_latest_forecast(
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
-    forecast_horizon_minutes: Optional[int] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -228,9 +225,6 @@ def get_all_gsp_ids_latest_forecast(
         Filter: forecast values target time should be larger than this datetime
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
-    :param forecast_horizon_minutes: Optional filter on forecast horizon. For example
-        forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
-        target time. Note this only works for non-historic data.
 
     return: List of forecasts objects from database
     """
@@ -244,7 +238,6 @@ def get_all_gsp_ids_latest_forecast(
         preload_children=preload_children,
         historic=historic,
         gsp_ids=list(range(0, N_GSP + 1)),
-        forecast_horizon_minutes=forecast_horizon_minutes,
     )
 
 
@@ -254,7 +247,6 @@ def get_latest_forecast_for_gsps(
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
-    forecast_horizon_minutes: Optional[int] = None,
     gsp_ids: List[int] = None,
 ):
     """
@@ -267,19 +259,8 @@ def get_latest_forecast_for_gsps(
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
-    :param forecast_horizon_minutes: Optional filter on forecast horizon. For example
-        forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
-        target time. Note this only works for non-historic data.
+ List of forecasts objects from database
 
-    return: List of forecasts objects from database
-
-    :param session:
-    :param start_created_utc:
-    :param start_target_time:
-    :param preload_children:
-    :param historic:
-    :param gsp_ids:
-    :return:
     """
     order_by_cols = []
 
@@ -305,20 +286,6 @@ def get_latest_forecast_for_gsps(
     if start_target_time is not None:
         query = filter_query_on_target_time(
             query=query, start_target_time=start_target_time, historic=historic
-        )
-
-    if forecast_horizon_minutes is not None:
-        assert historic is False, Exception(
-            "Loading a forecast horizon only works on non latest data."
-        )
-
-        # need to join the ForecastValueSQL table
-        if start_target_time is None:
-            query = query.join(ForecastValueSQL)
-                
-        query = query.filter(
-            ForecastValueSQL.target_time - ForecastValueSQL.created_utc
-            >= text(f"interval '{forecast_horizon_minutes} minute'")
         )
 
     query = query.join(LocationSQL)
@@ -377,6 +344,7 @@ def get_forecast_values(
     session: Session,
     gsp_id: Optional[int] = None,
     start_datetime: Optional[datetime] = None,
+    forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
 ) -> List[ForecastValueSQL]:
     """
@@ -389,6 +357,11 @@ def get_forecast_values(
         If None is given then all are returned.
     :param only_return_latest: Optional to only return the latest forecast, not all of them.
         Default is False
+    :param forecast_horizon_minutes: Optional filter on forecast horizon. For example
+        forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
+        target time. Note this only works for non-historic data.
+
+    return:
 
     return: List of forecasts values objects from database
 
@@ -407,6 +380,14 @@ def get_forecast_values(
         created_utc_filter = start_datetime - timedelta(days=1)
         query = query.filter(ForecastValueSQL.created_utc >= created_utc_filter)
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
+
+    if forecast_horizon_minutes is not None:
+
+        # this seems to only work for postgres
+        query = query.filter(
+            ForecastValueSQL.target_time - ForecastValueSQL.created_utc
+            >= text(f"interval '{forecast_horizon_minutes} minute'")
+        )
 
     # filter on gsp_id
     if gsp_id is not None:
