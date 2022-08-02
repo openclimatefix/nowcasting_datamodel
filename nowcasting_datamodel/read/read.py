@@ -259,7 +259,8 @@ def get_latest_forecast_for_gsps(
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
- List of forecasts objects from database
+
+    :return: List of forecasts objects from database
 
     """
     order_by_cols = []
@@ -360,8 +361,6 @@ def get_forecast_values(
     :param forecast_horizon_minutes: Optional filter on forecast horizon. For example
         forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
         target time. Note this only works for non-historic data.
-
-    return:
 
     return: List of forecasts values objects from database
 
