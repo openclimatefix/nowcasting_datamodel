@@ -149,3 +149,42 @@ def test_update_one_gsp_wtih_time_step(db_session):
             forecasts_historic[0].forecast_creation_time.isoformat()
             == datetime(2022, 1, 1, 0, 30, tzinfo=timezone.utc).isoformat()
         )
+
+
+def test_update_all_forecast_latest_update_none(db_session):
+    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f1)
+
+    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f2)
+
+    update_all_forecast_latest(
+        forecasts=f1, session=db_session, update_national=False, update_gsp=False
+    )
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 0
+
+
+def test_update_all_forecast_latest_update_national(db_session):
+    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f1)
+
+    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f2)
+
+    update_all_forecast_latest(
+        forecasts=f1, session=db_session, update_national=True, update_gsp=False
+    )
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
+
+
+def test_update_all_forecast_latest_update_gsps(db_session):
+    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f1)
+
+    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(f2)
+
+    update_all_forecast_latest(
+        forecasts=f1, session=db_session, update_national=True, update_gsp=True
+    )
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 20
