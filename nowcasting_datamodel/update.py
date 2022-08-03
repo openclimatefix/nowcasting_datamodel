@@ -13,6 +13,7 @@ from nowcasting_datamodel.read.read import (
     get_latest_forecast_for_gsps,
     get_model,
 )
+from nowcasting_datamodel import N_GSP
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +91,7 @@ def update_forecast_latest(
         forecast_historic = get_historic_forecast(session=session, forecast=forecast)
 
     # 2. create forecast value latest
-    forecast_values_dict = []
+    forecast_values = []
     for forecast_value in forecast.forecast_values:
 
         forecast_value_dict = {}
@@ -100,27 +101,43 @@ def update_forecast_latest(
         forecast_value_dict["gsp_id"] = forecast.location.gsp_id
         forecast_value_dict["forecast_id"] = forecast_historic.id
 
-        forecast_values_dict.append(ForecastValueLatestSQL(**forecast_value_dict).__dict__)
+        forecast_values.append(ForecastValueLatestSQL(**forecast_value_dict).__dict__)
 
     # upsert forecast values
-    upsert(session=session, model=ForecastValueLatestSQL, rows=forecast_values_dict)
+    upsert(session=session, model=ForecastValueLatestSQL, rows=forecast_values)
 
     # update forecast creation time
     forecast_historic.forecast_creation_time = datetime.now(tz=timezone.utc)
     session.commit()
 
 
-def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
+def update_all_forecast_latest(
+    forecasts: List[ForecastSQL],
+    session: Session,
+    update_national: Optional[bool] = True,
+    update_gsp: Optional[bool] = True,
+):
     """
     Update all latest forecasts
+
+    :param forecasts: The forecasts that should be updated that should be used to update the latest table
+    :param session: sqlalmacy session
+    :param update_national: Optional (default true), to update the national forecast
+    :param update_gsp: Optional (default true), to update all the GSP forecasts
     """
+
+    gsp_ids = get_gsp_ids(include_national=update_national, include_gsps=update_gsp)
+    if len(gsp_ids) == 0:
+        logger.warning(f"Will not be updating any GSPs as {update_national=} and {update_gsp=}")
+        return
+    logger.debug(f"Will be update GSPs from {min(gsp_ids)} to {max(gsp_ids)}")
 
     # get all latest forecasts
     logger.debug("Getting all latest forecasts")
     forecasts_historic_all_gsps = get_latest_forecast_for_gsps(
-        session=session, historic=True, preload_children=True
+        session=session, historic=True, preload_children=True, gsp_ids=gsp_ids
     )
-    # get all these ids, so we onl have to load it once
+    # get all these ids, so we only have to load it once
     historic_gsp_ids = [forecast.location.gsp_id for forecast in forecasts_historic_all_gsps]
     logger.debug(f"Found {len(forecasts_historic_all_gsps)} historic forecasts")
 
@@ -131,6 +148,13 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
         # chose the correct forecast historic
         logger.debug("Getting gsp")
         gsp_id = forecast.location.gsp_id
+        if gsp_id not in gsp_ids:
+            logger.debug(
+                f"GSP id {gsp_id} will not be updated, "
+                f"this is due to the options {update_national=} and {update_gsp=}"
+            )
+            continue
+
         logger.debug(f"Updating forecast for gsp_id {gsp_id}")
 
         forecast_historic = [
@@ -151,3 +175,20 @@ def update_all_forecast_latest(forecasts: List[ForecastSQL], session: Session):
         update_forecast_latest(
             forecast=forecast, session=session, forecast_historic=forecast_historic
         )
+
+
+def get_gsp_ids(include_national: bool = True, include_gsps: bool = True) -> List[int]:
+    """
+    Get list of gsps ids
+
+    :param include_national: option to incldue gsp_id of 0
+    :param include_gsps: option to include gsp_ids 1 to N_GSPS
+    :return: list of gsps
+    """
+
+    gsp_ids = []
+    if include_national:
+        gsp_ids.append(0)
+    if include_gsps:
+        gsp_ids = gsp_ids + list(range(0, N_GSP))
+    return gsp_ids
