@@ -120,7 +120,8 @@ def update_all_forecast_latest(
     """
     Update all latest forecasts
 
-    :param forecasts: The forecasts that should be updated that should be used to update the latest table
+    :param forecasts: The forecasts that should be updated that should be used to update
+        the latest table
     :param session: sqlalmacy session
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
