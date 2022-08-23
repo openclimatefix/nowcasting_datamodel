@@ -191,5 +191,5 @@ def get_gsp_ids(include_national: bool = True, include_gsps: bool = True) -> Lis
     if include_national:
         gsp_ids.append(0)
     if include_gsps:
-        gsp_ids = gsp_ids + list(range(1, N_GSP+1))
+        gsp_ids = gsp_ids + list(range(1, N_GSP + 1))
     return gsp_ids
