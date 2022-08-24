@@ -166,6 +166,8 @@ def test_get_forecast_values_latest_gsp_id(db_session):
     _ = ForecastValue.from_orm(forecast_values_read[0])
 
     assert len(forecast_values_read) == 2
+    assert forecast_values_read[0].gsp_id == f1[0].location.gsp_id
+    assert forecast_values_read[0].target_time == f1[0].forecast_values_latest[0].target_time
     assert forecast_values_read[0] == f1[0].forecast_values_latest[0]
 
 
