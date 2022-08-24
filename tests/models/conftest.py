@@ -1,18 +1,18 @@
 import os
+from datetime import datetime
 from typing import List
 
 import pytest
-from datetime import datetime
+
+from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.metric import (
-    Metric,
-    MetricSQL,
     DatetimeInterval,
     DatetimeIntervalSQL,
+    Metric,
+    MetricSQL,
     MetricValue,
     MetricValueSQL,
 )
-
-from nowcasting_datamodel.models.gsp import Location
 
 
 @pytest.fixture
