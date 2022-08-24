@@ -32,16 +32,3 @@ def metric():
 def location():
 
     return Location(label="GSP_1", gsp_id=1)
-
-
-# @pytest.fixture
-# def forecast_sql(db_session):
-#
-#     # create
-#     f = make_fake_forecasts(gsp_ids=[1], session=db_session)
-#
-#     # add
-#     db_session.add_all(f)
-#
-#     return f
-#
