@@ -1,15 +1,14 @@
 """ Read database functions
 
 1. Get the one metric
-2. get datetimer interval
+2. get datetime interval
 """
 import logging
-from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
 
-from nowcasting_datamodel.models.metric import MetricSQL, DatetimeIntervalSQL
+from nowcasting_datamodel.models.metric import MetricSQL
 
 logger = logging.getLogger(__name__)
 
