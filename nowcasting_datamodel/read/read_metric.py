@@ -8,7 +8,7 @@ from datetime import datetime
 
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models.metric import MetricSQL, DatetimeIntervalSQL
+from nowcasting_datamodel.models.metric import DatetimeIntervalSQL, MetricSQL
 
 logger = logging.getLogger(__name__)
 
