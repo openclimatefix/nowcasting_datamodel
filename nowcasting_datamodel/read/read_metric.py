@@ -7,7 +7,6 @@ import logging
 
 from sqlalchemy.orm.session import Session
 
-
 from nowcasting_datamodel.models.metric import MetricSQL
 
 logger = logging.getLogger(__name__)
