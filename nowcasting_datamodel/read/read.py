@@ -403,6 +403,46 @@ def get_forecast_values(
     return forecasts
 
 
+def get_forecast_values_latest(
+    session: Session,
+    gsp_id: int,
+    start_datetime: Optional[datetime] = None,
+) -> List[ForecastValueLatestSQL]:
+    """
+    Get forecast values
+
+    :param session: database session
+    :param gsp_id: gsp id, to filter query on
+    :param start_datetime: optional to filterer target_time by start_datetime
+        If None is given then all are returned.
+
+    return: List of forecasts values latest objects from database
+
+    """
+
+    # start main query
+    query = session.query(ForecastValueLatestSQL)
+
+    if start_datetime is not None:
+        query = query.filter(ForecastValueLatestSQL.target_time >= start_datetime)
+
+        # also filter on creation time, to speed up things
+        created_utc_filter = start_datetime - timedelta(days=1)
+        query = query.filter(ForecastValueLatestSQL.created_utc >= created_utc_filter)
+
+    # filter on gsp_id
+    if gsp_id is not None:
+        query = query.filter(ForecastValueLatestSQL.gsp_id == gsp_id)
+
+    # order by target time and created time desc
+    query = query.order_by(ForecastValueLatestSQL.target_time)
+
+    # get all results
+    forecast_values_latest = query.all()
+
+    return forecast_values_latest
+
+
 def get_latest_national_forecast(
     session: Session,
 ) -> ForecastSQL:

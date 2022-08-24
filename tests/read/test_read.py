@@ -26,6 +26,7 @@ from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
     get_all_locations,
     get_forecast_values,
+    get_forecast_values_latest,
     get_latest_forecast,
     get_latest_forecast_created_utc,
     get_latest_input_data_last_updated,
@@ -142,6 +143,30 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
     assert len(forecast_values_read) == 2
 
     assert forecast_values_read[0] == forecasts[0].forecast_values[0]
+
+
+def test_get_forecast_values_latest_gsp_id(db_session):
+
+    f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
+    f1[0].historic = True
+    f1[0].forecast_values_latest = [
+        ForecastValueLatestSQL(
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
+        ),
+        ForecastValueLatestSQL(
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1, 0, 30)
+        )
+    ]
+    db_session.add_all(f1)
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
+
+    forecast_values_read = get_forecast_values_latest(
+        session=db_session, gsp_id=f1[0].location.gsp_id
+    )
+    _ = ForecastValue.from_orm(forecast_values_read[0])
+
+    assert len(forecast_values_read) == 2
+    assert forecast_values_read[0] == f1[0].forecast_values_latest[0]
 
 
 def test_get_latest_status(db_session):
