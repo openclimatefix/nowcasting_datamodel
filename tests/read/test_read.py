@@ -155,7 +155,7 @@ def test_get_forecast_values_latest_gsp_id(db_session):
         ),
         ForecastValueLatestSQL(
             gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1, 0, 30)
-        )
+        ),
     ]
     db_session.add_all(f1)
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
