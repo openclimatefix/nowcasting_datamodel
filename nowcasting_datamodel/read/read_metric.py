@@ -75,7 +75,8 @@ def get_datetime_interval(
 
     if len(datetime_intervals) == 0:
         logger.debug(
-            f"Datetime interbal for {start_datetime_utc=} and {end_datetime_utc=} does not exist so going to add it"
+            f"Datetime interbal for {start_datetime_utc=} "
+            f"and {end_datetime_utc=} does not exist so going to add it"
         )
 
         datetime_interval = DatetimeIntervalSQL(
