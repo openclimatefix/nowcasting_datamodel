@@ -151,10 +151,14 @@ def test_get_forecast_values_latest_gsp_id(db_session):
     f1[0].historic = True
     f1[0].forecast_values_latest = [
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
+            gsp_id=1,
+            expected_power_generation_megawatts=1,
+            target_time=datetime(2022, 1, 1, tzinfo=timezone.utc),
         ),
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1, 0, 30)
+            gsp_id=1,
+            expected_power_generation_megawatts=1,
+            target_time=datetime(2022, 1, 1, 0, 30, tzinfo=timezone.utc),
         ),
     ]
     db_session.add_all(f1)
