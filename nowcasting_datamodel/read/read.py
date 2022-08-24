@@ -297,6 +297,7 @@ def get_latest_forecast_for_gsps(
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
         query = query.options(joinedload(ForecastSQL.forecast_values))
+        query = query.options(joinedload(ForecastSQL.forecast_values_latest))
 
     order_by_cols.append(desc(ForecastSQL.created_utc))
     query = query.order_by(*order_by_cols)
