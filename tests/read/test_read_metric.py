@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from nowcasting_datamodel.models import MetricSQL, DatetimeIntervalSQL
-from nowcasting_datamodel.read.read_metric import get_metric, get_datetime_interval
+from nowcasting_datamodel.models import DatetimeIntervalSQL, MetricSQL
+from nowcasting_datamodel.read.read_metric import get_datetime_interval, get_metric
 
 
 def test_get_metric(db_session):
