@@ -176,6 +176,7 @@ def update_all_forecast_latest(
         update_forecast_latest(
             forecast=forecast, session=session, forecast_historic=forecast_historic
         )
+        session.commit()
 
 
 def get_gsp_ids(include_national: bool = True, include_gsps: bool = True) -> List[int]:
