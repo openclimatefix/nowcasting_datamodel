@@ -8,7 +8,6 @@ The followin tables are made with sqlamyc and pydantic
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
@@ -55,6 +54,7 @@ class Metric(EnhancedBaseModel):
             description=self.description,
         )
 
+
 ########
 # 2. Datetime Interval
 ########
@@ -81,9 +81,13 @@ class DatetimeIntervalSQL(Base_Forecast):
 class DatetimeInterval(EnhancedBaseModel):
     """Datetime interval data"""
 
-    start_datetime_utc: datetime = Field(..., description="The timestamp of the start of the interval")
+    start_datetime_utc: datetime = Field(
+        ..., description="The timestamp of the start of the interval"
+    )
     end_datetime_utc: datetime = Field(..., description="The timestamp of the end of the interval")
-    elexon_settlement_period: datetime = Field(None, description="The elexon settlement period. This is optional")
+    elexon_settlement_period: datetime = Field(
+        None, description="The elexon settlement period. This is optional"
+    )
 
     _normalize_start_datetime_utc = validator("start_datetime_utc", allow_reuse=True)(
         datetime_must_have_timezone
@@ -99,6 +103,7 @@ class DatetimeInterval(EnhancedBaseModel):
             end_datetime_utc=self.end_datetime_utc,
             elexon_settlement_period=self.elexon_settlement_period,
         )
+
 
 ########
 # 3. Metirc Value
@@ -131,9 +136,13 @@ class MetricValue(EnhancedBaseModel):
     """Location that the forecast is for"""
 
     value: str = Field(..., description="The value of the metric")
-    number_of_data_points: int = Field(..., description="The number of data points used to make the value")
+    number_of_data_points: int = Field(
+        ..., description="The number of data points used to make the value"
+    )
     metric: Metric = Field(..., description="The metric this value is about")
-    datetime_interval: DatetimeInterval = Field(..., description="The datetime interval this value is about")
+    datetime_interval: DatetimeInterval = Field(
+        ..., description="The datetime interval this value is about"
+    )
     location: Location = Field(..., description="The location object for this metric value")
 
     rm_mode = True
