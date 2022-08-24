@@ -10,7 +10,7 @@ The followin tables are made with sqlamyc and pydantic
 from datetime import datetime
 
 from pydantic import Field, validator
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
@@ -65,10 +65,22 @@ class DatetimeIntervalSQL(Base_Forecast):
 
     __tablename__ = "datetime_interval"
 
+    # add a unique condition on 'gsp_id' and 'target_time'
+    __table_args__ = (
+        Index(
+            "uix_2",  # Index name
+            "start_datetime_utc",
+            "end_datetime_utc",  # Columns which are part of the index
+            unique=True,
+            postgresql_where=Column("is_primary"),  # The condition
+        ),
+    )
+
     id = Column(Integer, primary_key=True)
     start_datetime_utc = Column(DateTime, index=True)
     end_datetime_utc = Column(DateTime, index=True)
     elexon_settlement_period = Column(Integer, nullable=True)
+    is_primary = Column(Boolean, default=True)
 
     metric_value = relationship("MetricValueSQL", back_populates="datetime_interval")
 
