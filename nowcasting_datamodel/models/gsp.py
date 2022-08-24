@@ -38,6 +38,7 @@ class LocationSQL(Base_Forecast):
 
     forecast = relationship("ForecastSQL", back_populates="location")
     gsp_yield = relationship("GSPYieldSQL", back_populates="location")
+    metric_value = relationship("MetricValueSQL", back_populates="location")
 
 
 class Location(EnhancedBaseModel):
