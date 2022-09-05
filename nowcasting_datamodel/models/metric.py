@@ -130,6 +130,7 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     id = Column(Integer, primary_key=True)
     value = Column(Float, nullable=False)
     number_of_data_points = Column(Integer, nullable=False)
+    forecast_horizon_minutes = Column(Integer, nullable=True)
 
     # many (metric values) to one (metric)
     metric = relationship("MetricSQL", back_populates="metric_value")
@@ -151,6 +152,11 @@ class MetricValue(EnhancedBaseModel):
     number_of_data_points: int = Field(
         ..., description="The number of data points used to make the value"
     )
+    forecast_horizon_minutes: int = Field(
+        None,
+        description="The forecast horizon in minutes. "
+        "60 minutes means the forecast made 60 mintues before the target time",
+    )
     metric: Metric = Field(..., description="The metric this value is about")
     datetime_interval: DatetimeInterval = Field(
         ..., description="The datetime interval this value is about"
@@ -171,4 +177,5 @@ class MetricValue(EnhancedBaseModel):
             metric=self.metric.to_orm(),
             location=self.location.to_orm(),
             datetime_interval=self.datetime_interval.to_orm(),
+            forecast_horizon_minutes=self.forecast_horizon_minutes,
         )
