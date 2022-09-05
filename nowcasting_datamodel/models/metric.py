@@ -153,7 +153,7 @@ class MetricValue(EnhancedBaseModel):
         ..., description="The number of data points used to make the value"
     )
     forecast_horizon_minutes: int = Field(
-        ...,
+        None,
         description="The forecast horizon in minutes. "
         "60 minutes means the forecast made 60 mintues before the target time",
     )
