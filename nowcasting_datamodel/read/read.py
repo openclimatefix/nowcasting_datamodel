@@ -391,7 +391,7 @@ def get_forecast_values(
             ForecastValueSQL.created_utc - datetime.now(tz=timezone.utc)
             <= text(f"interval '{forecast_horizon_minutes} minute'")
         )
-        
+
     # filter on gsp_id
     if gsp_id is not None:
         query = query.join(ForecastSQL)
