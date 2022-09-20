@@ -13,10 +13,11 @@ from datetime import datetime
 from typing import List, Optional
 
 from pydantic import Field, validator
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
+from nowcasting_datamodel.models.forecast import ForecastValue
 from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
@@ -67,92 +68,6 @@ class MLModel(EnhancedBaseModel):
 # B. SQL table that save the latest forecast
 # C. Pydantic object
 ########
-
-
-class ForecastValueSQL(Base_Forecast, CreatedMixin):
-    """One Forecast of generation at one timestamp"""
-
-    __tablename__ = "forecast_value"
-
-    id = Column(Integer, primary_key=True)
-    target_time = Column(DateTime(timezone=True), index=True)
-    expected_power_generation_megawatts = Column(Float)
-
-    forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
-    forecast = relationship("ForecastSQL", back_populates="forecast_values")
-
-    Index("index_forecast_value", CreatedMixin.created_utc.desc())
-
-
-class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
-    """One Forecast of generation at one timestamp
-
-    Thanks for the help from
-    https://www.johbo.com/2016/creating-a-partial-unique-index-with-sqlalchemy-in-postgresql.html
-    """
-
-    __tablename__ = "forecast_value_latest"
-
-    # add a unique condition on 'gsp_id' and 'target_time'
-    __table_args__ = (
-        Index(
-            "uix_1",  # Index name
-            "gsp_id",
-            "target_time",  # Columns which are part of the index
-            unique=True,
-            postgresql_where=Column("is_primary"),  # The condition
-        ),
-    )
-
-    target_time = Column(DateTime(timezone=True), index=True, primary_key=True)
-    expected_power_generation_megawatts = Column(Float)
-    gsp_id = Column(Integer, index=True, primary_key=True)
-    is_primary = Column(Boolean, default=True)
-
-    forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
-    forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
-
-    Index("index_forecast_value_latest", CreatedMixin.created_utc.desc())
-
-
-class ForecastValue(EnhancedBaseModel):
-    """One Forecast of generation at one timestamp"""
-
-    target_time: datetime = Field(
-        ...,
-        description="The target time that the forecast is produced for",
-    )
-    expected_power_generation_megawatts: float = Field(
-        ..., ge=0, description="The forecasted value in MW"
-    )
-
-    expected_power_generation_normalized: float = Field(
-        None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
-    )
-
-    _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
-
-    def to_orm(self) -> ForecastValueSQL:
-        """Change model to ForecastValueSQL"""
-        return ForecastValueSQL(
-            target_time=self.target_time,
-            expected_power_generation_megawatts=self.expected_power_generation_megawatts,
-        )
-
-    def normalize(self, installed_capacity_mw):
-        """Normalize forecasts by installed capacity mw"""
-        if installed_capacity_mw in [0, None]:
-            logger.warning(
-                f"Could not normalize ForecastValue object {installed_capacity_mw}"
-                f"So will set to zero"
-            )
-            self.expected_power_generation_normalized = 0
-        else:
-            self.expected_power_generation_normalized = (
-                self.expected_power_generation_megawatts / installed_capacity_mw
-            )
-
-        return self
 
 
 ########

@@ -13,7 +13,6 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import (
     Forecast,
     ForecastValue,
-    ForecastValueLatestSQL,
     ForecastValueSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
@@ -22,6 +21,7 @@ from nowcasting_datamodel.models import (
     Status,
     national_gb_label,
 )
+from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL
 from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
     get_all_locations,

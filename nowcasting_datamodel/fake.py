@@ -7,12 +7,12 @@ from sqlalchemy.orm import Session
 
 from nowcasting_datamodel.models import (
     ForecastSQL,
-    ForecastValueSQL,
     InputDataLastUpdatedSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
 )
+from nowcasting_datamodel.models.forecast import ForecastValueSQL
 from nowcasting_datamodel.models.gsp import LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 

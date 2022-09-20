@@ -39,16 +39,16 @@ def app(make_migrations: bool, run_migrations: bool):
     :param run_pv: option to run PV database as well
     """
 
-    # some times need 1 second for the data base to get started
+    # some times need 1 second for the database to get started
     time.sleep(1)
 
     if make_migrations:
         make_all_migrations("forecast")
-        make_all_migrations("pv")
+        # make_all_migrations("pv")
 
     if run_migrations:
         run_all_migrations("forecast")
-        run_all_migrations("pv")
+        # run_all_migrations("pv")
 
 
 def make_all_migrations(database: str):
