@@ -17,8 +17,9 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
 
-from nowcasting_datamodel.models import InputDataLastUpdated, Location, MLModel
 from nowcasting_datamodel.models.base import Base_Forecast
+from nowcasting_datamodel.models.gsp import Location
+from nowcasting_datamodel.models.models import InputDataLastUpdated, MLModel
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
