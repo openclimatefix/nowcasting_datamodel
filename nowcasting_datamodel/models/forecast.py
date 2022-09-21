@@ -133,6 +133,9 @@ def get_partitions(start_year: int, end_year: int):
 
             if month < 10:
                 month = f"0{month}"
+            if month_end < 10:
+                month_end = f"0{month_end}"
+            
             partitions.append(
                 ForecastValueSQL.create_partition(f"{year}_{month}", f"{year_end}_{month_end}")
             )
