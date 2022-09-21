@@ -1,15 +1,29 @@
+""" Pydantic and Sqlalchemy models for the database
+
+The following class are made
+1. ForecastValue objects, specific values of a forecast and time
+2. Forecasts, a forecast that is made for one gsp, for several time steps into the future
+
+"""
+
 from datetime import datetime
+from typing import List
 
 from pydantic import Field, validator
-from sqlalchemy import Column, Integer, DateTime, Float, ForeignKey, Index, Boolean
+from sqlalchemy import Column, Integer, DateTime, Float, ForeignKey, Index, Boolean, Date
 from sqlalchemy.orm import relationship
+from sqlalchemy import func
 
-from nowcasting_datamodel.models import Base_Forecast, CreatedMixin, EnhancedBaseModel, logger
+from nowcasting_datamodel.models import Base_Forecast, CreatedMixin, EnhancedBaseModel, logger, Location, MLModel, \
+    InputDataLastUpdated
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.sql.ddl import DDL
 from sqlalchemy import event
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy import UniqueConstraint, PrimaryKeyConstraint
+from sqlalchemy.dialects.postgresql import UUID
 
 
 """
@@ -18,58 +32,56 @@ https://stackoverflow.com/questions/61545680/postgresql-partition-and-sqlalchemy
 """
 
 
-class PartitionByYearMonthMeta(DeclarativeMeta):
-    def __new__(cls, clsname, bases, attrs, *, partition_by):
-        @classmethod
-        def get_partition_name(cls_, year_month: str):
-            # 'forecast_value' -> 'forecast_value_2020_01'
-            return f"{cls_.__tablename__}_{year_month}"
+class PartitionByMeta(DeclarativeMeta):
+    def __new__(cls, clsname, bases, attrs, *, partition_by, partition_type:str = 'RANGE'):
 
         @classmethod
-        def create_partition(cls_, year_month_start, year_month_end):
-            """
-            Create partion
+        def get_partition_name(cls_, suffix):
+            return f'{cls_.__tablename__}_{suffix}'
 
-            :param year_month_start: start month e.g. 2020-01
-            :param year_month_end: end month e.g. 2020-02
-            """
-            if year_month_start not in cls_.partitions:
-                Partition = type(
-                    f"{clsname}{year_month_start}",  # Class name, only used internally
+        @classmethod
+        def create_partition(cls_, suffix, year_month_end, subpartition_by=None, subpartition_type=None):
+            if suffix not in cls_.partitions:
+                partition = PartitionByMeta(
+                    f'{clsname}{suffix}',
                     bases,
-                    {"__tablename__": cls_.get_partition_name(year_month_start)},
+                    {'__tablename__': cls_.get_partition_name(suffix)},
+                    partition_type=subpartition_type,
+                    partition_by=subpartition_by,
                 )
 
-                Partition.__table__.add_is_dependent_on(cls_.__table__)
+                partition.__table__.add_is_dependent_on(cls_.__table__)
 
                 event.listen(
-                    Partition.__table__,
-                    "after_create",
+                    partition.__table__,
+                    'after_create',
                     DDL(
                         # For non-year ranges, modify the FROM and TO below
+                        # LIST: IN ('first', 'second');
+                        # RANGE: FROM ('{key}-01-01') TO ('{key+1}-01-01')
                         f"""
                         ALTER TABLE {cls_.__tablename__}
-                        ATTACH PARTITION {Partition.__tablename__}
-                        FOR VALUES FROM ('{year_month_start}-01') TO ('{year_month_end}-01');
+                        ATTACH PARTITION {partition.__tablename__}
+                        FOR VALUES FROM ('{suffix}-01') TO ('{year_month_end}-01');
                         """
-                    ),
+                    )
                 )
 
-                cls_.partitions[year_month_start] = Partition
+                cls_.partitions[suffix] = partition
 
-            return cls_.partitions[year_month_start]
+            return cls_.partitions[suffix]
 
-        attrs.update(
-            {
-                # For non-RANGE partitions, modify the `postgresql_partition_by` key below
-                "__table_args__": attrs.get("__table_args__", ())
-                + (dict(postgresql_partition_by=f"RANGE({partition_by})"),),
-                "partitions": {},
-                "partitioned_by": partition_by,
-                "get_partition_name": get_partition_name,
-                "create_partition": create_partition,
-            }
-        )
+        if partition_by is not None:
+            attrs.update(
+                {
+                    '__table_args__': attrs.get('__table_args__', ())
+                                      + (dict(postgresql_partition_by=f'{partition_type.upper()}({partition_by})'),),
+                    'partitions': {},
+                    'partitioned_by': partition_by,
+                    'get_partition_name': get_partition_name,
+                    'create_partition': create_partition
+                }
+            )
 
         return super().__new__(cls, clsname, bases, attrs)
 
@@ -77,28 +89,23 @@ class PartitionByYearMonthMeta(DeclarativeMeta):
 class ForecastValueSQLMixin(CreatedMixin):
     """One Forecast of generation at one timestamp
 
-    This Mixin is used to creat partition tables
+    This Mixin is used to create partition tables
     """
-    # __tablename__ = "forecast_value"
 
-    id = Column(Integer, primary_key=True)
-    target_time = Column(DateTime(timezone=True), index=True)
+    uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
+    target_time = Column(DateTime(timezone=True), index=True, nullable=False, primary_key=True)
     expected_power_generation_megawatts = Column(Float)
 
-    forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
-    forecast = relationship("ForecastSQL", back_populates="forecast_values")
+    @declared_attr
+    def forecast_id(self):
+        return Column(Integer, ForeignKey("forecast.id"), index=True)
 
-    Index("index_forecast_value", CreatedMixin.created_utc.desc())
 
+class ForecastValueSQL(ForecastValueSQLMixin, Base_Forecast, metaclass=PartitionByMeta, partition_by='target_time'):
+    """One Forecast of generation at one timestamp
 
-class ForecastValueSQL(
-    ForecastValueSQLMixin,
-    Base_Forecast,
-    metaclass=PartitionByYearMonthMeta,
-    partition_by="target_time",
-):
-    """One Forecast of generation at one timestamp"""
-
+    This Mixin is used to creat partition tables
+    """
     __tablename__ = "forecast_value"
 
 
@@ -171,3 +178,118 @@ class ForecastValue(EnhancedBaseModel):
             )
 
         return self
+
+
+class ForecastSQL(Base_Forecast, CreatedMixin):
+    """Forecast SQL model"""
+
+    __tablename__ = "forecast"
+
+    id = Column(Integer, primary_key=True)
+    forecast_creation_time = Column(DateTime(timezone=True))
+
+    # Two distinuise between
+    # 1. a Forecast with some forecast values, for that moment,
+    # 2. a Forecast with all the historic latest value.
+    # we use this boolean.
+    # This make it easier to load the forecast showing historic values very easily
+    historic = Column(Boolean, default=False)
+
+    model = relationship("MLModelSQL", back_populates="forecast")
+    model_id = Column(Integer, ForeignKey("model.id"), index=True)
+
+    # many (forecasts) to one (location)
+    location = relationship("LocationSQL", back_populates="forecast")
+    location_id = Column(Integer, ForeignKey("location.id"), index=True)
+
+    # one (forecasts) to many (forecast_value)
+    forecast_values = relationship("ForecastValueSQL")
+    forecast_values_latest = relationship(
+        "ForecastValueLatestSQL", back_populates="forecast_latest"
+    )
+
+    # many (forecasts) to one (input_data_last_updated)
+    input_data_last_updated = relationship("InputDataLastUpdatedSQL", back_populates="forecast")
+    input_data_last_updated_id = Column(
+        Integer, ForeignKey("input_data_last_updated.id"), index=True
+    )
+
+    Index("index_forecast", CreatedMixin.created_utc.desc())
+
+
+class Forecast(EnhancedBaseModel):
+    """A single Forecast"""
+
+    location: Location = Field(..., description="The location object for this forecaster")
+    model: MLModel = Field(..., description="The name of the model that made this forecast")
+    forecast_creation_time: datetime = Field(
+        ..., description="The time when the forecaster was made"
+    )
+    historic: bool = Field(
+        False,
+        description="if False, the forecast is just the latest forecast. "
+        "If True, historic values are also given",
+    )
+    forecast_values: List[ForecastValue] = Field(
+        ...,
+        description="List of forecasted value objects. Each value has the datestamp and a value",
+    )
+    input_data_last_updated: InputDataLastUpdated = Field(
+        ...,
+        description="Information about the input data that was used to create the forecast",
+    )
+
+    _normalize_forecast_creation_time = validator("forecast_creation_time", allow_reuse=True)(
+        datetime_must_have_timezone
+    )
+
+    def to_orm(self) -> ForecastSQL:
+        """Change model to ForecastSQL"""
+        return ForecastSQL(
+            model=self.model.to_orm(),
+            forecast_creation_time=self.forecast_creation_time,
+            location=self.location.to_orm(),
+            input_data_last_updated=self.input_data_last_updated.to_orm(),
+            forecast_values=[forecast_value.to_orm() for forecast_value in self.forecast_values],
+            historic=self.historic,
+        )
+
+    @classmethod
+    def from_orm_latest(cls, forecast_sql: ForecastSQL):
+        """Method to make Forecast object from ForecastSQL,
+
+        but move 'forecast_values_latest' to 'forecast_values'
+        This is useful as we want the API to still present a Forecast object.
+        """
+        # do normal transform
+        forecast = cls.from_orm(forecast_sql)
+
+        # move 'forecast_values_latest' to 'forecast_values'
+        forecast.forecast_values = [
+            ForecastValue.from_orm(forecast_value)
+            for forecast_value in forecast_sql.forecast_values_latest
+        ]
+
+        return forecast
+
+    def normalize(self):
+        """Normalize forecasts by installed capacity mw"""
+        self.forecast_values = [
+            forecast_value.normalize(self.location.installed_capacity_mw)
+            for forecast_value in self.forecast_values
+        ]
+
+        return self
+
+
+class ManyForecasts(EnhancedBaseModel):
+    """Many Forecasts"""
+
+    forecasts: List[Forecast] = Field(
+        ...,
+        description="List of forecasts for different GSPs",
+    )
+
+    def normalize(self):
+        """Normalize forecasts by installed capacity mw"""
+        self.forecasts = [forecast.normalize() for forecast in self.forecasts]

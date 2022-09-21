@@ -6,7 +6,7 @@ import pytest
 from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.connection import Base_Forecast, DatabaseConnection
 from nowcasting_datamodel.fake import make_fake_forecasts
-from nowcasting_datamodel.models import ForecastSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL
 from nowcasting_datamodel.models.pv import Base_PV
 
 
@@ -58,11 +58,11 @@ def db_connection():
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url)
-    Base_Forecast.metadata.create_all(connection.engine)
+    connection.create_all()
 
     yield connection
 
-    Base_Forecast.metadata.drop_all(connection.engine)
+    connection.drop_all()
 
 
 @pytest.fixture(scope="function", autouse=True)

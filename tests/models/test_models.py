@@ -7,10 +7,9 @@ import pytest
 from nowcasting_datamodel.models import (
     Forecast,
     ForecastValue,
-    ManyForecasts,
     Status,
 )
-from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL
+from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL, ManyForecasts
 
 
 def test_normalize_forecasts(forecasts_all):

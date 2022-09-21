@@ -11,12 +11,12 @@ from nowcasting_datamodel.models import (
     Forecast,
     ForecastSQL,
     ForecastValue,
-    ForecastValueSQL,
     InputDataLastUpdated,
     InputDataLastUpdatedSQL,
     Location,
     LocationSQL,
 )
+from nowcasting_datamodel.models.forecast import ForecastValueSQL
 
 
 def test_make_fake_location():
@@ -45,6 +45,12 @@ def test_make_fake_forecast(db_session):
     forecast = Forecast.from_orm(forecast_sql)
     forecast_sql = Forecast.to_orm(forecast)
     _ = Forecast.from_orm(forecast_sql)
+
+    from sqlalchemy import text
+    f = ForecastValueSQL(target_time='2021-01-01 12:00:00',expected_power_generation_megawatts=3)
+    db_session.add(f)
+    db_session.commit()
+    tables = db_session.execute(text("SELECT * FROM forecast_value_2022_01")).all()
 
 
 def test_make_national_fake_forecast(db_session):
