@@ -18,13 +18,12 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
 
 from nowcasting_datamodel.models import (
-    CreatedMixin,
-    EnhancedBaseModel,
     InputDataLastUpdated,
     Location,
     MLModel,
 )
 from nowcasting_datamodel.models.base import Base_Forecast
+from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 logger = logging.getLogger(__name__)
