@@ -4,7 +4,8 @@ from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models import ForecastSQL, PVSystem, PVSystemSQL
+from nowcasting_datamodel.models import PVSystem, PVSystemSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL
 from nowcasting_datamodel.update import update_all_forecast_latest
 
 logger = logging.getLogger(__name__)

@@ -4,12 +4,12 @@ from datetime import datetime
 
 import pytest
 
-from nowcasting_datamodel.models import (
+from nowcasting_datamodel.models import Status
+from nowcasting_datamodel.models.forecast import (
     Forecast,
     ForecastValue,
     ForecastValueLatestSQL,
     ManyForecasts,
-    Status,
 )
 
 

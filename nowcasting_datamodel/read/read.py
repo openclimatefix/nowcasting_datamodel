@@ -14,15 +14,17 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import (
-    ForecastSQL,
-    ForecastValueLatestSQL,
-    ForecastValueSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModelSQL,
     PVSystemSQL,
     StatusSQL,
     national_gb_label,
+)
+from nowcasting_datamodel.models.forecast import (
+    ForecastSQL,
+    ForecastValueLatestSQL,
+    ForecastValueSQL,
 )
 
 logger = logging.getLogger(__name__)

@@ -11,16 +11,18 @@ from nowcasting_datamodel.fake import (
     make_fake_pv_system,
 )
 from nowcasting_datamodel.models import (
-    Forecast,
-    ForecastValue,
-    ForecastValueLatestSQL,
-    ForecastValueSQL,
     InputDataLastUpdatedSQL,
     LocationSQL,
     MLModel,
     PVSystem,
     Status,
     national_gb_label,
+)
+from nowcasting_datamodel.models.forecast import (
+    Forecast,
+    ForecastValue,
+    ForecastValueLatestSQL,
+    ForecastValueSQL,
 )
 from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
@@ -214,13 +216,18 @@ def test_get_latest_forecast_created_utc_national(db_session):
 
 
 def test_get_forecast_values_gsp_id_latest(db_session):
-    _ = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 1))
+    _ = make_fake_forecast(
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 1, tzinfo=timezone.utc)
+    )
     forecast_2 = make_fake_forecast(
-        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2)
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2, tzinfo=timezone.utc)
     )
 
     forecast_values_read = get_forecast_values(
-        session=db_session, gsp_id=1, only_return_latest=True, start_datetime=datetime(2022, 1, 2)
+        session=db_session,
+        gsp_id=1,
+        only_return_latest=True,
+        start_datetime=datetime(2022, 1, 2, tzinfo=timezone.utc),
     )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
