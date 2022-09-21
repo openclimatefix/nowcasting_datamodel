@@ -4,8 +4,7 @@ import pytest
 from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import make_fake_forecasts
-from nowcasting_datamodel.models import ForecastSQL
-from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL
+from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL, ForecastSQL
 from nowcasting_datamodel.models.forecast import ForecastValueSQL
 from nowcasting_datamodel.update import update_all_forecast_latest, update_forecast_latest
 

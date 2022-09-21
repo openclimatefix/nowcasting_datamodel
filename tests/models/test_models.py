@@ -5,10 +5,9 @@ from datetime import datetime
 import pytest
 
 from nowcasting_datamodel.models import (
-    Forecast,
-    ForecastValue,
     Status,
 )
+from nowcasting_datamodel.models.forecast import Forecast, ForecastValue
 from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL, ManyForecasts
 
 

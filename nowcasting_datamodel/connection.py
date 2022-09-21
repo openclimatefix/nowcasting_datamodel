@@ -34,6 +34,7 @@ class DatabaseConnection:
     def create_all(self):
         """Create all tables"""
 
+        self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
 
         # TODO add more
@@ -52,7 +53,7 @@ class DatabaseConnection:
             if not self.engine.dialect.has_table(connection=self.engine.connect(), table_name=partition.__table__.name):
                 partition.__table__.drop(bind=self.engine)
 
-        Base_Forecast.metadata.drop_all(self.engine)
+        self.base.metadata.drop_all(self.engine)
 
     def get_session(self) -> Session:
         """Get sqlalamcy session"""

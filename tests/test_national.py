@@ -3,7 +3,8 @@
 import pytest
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import Forecast, ForecastSQL, LocationSQL
+from nowcasting_datamodel.models import LocationSQL
+from nowcasting_datamodel.models.forecast import Forecast, ForecastSQL
 from nowcasting_datamodel.national import make_national_forecast
 
 
