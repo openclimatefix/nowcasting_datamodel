@@ -18,7 +18,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
 
 from nowcasting_datamodel.models import InputDataLastUpdated, Location, MLModel
-
 from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
