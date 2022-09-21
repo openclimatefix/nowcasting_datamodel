@@ -6,16 +6,14 @@ The following class are made
 
 """
 
+import logging
 from datetime import datetime
 from typing import List
 
 from pydantic import Field, validator
-from sqlalchemy import Column, Integer, DateTime, Float, ForeignKey, Index, Boolean
-from sqlalchemy import event
-from sqlalchemy import func
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, event, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import DeclarativeMeta
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
 
@@ -23,12 +21,13 @@ from nowcasting_datamodel.models import (
     Base_Forecast,
     CreatedMixin,
     EnhancedBaseModel,
-    logger,
+    InputDataLastUpdated,
     Location,
     MLModel,
-    InputDataLastUpdated,
 )
 from nowcasting_datamodel.utils import datetime_must_have_timezone
+
+logger = logging.getLogger(__name__)
 
 """
 Tried to follow the example here

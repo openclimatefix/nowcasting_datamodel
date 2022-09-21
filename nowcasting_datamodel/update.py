@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL, ForecastSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueLatestSQL
 from nowcasting_datamodel.read.read import (
     get_latest_forecast,
     get_latest_forecast_for_gsps,

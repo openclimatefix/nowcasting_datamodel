@@ -18,7 +18,6 @@ from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
-
 ########
 # 1. Metric
 ########

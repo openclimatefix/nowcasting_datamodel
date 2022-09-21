@@ -11,7 +11,7 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     national_gb_label,
 )
-from nowcasting_datamodel.models.forecast import ForecastValueSQL, ForecastSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 
