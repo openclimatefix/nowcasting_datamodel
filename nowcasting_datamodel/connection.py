@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.base import Base_Forecast
-from nowcasting_datamodel.models.forecast import ForecastValueSQL
+from nowcasting_datamodel.models.forecast import ForecastValueSQL, get_partitions
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +37,8 @@ class DatabaseConnection:
         self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
 
-        # TODO add more
-        self.partitions.append(ForecastValueSQL.create_partition('2021_01', '2021_02'))
-        self.partitions.append(ForecastValueSQL.create_partition('2022_01', '2022_02'))
+        # get partitions
+        self.partitions = get_partitions(2020,2023)
 
         # make partitions
         for partition in self.partitions:

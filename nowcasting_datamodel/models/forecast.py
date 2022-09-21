@@ -109,6 +109,25 @@ class ForecastValueSQL(ForecastValueSQLMixin, Base_Forecast, metaclass=Partition
     __tablename__ = "forecast_value"
 
 
+def get_partitions(start_year,end_year):
+    # TODO add more
+    partitions = []
+    for year in range(start_year, end_year):
+        for month in range(1, 13):
+            if month == 12:
+                year_end = year+1
+                month_end = '01'
+            else:
+                year_end = year
+                month_end = month + 1
+
+            if month < 10:
+                month = f'0{month}'
+            partitions.append(ForecastValueSQL.create_partition(f'{year}_{month}', f'{year_end}_{month_end}'))
+
+    return partitions
+
+
 class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     """One Forecast of generation at one timestamp
 

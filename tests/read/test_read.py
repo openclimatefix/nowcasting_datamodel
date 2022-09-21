@@ -18,7 +18,7 @@ from nowcasting_datamodel.models import (
     Status,
     national_gb_label,
 )
-from nowcasting_datamodel.models.forecast import ForecastValueSQL, ForecastSQL, ForecastValue
+from nowcasting_datamodel.models.forecast import ForecastValueSQL, Forecast, ForecastValue
 from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL
 from nowcasting_datamodel.read.read import (
     get_all_gsp_ids_latest_forecast,
@@ -212,13 +212,13 @@ def test_get_latest_forecast_created_utc_national(db_session):
 
 
 def test_get_forecast_values_gsp_id_latest(db_session):
-    _ = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 1))
+    _ = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 1, tzinfo=timezone.utc))
     forecast_2 = make_fake_forecast(
-        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2)
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2, tzinfo=timezone.utc)
     )
 
     forecast_values_read = get_forecast_values(
-        session=db_session, gsp_id=1, only_return_latest=True, start_datetime=datetime(2022, 1, 2)
+        session=db_session, gsp_id=1, only_return_latest=True, start_datetime=datetime(2022, 1, 2, tzinfo=timezone.utc)
     )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
@@ -226,6 +226,7 @@ def test_get_forecast_values_gsp_id_latest(db_session):
     assert len(forecast_values_read) == 2
 
     assert forecast_values_read[0] == forecast_2.forecast_values[0]
+
 
 
 def test_get_all_gsp_ids_latest_forecast(db_session):
