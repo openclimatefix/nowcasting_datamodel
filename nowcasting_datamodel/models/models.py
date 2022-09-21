@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 # TODO #3 Add forecast latest table, this make it easy to load the latest forecast
 
 
-
 ########
 # 3. Model
 ########

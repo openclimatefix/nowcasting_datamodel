@@ -21,8 +21,8 @@ from nowcasting_datamodel.models import (
     StatusSQL,
     national_gb_label,
 )
-from nowcasting_datamodel.models.forecast import ForecastValueSQL, ForecastSQL
 from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL
+from nowcasting_datamodel.models.forecast import ForecastValueSQL, ForecastSQL
 
 logger = logging.getLogger(__name__)
 

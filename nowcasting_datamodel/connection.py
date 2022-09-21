@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.base import Base_Forecast
-from nowcasting_datamodel.models.forecast import ForecastValueSQL, get_partitions
+from nowcasting_datamodel.models.forecast import get_partitions
 
 logger = logging.getLogger(__name__)
 
@@ -32,24 +32,28 @@ class DatabaseConnection:
         assert self.url is not None, Exception("Need to set url for database connection")
 
     def create_all(self):
-        """Create all tables"""
+        """Create all paritions and tables"""
 
         self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
 
         # get partitions
-        self.partitions = get_partitions(2020,2023)
+        self.partitions = get_partitions(2020, 2023)
 
         # make partitions
         for partition in self.partitions:
-            if not self.engine.dialect.has_table(connection=self.engine.connect(), table_name=partition.__table__.name):
+            if not self.engine.dialect.has_table(
+                connection=self.engine.connect(), table_name=partition.__table__.name
+            ):
                 partition.__table__.create(bind=self.engine)
 
     def drop_all(self):
-
+        """Drop all partitions and tables"""
         # drop partitions
         for partition in self.partitions:
-            if not self.engine.dialect.has_table(connection=self.engine.connect(), table_name=partition.__table__.name):
+            if not self.engine.dialect.has_table(
+                connection=self.engine.connect(), table_name=partition.__table__.name
+            ):
                 partition.__table__.drop(bind=self.engine)
 
         self.base.metadata.drop_all(self.engine)

@@ -10,21 +10,25 @@ from datetime import datetime
 from typing import List
 
 from pydantic import Field, validator
-from sqlalchemy import Column, Integer, DateTime, Float, ForeignKey, Index, Boolean, Date
-from sqlalchemy.orm import relationship
-from sqlalchemy import func
-
-from nowcasting_datamodel.models import Base_Forecast, CreatedMixin, EnhancedBaseModel, logger, Location, MLModel, \
-    InputDataLastUpdated
-from nowcasting_datamodel.utils import datetime_must_have_timezone
-
-from sqlalchemy.ext.declarative import DeclarativeMeta
-from sqlalchemy.sql.ddl import DDL
+from sqlalchemy import Column, Integer, DateTime, Float, ForeignKey, Index, Boolean
 from sqlalchemy import event
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import UniqueConstraint, PrimaryKeyConstraint
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql.ddl import DDL
 
+from nowcasting_datamodel.models import (
+    Base_Forecast,
+    CreatedMixin,
+    EnhancedBaseModel,
+    logger,
+    Location,
+    MLModel,
+    InputDataLastUpdated,
+)
+from nowcasting_datamodel.utils import datetime_must_have_timezone
 
 """
 Tried to follow the example here
@@ -33,19 +37,26 @@ https://stackoverflow.com/questions/61545680/postgresql-partition-and-sqlalchemy
 
 
 class PartitionByMeta(DeclarativeMeta):
-    def __new__(cls, clsname, bases, attrs, *, partition_by, partition_type:str = 'RANGE'):
+    """Parition table meta object"""
+
+    def __new__(cls, clsname, bases, attrs, *, partition_by, partition_type: str = "RANGE"):
+        """Make new partition"""
 
         @classmethod
         def get_partition_name(cls_, suffix):
-            return f'{cls_.__tablename__}_{suffix}'
+            """Get the name of the partition table"""
+            return f"{cls_.__tablename__}_{suffix}"
 
         @classmethod
-        def create_partition(cls_, suffix, year_month_end, subpartition_by=None, subpartition_type=None):
+        def create_partition(
+            cls_, suffix, year_month_end, subpartition_by=None, subpartition_type=None
+        ):
+            """Create new partitions"""
             if suffix not in cls_.partitions:
                 partition = PartitionByMeta(
-                    f'{clsname}{suffix}',
+                    f"{clsname}{suffix}",
                     bases,
-                    {'__tablename__': cls_.get_partition_name(suffix)},
+                    {"__tablename__": cls_.get_partition_name(suffix)},
                     partition_type=subpartition_type,
                     partition_by=subpartition_by,
                 )
@@ -54,7 +65,7 @@ class PartitionByMeta(DeclarativeMeta):
 
                 event.listen(
                     partition.__table__,
-                    'after_create',
+                    "after_create",
                     DDL(
                         # For non-year ranges, modify the FROM and TO below
                         # LIST: IN ('first', 'second');
@@ -64,7 +75,7 @@ class PartitionByMeta(DeclarativeMeta):
                         ATTACH PARTITION {partition.__tablename__}
                         FOR VALUES FROM ('{suffix}-01') TO ('{year_month_end}-01');
                         """
-                    )
+                    ),
                 )
 
                 cls_.partitions[suffix] = partition
@@ -74,12 +85,12 @@ class PartitionByMeta(DeclarativeMeta):
         if partition_by is not None:
             attrs.update(
                 {
-                    '__table_args__': attrs.get('__table_args__', ())
-                                      + (dict(postgresql_partition_by=f'{partition_type.upper()}({partition_by})'),),
-                    'partitions': {},
-                    'partitioned_by': partition_by,
-                    'get_partition_name': get_partition_name,
-                    'create_partition': create_partition
+                    "__table_args__": attrs.get("__table_args__", ())
+                    + (dict(postgresql_partition_by=f"{partition_type.upper()}({partition_by})"),),
+                    "partitions": {},
+                    "partitioned_by": partition_by,
+                    "get_partition_name": get_partition_name,
+                    "create_partition": create_partition,
                 }
             )
 
@@ -98,32 +109,38 @@ class ForecastValueSQLMixin(CreatedMixin):
 
     @declared_attr
     def forecast_id(self):
+        """Link with Forecast table"""
         return Column(Integer, ForeignKey("forecast.id"), index=True)
 
 
-class ForecastValueSQL(ForecastValueSQLMixin, Base_Forecast, metaclass=PartitionByMeta, partition_by='target_time'):
+class ForecastValueSQL(
+    ForecastValueSQLMixin, Base_Forecast, metaclass=PartitionByMeta, partition_by="target_time"
+):
     """One Forecast of generation at one timestamp
 
     This Mixin is used to creat partition tables
     """
+
     __tablename__ = "forecast_value"
 
 
-def get_partitions(start_year,end_year):
-    # TODO add more
+def get_partitions(start_year: int, end_year: int):
+    """Make partitions"""
     partitions = []
     for year in range(start_year, end_year):
         for month in range(1, 13):
             if month == 12:
-                year_end = year+1
-                month_end = '01'
+                year_end = year + 1
+                month_end = "01"
             else:
                 year_end = year
                 month_end = month + 1
 
             if month < 10:
-                month = f'0{month}'
-            partitions.append(ForecastValueSQL.create_partition(f'{year}_{month}', f'{year_end}_{month_end}'))
+                month = f"0{month}"
+            partitions.append(
+                ForecastValueSQL.create_partition(f"{year}_{month}", f"{year_end}_{month_end}")
+            )
 
     return partitions
 
