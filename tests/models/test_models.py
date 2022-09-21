@@ -4,11 +4,13 @@ from datetime import datetime
 
 import pytest
 
-from nowcasting_datamodel.models import (
-    Status,
+from nowcasting_datamodel.models import Status
+from nowcasting_datamodel.models.forecast import (
+    Forecast,
+    ForecastValue,
+    ForecastValueLatestSQL,
+    ManyForecasts,
 )
-from nowcasting_datamodel.models.forecast import Forecast, ForecastValue
-from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL, ManyForecasts
 
 
 def test_normalize_forecasts(forecasts_all):

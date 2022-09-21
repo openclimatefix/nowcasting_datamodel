@@ -47,7 +47,8 @@ def test_make_fake_forecast(db_session):
     _ = Forecast.from_orm(forecast_sql)
 
     from sqlalchemy import text
-    f = ForecastValueSQL(target_time='2021-01-01 12:00:00',expected_power_generation_megawatts=3)
+
+    f = ForecastValueSQL(target_time="2021-01-01 12:00:00", expected_power_generation_megawatts=3)
     db_session.add(f)
     db_session.commit()
     tables = db_session.execute(text("SELECT * FROM forecast_value_2022_01")).all()
