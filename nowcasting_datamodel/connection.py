@@ -4,11 +4,9 @@ import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-import architect
 
 from nowcasting_datamodel.models.base import Base_Forecast
-from nowcasting_datamodel.models.forecast import ForecastValueSQL, ForecastSQL
-from nowcasting_datamodel.models.models import MLModelSQL
+from nowcasting_datamodel.models.forecast import ForecastValueSQL
 
 logger = logging.getLogger(__name__)
 
