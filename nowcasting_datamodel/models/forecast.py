@@ -17,8 +17,8 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
 
+from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models import (
-    Base_Forecast,
     CreatedMixin,
     EnhancedBaseModel,
     InputDataLastUpdated,
