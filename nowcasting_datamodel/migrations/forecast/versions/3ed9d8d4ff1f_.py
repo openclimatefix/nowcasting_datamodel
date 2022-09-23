@@ -70,10 +70,16 @@ def upgrade():  # noqa
     # 5. Rename forecast_value_new table to forecast_value
     # ALTER TABLE forecast_value_new RENAME TO forecast_value
 
-    # 6. copy values
-    # INSERT INTO forecast_value
-    # SELECT * FROM forecast_value_old
+    # 6. copy values. Copying 1 day of data can take some time (~1 minute)
+    # INSERT INTO forecast_value (created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid)
+    # SELECT created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid FROM forecast_value_old
     # WHERE target_time>'2022-09-01;
+
+    # 7. might be good to move some indexes over (rename and make new ones)
+    # ALTER INDEX ix_forecast_value_forecast_id RENAME TO ix_forecast_value_forecast_id_old
+    # ALTER INDEX ix_forecast_value_target_time RENAME TO ix_forecast_value_target_time_old
+    # CREATE INDEX ix_forecast_value_forecast_id on forecast_value(forecast_id)
+    # CREATE INDEX ix_forecast_value_target_time on forecast_value(target_time)
 
     # ### end Alembic commands ###
 
