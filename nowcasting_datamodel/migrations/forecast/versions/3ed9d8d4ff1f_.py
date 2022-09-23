@@ -60,8 +60,10 @@ def upgrade():  # noqa
     #       ATTACH PARTITION forecast_value_2020_01
     #       FOR VALUES FROM ('2020-01-01') TO ('2020-02-01');
 
-    # 3. run migrations. Make sure there iss at 15GB of storage available. This can take ~ 20 mins.
-    # Watch out if the forecaster is running, then changing a column while inserting data causes problem
+    # 3. run migrations. Make sure there iss at 15GB of storage available.
+    # This can take ~ 20 mins.
+    # Watch out if the forecaster is running, 
+    # then changing a column while inserting data causes problem
     # python nowcasting_datamodel/migrations/app.py --run-migrations
 
     # 4. Rename forecast_value table to forecast_value_old
@@ -71,8 +73,10 @@ def upgrade():  # noqa
     # ALTER TABLE forecast_value_new RENAME TO forecast_value
 
     # 6. copy values. Copying 1 day of data can take some time (~1 minute)
-    # INSERT INTO forecast_value (created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid)
-    # SELECT created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid FROM forecast_value_old
+    # INSERT INTO forecast_value
+    # (created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid)
+    # SELECT created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid
+    # FROM forecast_value_old
     # WHERE target_time>'2022-09-01;
 
     # 7. might be good to move some indexes over (rename and make new ones)
