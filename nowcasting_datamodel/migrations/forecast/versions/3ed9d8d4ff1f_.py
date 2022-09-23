@@ -62,7 +62,7 @@ def upgrade():  # noqa
 
     # 3. run migrations. Make sure there iss at 15GB of storage available.
     # This can take ~ 20 mins.
-    # Watch out if the forecaster is running, 
+    # Watch out if the forecaster is running,
     # then changing a column while inserting data causes problem
     # python nowcasting_datamodel/migrations/app.py --run-migrations
 
