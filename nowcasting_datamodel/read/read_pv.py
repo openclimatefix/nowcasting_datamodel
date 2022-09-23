@@ -113,7 +113,6 @@ def get_latest_pv_yield(
     for pv_yield in pv_yields:
         pv_yield.datetime_utc = pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
 
-
     if not append_to_pv_systems:
         return pv_yields
     else:
