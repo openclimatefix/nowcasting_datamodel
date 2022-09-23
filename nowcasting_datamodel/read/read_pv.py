@@ -1,6 +1,6 @@
 """ Read pv functions """
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
@@ -108,6 +108,10 @@ def get_latest_pv_yield(
 
     # get all results
     pv_yields: List[PVYieldSQL] = query.all()
+
+    # add utc timezone
+    for pv_yield in pv_yields:
+        pv_yield.datetime_utc = pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
 
     if not append_to_pv_systems:
         return pv_yields

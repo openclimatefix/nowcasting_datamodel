@@ -47,15 +47,43 @@ def upgrade():  # noqa
     #  PARTITION BY RANGE(target_time)
 
     # 2. Make partitions tables
+    # CREATE TABLE forecast_value_2021_01 (
+    #         created_utc TIMESTAMP WITH TIME ZONE,
+    #         uuid UUID DEFAULT gen_random_uuid() NOT NULL,
+    #         target_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    #         expected_power_generation_megawatts FLOAT,
+    #         forecast_id INTEGER,
+    #         PRIMARY KEY (uuid, target_time),
+    #         FOREIGN KEY(forecast_id) REFERENCES forecast (id)
+    # )
     # ALTER TABLE forecast_value
     #       ATTACH PARTITION forecast_value_2020_01
-    #       FOR VALUES FROM ('2020_01-01') TO ('2020_02-01');
+    #       FOR VALUES FROM ('2020-01-01') TO ('2020-02-01');
 
-    # 3. Rename forecast_value table to forecast_value_old
+    # 3. run migrations. Make sure there iss at 15GB of storage available.
+    # This can take ~ 20 mins.
+    # Watch out if the forecaster is running,
+    # then changing a column while inserting data causes problem
+    # python nowcasting_datamodel/migrations/app.py --run-migrations
+
+    # 4. Rename forecast_value table to forecast_value_old
     # ALTER TABLE forecast_value RENAME TO forecast_value_old
 
-    # 4. Rename forecast_value_new table to forecast_value
+    # 5. Rename forecast_value_new table to forecast_value
     # ALTER TABLE forecast_value_new RENAME TO forecast_value
+
+    # 6. copy values. Copying 1 day of data can take some time (~1 minute)
+    # INSERT INTO forecast_value
+    # (created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid)
+    # SELECT created_utc, target_time, expected_power_generation_megawatts, forecast_id, uuid
+    # FROM forecast_value_old
+    # WHERE target_time>'2022-09-01;
+
+    # 7. might be good to move some indexes over (rename and make new ones)
+    # ALTER INDEX ix_forecast_value_forecast_id RENAME TO ix_forecast_value_forecast_id_old
+    # ALTER INDEX ix_forecast_value_target_time RENAME TO ix_forecast_value_target_time_old
+    # CREATE INDEX ix_forecast_value_forecast_id on forecast_value(forecast_id)
+    # CREATE INDEX ix_forecast_value_target_time on forecast_value(target_time)
 
     # ### end Alembic commands ###
 

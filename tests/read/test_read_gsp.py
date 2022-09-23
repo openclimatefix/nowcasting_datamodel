@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
 
@@ -42,8 +42,8 @@ def test_get_latest_gsp_yield(db_session):
     # read database
     assert len(gsp_yields) == 2
 
-    assert gsp_yields[0].datetime_utc == datetime(2022, 1, 2)
-    assert gsp_yields[1].datetime_utc == datetime(2022, 1, 1)
+    assert gsp_yields[0].datetime_utc == datetime(2022, 1, 2, tzinfo=timezone.utc)
+    assert gsp_yields[1].datetime_utc == datetime(2022, 1, 1, tzinfo=timezone.utc)
 
     gsps = db_session.query(LocationSQL).order_by(LocationSQL.gsp_id).all()
     gsp_yields[0].location.id = gsps[0].id
@@ -144,8 +144,8 @@ def test_get_gsp_yield(db_session):
     gsp_yields = get_gsp_yield(
         session=db_session,
         gsp_ids=[1],
-        start_datetime_utc=datetime(2022, 1, 1),
-        end_datetime_utc=datetime(2022, 1, 1, 12),
+        start_datetime_utc=datetime(2022, 1, 1, tzinfo=timezone.utc),
+        end_datetime_utc=datetime(2022, 1, 1, 12, tzinfo=timezone.utc),
     )
     assert len(gsp_yields) == 2
     logger.debug("Check location ids")
