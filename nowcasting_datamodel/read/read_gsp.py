@@ -1,6 +1,6 @@
 """ Read pv functions """
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
@@ -52,6 +52,10 @@ def get_latest_gsp_yield(
     gsp_yields: List[GSPYieldSQL] = query.all()
 
     logger.debug(f"Found {len(gsp_yields)}  latest gsp yields")
+
+    # add utc timezone
+    for gsp_yield in gsp_yields:
+        gsp_yield.datetime_utc = gsp_yield.datetime_utc.replace(tzinfo=timezone.utc)
 
     if not append_to_gsps:
         return gsp_yields
