@@ -12,8 +12,11 @@ from nowcasting_datamodel.models import (
     national_gb_label,
 )
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
-from nowcasting_datamodel.models.gsp import LocationSQL
+from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
+
+# 2 days in the past + 8 hours forward at 30 mins interval
+N_FAKE_FORECASTS = (24 * 2 + 8) * 2
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
@@ -59,7 +62,9 @@ def make_fake_forecast(
     # create
     if forecast_values is None:
         forecast_values = []
-        for target_datetime_utc in [t0_datetime_utc, t0_datetime_utc + timedelta(minutes=30)]:
+        # 2 days in the past + 8 hours forward
+        for i in range(N_FAKE_FORECASTS):
+            target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
             f = make_fake_forecast_value(target_time=target_datetime_utc)
             forecast_values.append(f)
 
@@ -112,7 +117,8 @@ def make_fake_national_forecast(
 
     # create
     forecast_values = []
-    for target_datetime_utc in [t0_datetime_utc, t0_datetime_utc + timedelta(minutes=30)]:
+    for i in range(N_FAKE_FORECASTS):
+        target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
         f = make_fake_forecast_value(target_time=target_datetime_utc)
         forecast_values.append(f)
 
@@ -125,3 +131,52 @@ def make_fake_national_forecast(
     )
 
     return forecast
+
+
+def make_fake_gsp_yields_for_one_location(
+    gsp_id: int, session: Session, t0_datetime_utc: Optional[datetime] = None
+):
+    """
+    Make GSP yields for one locations
+
+    :param gsp_id: the gsp id you want gsp yields for
+    :param session: database sessions
+    :param t0_datetime_utc: the time now.
+    """
+
+    if t0_datetime_utc is None:
+        t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
+
+    location = get_location(session=session, gsp_id=gsp_id)
+
+    # make 3 days of fake data
+    for i in range(48 * 3):
+        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
+        gsp_yield = GSPYieldSQL(datetime_utc=datetime_utc, solar_generation_kw=2, regime="in-day")
+        gsp_yield.location = location
+
+        session.add(gsp_yield)
+
+        gsp_yield = GSPYieldSQL(
+            datetime_utc=datetime_utc, solar_generation_kw=3, regime="day-after"
+        )
+        gsp_yield.location = location
+
+        session.add(gsp_yield)
+
+
+def make_fake_gsp_yields(
+    session: Session, gsp_ids: List[int], t0_datetime_utc: Optional[datetime] = None
+):
+    """
+    Make GSP yields for many locations
+
+    :param gsp_ids: the gsp ids you want gsp yields for
+    :param session: database sessions
+    :param t0_datetime_utc: the time now.
+    """
+
+    for gsp_id in gsp_ids:
+        make_fake_gsp_yields_for_one_location(
+            gsp_id=gsp_id, session=session, t0_datetime_utc=t0_datetime_utc
+        )

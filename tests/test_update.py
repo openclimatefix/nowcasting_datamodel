@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from freezegun import freeze_time
 
-from nowcasting_datamodel.fake import make_fake_forecasts
+from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
@@ -178,7 +178,7 @@ def test_update_all_forecast_latest_update_national(db_session):
     update_all_forecast_latest(
         forecasts=f1, session=db_session, update_national=True, update_gsp=False
     )
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == N_FAKE_FORECASTS
 
 
 def test_update_all_forecast_latest_update_gsps(db_session):
@@ -191,4 +191,4 @@ def test_update_all_forecast_latest_update_gsps(db_session):
     update_all_forecast_latest(
         forecasts=f1, session=db_session, update_national=True, update_gsp=True
     )
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 20
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS

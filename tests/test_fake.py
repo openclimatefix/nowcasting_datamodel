@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from nowcasting_datamodel.fake import (
     make_fake_forecast,
     make_fake_forecast_value,
+    make_fake_gsp_yields,
     make_fake_input_data_last_updated,
     make_fake_location,
     make_fake_national_forecast,
@@ -11,6 +12,7 @@ from nowcasting_datamodel.models import (
     Forecast,
     ForecastSQL,
     ForecastValue,
+    GSPYieldSQL,
     InputDataLastUpdated,
     InputDataLastUpdatedSQL,
     Location,
@@ -58,3 +60,11 @@ def test_make_national_fake_forecast(db_session):
     forecast_sql: ForecastSQL = make_fake_national_forecast(session=db_session)
     forecast = Forecast.from_orm(forecast_sql)
     _ = Forecast.to_orm(forecast)
+
+
+def test_make_fake_gsp_yields(db_session):
+    make_fake_gsp_yields(session=db_session, gsp_ids=list(range(0, 10)))
+
+    assert len(db_session.query(LocationSQL).all()) == 10
+    # 3 days for each location, both regimes
+    assert len(db_session.query(GSPYieldSQL).all()) == 10 * 48 * 3 * 2
