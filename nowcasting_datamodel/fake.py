@@ -12,9 +12,10 @@ from nowcasting_datamodel.models import (
     national_gb_label,
 )
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
-from nowcasting_datamodel.models.gsp import LocationSQL
+from nowcasting_datamodel.models.gsp import LocationSQL, GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 
+from nowcasting_datamodel import N_GSP
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
     """Make fake location with gsp id"""
@@ -125,3 +126,52 @@ def make_fake_national_forecast(
     )
 
     return forecast
+
+
+def make_fake_gsp_yields_for_one_location(
+    gsp_id: int, session: Session, t0_datetime_utc: Optional[datetime] = None
+):
+    """
+    Make GSP yields for one locations
+
+    :param gsp_id: the gsp id you want gsp yields for
+    :param session: database sessions
+    :param t0_datetime_utc: the time now.
+    """
+
+    if t0_datetime_utc is None:
+        t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
+
+    location = get_location(session=session, gsp_id=gsp_id)
+
+    # make 3 days of fake data
+    for i in range(48 * 3):
+        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
+        gsp_yield = GSPYieldSQL(datetime_utc=datetime_utc, solar_generation_kw=2, regime="in-day")
+        gsp_yield.location = location
+
+        session.add(gsp_yield)
+
+        gsp_yield = GSPYieldSQL(
+            datetime_utc=datetime_utc, solar_generation_kw=3, regime="day-after"
+        )
+        gsp_yield.location = location
+
+        session.add(gsp_yield)
+
+
+def make_fake_gsp_yields(
+    session: Session, gsp_ids: List[int], t0_datetime_utc: Optional[datetime] = None
+):
+    """
+    Make GSP yields for many locations
+
+    :param gsp_ids: the gsp ids you want gsp yields for
+    :param session: database sessions
+    :param t0_datetime_utc: the time now.
+    """
+
+    for gsp_id in gsp_ids:
+        make_fake_gsp_yields_for_one_location(
+            gsp_id=gsp_id, session=session, t0_datetime_utc=t0_datetime_utc
+        )
