@@ -38,7 +38,7 @@ class DatabaseConnection:
         self.base.metadata.create_all(self.engine)
 
         # get partitions
-        self.partitions = get_partitions(2020, 2023)
+        self.partitions = get_partitions(2019, 2023)
 
         # make partitions
         for partition in self.partitions:

@@ -9,6 +9,7 @@ from nowcasting_datamodel.fake import (
     make_fake_forecasts,
     make_fake_national_forecast,
     make_fake_pv_system,
+    N_FAKE_FORECASTS
 )
 from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
@@ -128,7 +129,7 @@ def test_read_target_time(db_session):
 def test_get_forecast_values(db_session, forecasts):
 
     forecast_values_read = get_forecast_values(session=db_session)
-    assert len(forecast_values_read) == 20
+    assert len(forecast_values_read) == 10 * N_FAKE_FORECASTS
 
     # we have order so that the most recent forecast gets returned first
     assert forecast_values_read[0] == forecasts[-1].forecast_values[0]
@@ -142,7 +143,7 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
 
-    assert len(forecast_values_read) == 2
+    assert len(forecast_values_read) == N_FAKE_FORECASTS
 
     assert forecast_values_read[0] == forecasts[0].forecast_values[0]
 
@@ -232,9 +233,9 @@ def test_get_forecast_values_gsp_id_latest(db_session):
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
 
-    assert len(forecast_values_read) == 2
+    assert len(forecast_values_read) == 16 # only getting forecast ahead
 
-    assert forecast_values_read[0] == forecast_2.forecast_values[0]
+    assert forecast_values_read[0].target_time == forecast_2.forecast_values[96].target_time
 
 
 def test_get_all_gsp_ids_latest_forecast(db_session):
@@ -279,7 +280,7 @@ def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
     assert len(forecasts) == 2
     assert forecasts[0] == f1[0]
     assert forecasts[1] == f1[1]
-    assert len(forecasts[0].forecast_values) == 2
+    assert len(forecasts[0].forecast_values) == N_FAKE_FORECASTS
 
 
 def test_get_all_gsp_ids_latest_forecast_filter(db_session):
@@ -290,20 +291,20 @@ def test_get_all_gsp_ids_latest_forecast_filter(db_session):
     db_session.add_all(f1)
     db_session.add_all(f1[0].forecast_values)
     db_session.commit()
-    assert len(f1[0].forecast_values) == 2
+    assert len(f1[0].forecast_values) == N_FAKE_FORECASTS
 
     start_created_utc = datetime.now() - timedelta(days=1)
     target_time = datetime(2020, 1, 1) - timedelta(days=1)
-    assert len(f1[0].forecast_values) == 2
-    forecast_values_read = get_all_gsp_ids_latest_forecast(
+    assert len(f1[0].forecast_values) == N_FAKE_FORECASTS
+    forecast_read = get_all_gsp_ids_latest_forecast(
         session=db_session, start_created_utc=start_created_utc, start_target_time=target_time
     )
-    assert len(db_session.query(ForecastValueSQL).all()) == 4
-    assert len(forecast_values_read) == 2
-    assert forecast_values_read[0] == f1[0]
-    assert forecast_values_read[1] == f1[1]
-    assert len(f1[0].forecast_values) == 2
-    assert len(forecast_values_read[0].forecast_values) == 2
+    assert len(db_session.query(ForecastValueSQL).all()) == 2* N_FAKE_FORECASTS
+    assert len(forecast_read) == 2
+    assert forecast_read[0] == f1[0]
+    assert forecast_read[1] == f1[1]
+    assert len(f1[0].forecast_values) == N_FAKE_FORECASTS
+    assert len(forecast_read[0].forecast_values) == N_FAKE_FORECASTS
 
 
 def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):

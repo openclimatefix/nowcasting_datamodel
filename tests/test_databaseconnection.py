@@ -1,6 +1,7 @@
 from typing import List
 
 from nowcasting_datamodel.models import ForecastSQL
+from nowcasting_datamodel.fake import N_FAKE_FORECASTS
 
 
 def test_get_session(db_connection):
@@ -20,4 +21,4 @@ def test_read_forecast_one(db_session, forecast_sql):
     forecasts: List[ForecastSQL] = db_session.query(ForecastSQL).all()
     assert len(forecasts) == 1
     assert forecast_sql[0] == forecasts[0]
-    assert len(forecasts[0].forecast_values) == 2
+    assert len(forecasts[0].forecast_values) == N_FAKE_FORECASTS
