@@ -3,10 +3,10 @@ from datetime import datetime, timezone
 from nowcasting_datamodel.fake import (
     make_fake_forecast,
     make_fake_forecast_value,
+    make_fake_gsp_yields,
     make_fake_input_data_last_updated,
     make_fake_location,
     make_fake_national_forecast,
-    make_fake_gsp_yields,
 )
 from nowcasting_datamodel.models import (
     Forecast,

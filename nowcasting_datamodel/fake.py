@@ -5,6 +5,7 @@ from typing import List, Optional
 import numpy as np
 from sqlalchemy.orm import Session
 
+from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
     MLModelSQL,
@@ -12,10 +13,9 @@ from nowcasting_datamodel.models import (
     national_gb_label,
 )
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
-from nowcasting_datamodel.models.gsp import LocationSQL, GSPYieldSQL
+from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 
-from nowcasting_datamodel import N_GSP
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
     """Make fake location with gsp id"""
