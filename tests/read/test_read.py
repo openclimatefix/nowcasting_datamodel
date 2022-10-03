@@ -5,11 +5,11 @@ import pytest
 from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import (
+    N_FAKE_FORECASTS,
     make_fake_forecast,
     make_fake_forecasts,
     make_fake_national_forecast,
     make_fake_pv_system,
-    N_FAKE_FORECASTS
 )
 from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
@@ -233,7 +233,7 @@ def test_get_forecast_values_gsp_id_latest(db_session):
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
 
-    assert len(forecast_values_read) == 16 # only getting forecast ahead
+    assert len(forecast_values_read) == 16  # only getting forecast ahead
 
     assert forecast_values_read[0].target_time == forecast_2.forecast_values[96].target_time
 
@@ -299,7 +299,7 @@ def test_get_all_gsp_ids_latest_forecast_filter(db_session):
     forecast_read = get_all_gsp_ids_latest_forecast(
         session=db_session, start_created_utc=start_created_utc, start_target_time=target_time
     )
-    assert len(db_session.query(ForecastValueSQL).all()) == 2* N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueSQL).all()) == 2 * N_FAKE_FORECASTS
     assert len(forecast_read) == 2
     assert forecast_read[0] == f1[0]
     assert forecast_read[1] == f1[1]

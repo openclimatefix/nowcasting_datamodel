@@ -1,4 +1,4 @@
-from nowcasting_datamodel.fake import make_fake_forecasts, N_FAKE_FORECASTS
+from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
@@ -15,8 +15,8 @@ def test_save(db_session):
 
     # 10 forecast, + 10 historic ones
     assert len(db_session.query(ForecastSQL).all()) == 20
-    assert len(db_session.query(ForecastValueSQL).all()) == 10* N_FAKE_FORECASTS
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10* N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueSQL).all()) == 10 * N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
 
     forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
     save(session=db_session, forecasts=forecasts)
@@ -24,7 +24,7 @@ def test_save(db_session):
     # 20 forecast, + 10 historic ones
     assert len(db_session.query(ForecastSQL).all()) == 30
     assert len(db_session.query(ForecastValueSQL).all()) == 20 * N_FAKE_FORECASTS
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10* N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
 
     # check that for gsp_id the results look right
     forecast_latest_values = (

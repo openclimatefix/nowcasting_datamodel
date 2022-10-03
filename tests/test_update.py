@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from freezegun import freeze_time
 
-from nowcasting_datamodel.fake import make_fake_forecasts, N_FAKE_FORECASTS
+from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,

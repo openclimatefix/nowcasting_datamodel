@@ -1,7 +1,7 @@
 from typing import List
 
-from nowcasting_datamodel.models import ForecastSQL
 from nowcasting_datamodel.fake import N_FAKE_FORECASTS
+from nowcasting_datamodel.models import ForecastSQL
 
 
 def test_get_session(db_connection):

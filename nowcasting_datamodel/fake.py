@@ -17,7 +17,7 @@ from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 
 # 2 days in the past + 8 hours forward at 30 mins interval
-N_FAKE_FORECASTS = (24*2 + 8)*2
+N_FAKE_FORECASTS = (24 * 2 + 8) * 2
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
@@ -65,7 +65,7 @@ def make_fake_forecast(
         forecast_values = []
         # 2 days in the past + 8 hours forward
         for i in range(N_FAKE_FORECASTS):
-            target_datetime_utc = t0_datetime_utc + timedelta(minutes=i*30) - timedelta(days=2)
+            target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
             f = make_fake_forecast_value(target_time=target_datetime_utc)
             forecast_values.append(f)
 
@@ -119,7 +119,7 @@ def make_fake_national_forecast(
     # create
     forecast_values = []
     for i in range(N_FAKE_FORECASTS):
-        target_datetime_utc = t0_datetime_utc + timedelta(minutes=i* 30) - timedelta(days=2)
+        target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
         f = make_fake_forecast_value(target_time=target_datetime_utc)
         forecast_values.append(f)
 
