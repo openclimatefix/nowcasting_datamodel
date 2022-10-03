@@ -5,7 +5,6 @@ from typing import List, Optional
 import numpy as np
 from sqlalchemy.orm import Session
 
-from nowcasting_datamodel import N_GSP
 from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
     MLModelSQL,
