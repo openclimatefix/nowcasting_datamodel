@@ -1,6 +1,6 @@
 """ Method to update latest forecast values """
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from sqlalchemy import inspect
@@ -127,6 +127,14 @@ def update_all_forecast_latest(
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     """
 
+    logger.debug("Getting the earliest forecast target time for the first forecast")
+    forecast_values_target_times = [f.target_time for f in forecasts[0].forecast_values]
+    start_target_time = min(forecast_values_target_times) - timedelta(days=1)
+    logger.debug(
+        f"First forecast start target time is {min(forecast_values_target_times)} "
+        f"so will filter results on {start_target_time}"
+    )
+
     gsp_ids = get_gsp_ids(include_national=update_national, include_gsps=update_gsp)
     if len(gsp_ids) == 0:
         logger.warning(f"Will not be updating any GSPs as {update_national=} and {update_gsp=}")
@@ -136,7 +144,11 @@ def update_all_forecast_latest(
     # get all latest forecasts
     logger.debug("Getting all latest forecasts")
     forecasts_historic_all_gsps = get_latest_forecast_for_gsps(
-        session=session, historic=True, preload_children=True, gsp_ids=gsp_ids
+        session=session,
+        historic=True,
+        preload_children=True,
+        gsp_ids=gsp_ids,
+        start_target_time=start_target_time,
     )
     # get all these ids, so we only have to load it once
     historic_gsp_ids = [forecast.location.gsp_id for forecast in forecasts_historic_all_gsps]
