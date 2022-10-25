@@ -127,8 +127,8 @@ def update_all_forecast_latest(
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     """
 
-    logger.debug("Getting the earliest forecast time for the first forecast")
-    forecast_values_target_times = [f.target_time for f in forecasts[0].forecast_values_latest]
+    logger.debug("Getting the earliest forecast target time for the first forecast")
+    forecast_values_target_times = [f.target_time for f in forecasts[0].forecast_values]
     start_target_time = min(forecast_values_target_times) - timedelta(days=1)
     logger.debug(
         f"First forecast start target time is {min(forecast_values_target_times)} "
