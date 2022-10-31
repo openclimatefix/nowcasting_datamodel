@@ -12,7 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 def get_latest_gsp_yield(
-    session: Session, gsps: List[LocationSQL], append_to_gsps: bool = False, regime: str = "in-day"
+    session: Session,
+    gsps: List[LocationSQL],
+    append_to_gsps: bool = False,
+    regime: str = "in-day",
+    datetime_utc: Optional[datetime] = None,
 ) -> Union[List[GSPYieldSQL], List[LocationSQL]]:
     """
     Get the last gsp yield data
@@ -22,6 +26,7 @@ def get_latest_gsp_yield(
     :param append_to_gsps: append gsp yield to pv systems, or return pv systems.
         If appended the yield is access by 'pv_system.last_gsp_yield'
     :param regime: What regime the data is in, either 'in-day' or 'day-after'
+    :param datetime_utc: Optional to filter on datetime
     :return: either list of gsp yields, or pv systems
     """
 
@@ -42,6 +47,10 @@ def get_latest_gsp_yield(
 
     # select only th epv systems we want
     query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
+
+    if datetime_utc is not None:
+        # filter on datetime
+        query = query.where(GSPYieldSQL.datetime_utc >= datetime_utc)
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
