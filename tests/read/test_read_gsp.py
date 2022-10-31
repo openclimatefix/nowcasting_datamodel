@@ -76,7 +76,9 @@ def test_get_latest_gsp_yield_datetime(db_session):
 
     db_session.commit()
 
-    gsp_yields = get_latest_gsp_yield(session=db_session, gsps=[gsp_sql_1, gsp_sql_2], datetime_utc=datetime(2022, 1, 2))
+    gsp_yields = get_latest_gsp_yield(
+        session=db_session, gsps=[gsp_sql_1, gsp_sql_2], datetime_utc=datetime(2022, 1, 2)
+    )
 
     # read database
     assert len(gsp_yields) == 1
