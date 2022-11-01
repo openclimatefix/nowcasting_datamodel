@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import List
 
 from pydantic import Field, validator
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, REAL, event, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Index, Integer, REAL, event, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
