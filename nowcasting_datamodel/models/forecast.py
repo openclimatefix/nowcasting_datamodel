@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import List
 
 from pydantic import Field, validator
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, event, func
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, REAL, event, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
@@ -100,7 +100,7 @@ class ForecastValueSQLMixin(CreatedMixin):
 
     uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
     target_time = Column(DateTime(timezone=True), index=True, nullable=False, primary_key=True)
-    expected_power_generation_megawatts = Column(Float)
+    expected_power_generation_megawatts = Column(REAL)
 
     @declared_attr
     def forecast_id(self):
@@ -164,7 +164,7 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     )
 
     target_time = Column(DateTime(timezone=True), index=True, primary_key=True)
-    expected_power_generation_megawatts = Column(Float)
+    expected_power_generation_megawatts = Column(REAL)
     gsp_id = Column(Integer, index=True, primary_key=True)
     is_primary = Column(Boolean, default=True)
 
