@@ -14,6 +14,7 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
+from nowcasting_datamodel.update import change_forecast_value_to_latest
 
 # 2 days in the past + 8 hours forward at 30 mins interval
 N_FAKE_FORECASTS = (24 * 2 + 8) * 2
@@ -49,6 +50,7 @@ def make_fake_forecast(
     t0_datetime_utc: Optional[datetime] = None,
     forecast_values: Optional = None,
     forecast_values_latest: Optional = None,
+    add_latest: Optional[bool] = False,
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
@@ -71,6 +73,12 @@ def make_fake_forecast(
     if forecast_values_latest is None:
         forecast_values_latest = []
 
+        if add_latest:
+            for forecast_value in forecast_values:
+                forecast_values_latest.append(
+                    change_forecast_value_to_latest(forecast_value, gsp_id=location.gsp_id)
+                )
+
     forecast = ForecastSQL(
         model=model,
         forecast_creation_time=t0_datetime_utc,
@@ -88,6 +96,7 @@ def make_fake_forecasts(
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
     forecast_values: Optional = None,
+    add_latest: Optional[bool] = False,
 ) -> List[ForecastSQL]:
     """Make many fake forecast"""
     forecasts = []
@@ -98,8 +107,11 @@ def make_fake_forecasts(
                 t0_datetime_utc=t0_datetime_utc,
                 session=session,
                 forecast_values=forecast_values,
+                add_latest=add_latest,
             )
         )
+
+    session.add_all(forecasts)
 
     return forecasts
 

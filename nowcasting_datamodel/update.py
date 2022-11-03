@@ -8,7 +8,11 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueLatestSQL
+from nowcasting_datamodel.models.forecast import (
+    ForecastSQL,
+    ForecastValueLatestSQL,
+    ForecastValueSQL,
+)
 from nowcasting_datamodel.read.read import (
     get_latest_forecast,
     get_latest_forecast_for_gsps,
@@ -94,14 +98,10 @@ def update_forecast_latest(
     forecast_values = []
     for forecast_value in forecast.forecast_values:
 
-        forecast_value_dict = {}
-        for v in ["target_time", "expected_power_generation_megawatts"]:
-            forecast_value_dict[v] = getattr(forecast_value, v)
-
-        forecast_value_dict["gsp_id"] = forecast.location.gsp_id
-        forecast_value_dict["forecast_id"] = forecast_historic.id
-
-        forecast_values.append(ForecastValueLatestSQL(**forecast_value_dict).__dict__)
+        forecast_value_latest = change_forecast_value_to_latest(
+            forecast_value, gsp_id=forecast.location.gsp_id, forecast_id=forecast_historic.id
+        )
+        forecast_values.append(forecast_value_latest.__dict__)
 
     # upsert forecast values
     upsert(session=session, model=ForecastValueLatestSQL, rows=forecast_values)
@@ -109,6 +109,29 @@ def update_forecast_latest(
     # update forecast creation time
     forecast_historic.forecast_creation_time = datetime.now(tz=timezone.utc)
     session.commit()
+
+
+def change_forecast_value_to_latest(
+    forecast_value: ForecastValueSQL, gsp_id: int, forecast_id: Optional[int] = None
+) -> ForecastValueLatestSQL:
+    """
+    Make a ForecastValueLatestSQL from a ForecastValueQL object
+
+    :param forecast_value: forecast value object
+    :param gsp_id: gsp id
+    :param forecast_id: forecast joining id
+    :return: forecast value latest object
+    """
+
+    forecast_value_dict = {}
+    for v in ["target_time", "expected_power_generation_megawatts"]:
+        forecast_value_dict[v] = getattr(forecast_value, v)
+
+    forecast_value_dict["gsp_id"] = gsp_id
+    if forecast_id is not None:
+        forecast_value_dict["forecast_id"] = forecast_id
+
+    return ForecastValueLatestSQL(**forecast_value_dict)
 
 
 def update_all_forecast_latest(

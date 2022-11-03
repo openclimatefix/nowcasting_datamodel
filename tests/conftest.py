@@ -57,7 +57,7 @@ def db_connection():
 
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
-    connection = DatabaseConnection(url=url)
+    connection = DatabaseConnection(url=url, echo=False)
     connection.create_all()
 
     yield connection

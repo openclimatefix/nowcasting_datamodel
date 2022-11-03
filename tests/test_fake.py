@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from nowcasting_datamodel.fake import (
     make_fake_forecast,
     make_fake_forecast_value,
+    make_fake_forecasts,
     make_fake_gsp_yields,
     make_fake_input_data_last_updated,
     make_fake_location,
@@ -12,6 +13,7 @@ from nowcasting_datamodel.models import (
     Forecast,
     ForecastSQL,
     ForecastValue,
+    ForecastValueLatestSQL,
     GSPYieldSQL,
     InputDataLastUpdated,
     InputDataLastUpdatedSQL,
@@ -54,6 +56,14 @@ def test_make_fake_forecast(db_session):
     db_session.add(f)
     db_session.commit()
     tables = db_session.execute(text("SELECT * FROM forecast_value_2022_01")).all()
+
+
+def test_make_fake_forecasts(db_session):
+    make_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3], add_latest=True)
+
+    assert len(db_session.query(ForecastSQL).all()) > 0
+    assert len(db_session.query(ForecastValueLatestSQL).all()) > 0
+    assert len(db_session.query(ForecastValueSQL).all()) > 0
 
 
 def test_make_national_fake_forecast(db_session):
