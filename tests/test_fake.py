@@ -59,7 +59,7 @@ def test_make_fake_forecast(db_session):
 
 
 def test_make_fake_forecasts(db_session):
-    make_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3])
+    make_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3], add_latest=True)
 
     assert len(db_session.query(ForecastSQL).all()) > 0
     assert len(db_session.query(ForecastValueLatestSQL).all()) > 0
