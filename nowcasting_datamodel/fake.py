@@ -72,9 +72,9 @@ def make_fake_forecast(
     if forecast_values_latest is None:
         forecast_values_latest = []
         for forecast_value in forecast_values:
-            forecast_values_latest.append(change_forecast_value_to_latest(
-                forecast_value, gsp_id=location.gsp_id
-            ))
+            forecast_values_latest.append(
+                change_forecast_value_to_latest(forecast_value, gsp_id=location.gsp_id)
+            )
 
     forecast = ForecastSQL(
         model=model,
