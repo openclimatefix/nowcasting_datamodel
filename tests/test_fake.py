@@ -58,12 +58,12 @@ def test_make_fake_forecast(db_session):
     tables = db_session.execute(text("SELECT * FROM forecast_value_2022_01")).all()
 
 
-def test_make_fake_forecasts(db_sessions):
-    make_fake_forecasts(session=db_sessions, gsp_ids=[0, 1, 2, 3])
+def test_make_fake_forecasts(db_session):
+    make_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3])
 
-    assert len(db_sessions.query(ForecastSQL).all()) > 0
-    assert len(db_sessions.query(ForecastValueLatestSQL).all()) > 0
-    assert len(db_sessions.query(ForecastValueSQL).all()) > 0
+    assert len(db_session.query(ForecastSQL).all()) > 0
+    assert len(db_session.query(ForecastValueLatestSQL).all()) > 0
+    assert len(db_session.query(ForecastValueSQL).all()) > 0
 
 
 def test_make_national_fake_forecast(db_session):

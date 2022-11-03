@@ -14,6 +14,7 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
+from nowcasting_datamodel.update import change_forecast_value_to_latest
 
 # 2 days in the past + 8 hours forward at 30 mins interval
 N_FAKE_FORECASTS = (24 * 2 + 8) * 2
@@ -69,7 +70,11 @@ def make_fake_forecast(
             forecast_values.append(f)
 
     if forecast_values_latest is None:
-        forecast_values_latest = forecast_values
+        forecast_values_latest = []
+        for forecast_value in forecast_values:
+            forecast_values_latest.append(change_forecast_value_to_latest(
+                forecast_value, gsp_id=location.gsp_id
+            ))
 
     forecast = ForecastSQL(
         model=model,
