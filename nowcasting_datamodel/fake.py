@@ -69,7 +69,7 @@ def make_fake_forecast(
             forecast_values.append(f)
 
     if forecast_values_latest is None:
-        forecast_values_latest = []
+        forecast_values_latest = forecast_values
 
     forecast = ForecastSQL(
         model=model,
@@ -100,6 +100,8 @@ def make_fake_forecasts(
                 forecast_values=forecast_values,
             )
         )
+
+    session.add_all(forecasts)
 
     return forecasts
 
