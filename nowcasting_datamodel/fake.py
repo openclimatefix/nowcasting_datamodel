@@ -55,7 +55,17 @@ def make_fake_forecast(
     historic: Optional[bool] = False,
 ) -> ForecastSQL:
     """Make one fake forecast"""
-    location = get_location(gsp_id=gsp_id, session=session)
+
+    if gsp_id == 0:
+        # national capacity
+        installed_capacity_mw = 13000
+    else:
+        # gsp capacity (roughly)
+        installed_capacity_mw = 10
+
+    location = get_location(
+        gsp_id=gsp_id, session=session, installed_capacity_mw=installed_capacity_mw
+    )
     location.installed_capacity_mw = 2
     model = get_model(name="fake_model", session=session, version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
@@ -163,15 +173,28 @@ def make_fake_gsp_yields_for_one_location(
     :param t0_datetime_utc: the time now.
     """
 
+    if gsp_id == 0:
+        # national capacity
+        installed_capacity_mw = 13000
+    else:
+        # gsp capacity (roughly)
+        installed_capacity_mw = 10
+
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
 
-    location = get_location(session=session, gsp_id=gsp_id)
+    location = get_location(
+        session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
+    )
 
     # make 3 days of fake data
     for i in range(48 * 3):
         datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
-        gsp_yield = GSPYieldSQL(datetime_utc=datetime_utc, solar_generation_kw=2, regime="in-day")
+        gsp_yield = GSPYieldSQL(
+            datetime_utc=datetime_utc,
+            solar_generation_kw=np.random.random() * installed_capacity_mw,
+            regime="in-day",
+        )
         gsp_yield.location = location
 
         session.add(gsp_yield)
