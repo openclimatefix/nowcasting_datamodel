@@ -37,10 +37,11 @@ def make_fake_input_data_last_updated() -> InputDataLastUpdatedSQL:
     return InputDataLastUpdatedSQL(gsp=now, nwp=now, pv=now, satellite=now)
 
 
-def make_fake_forecast_value(target_time) -> ForecastValueSQL:
+def make_fake_forecast_value(target_time, forecast_maximum: Optional[int] = 1) -> ForecastValueSQL:
     """Make fake fprecast value"""
     return ForecastValueSQL(
-        target_time=target_time, expected_power_generation_megawatts=np.random.random()
+        target_time=target_time,
+        expected_power_generation_megawatts=np.random.random() * forecast_maximum,
     )
 
 
@@ -67,7 +68,9 @@ def make_fake_forecast(
         # 2 days in the past + 8 hours forward
         for i in range(N_FAKE_FORECASTS):
             target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
-            f = make_fake_forecast_value(target_time=target_datetime_utc)
+            f = make_fake_forecast_value(
+                target_time=target_datetime_utc, forecast_maximum=location.installed_capacity_mw
+            )
             forecast_values.append(f)
 
     if forecast_values_latest is None:
@@ -86,6 +89,7 @@ def make_fake_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         forecast_values_latest=forecast_values_latest,
+        historic=True,
     )
 
     return forecast
