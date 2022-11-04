@@ -66,7 +66,7 @@ def make_fake_forecast(
     location = get_location(
         gsp_id=gsp_id, session=session, installed_capacity_mw=installed_capacity_mw
     )
-    
+
     model = get_model(name="fake_model", session=session, version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
