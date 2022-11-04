@@ -52,6 +52,7 @@ def make_fake_forecast(
     forecast_values: Optional = None,
     forecast_values_latest: Optional = None,
     add_latest: Optional[bool] = False,
+    historic: Optional[bool] = False,
 ) -> ForecastSQL:
     """Make one fake forecast"""
     location = get_location(gsp_id=gsp_id, session=session)
@@ -89,7 +90,7 @@ def make_fake_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         forecast_values_latest=forecast_values_latest,
-        historic=True,
+        historic=historic,
     )
 
     return forecast
@@ -101,6 +102,7 @@ def make_fake_forecasts(
     t0_datetime_utc: Optional[datetime] = None,
     forecast_values: Optional = None,
     add_latest: Optional[bool] = False,
+    historic: Optional[bool] = False,
 ) -> List[ForecastSQL]:
     """Make many fake forecast"""
     forecasts = []
@@ -112,6 +114,7 @@ def make_fake_forecasts(
                 session=session,
                 forecast_values=forecast_values,
                 add_latest=add_latest,
+                historic=historic,
             )
         )
 
