@@ -507,13 +507,19 @@ def get_latest_forecast_created_utc(session: Session, gsp_id: Optional[int] = No
     return created_utc[0]
 
 
-def get_location(session: Session, gsp_id: int, label: Optional[str] = None) -> LocationSQL:
+def get_location(
+    session: Session,
+    gsp_id: int,
+    label: Optional[str] = None,
+    installed_capacity_mw: Optional[int] = None,
+) -> LocationSQL:
     """
     Get location object from gsp id
 
     :param session: database session
     :param gsp_id: gsp id of the location
     :param label: label of the location
+    :param installed_capacity_mw: if a new location is created, this will be the installed capacity mw
 
     return: List of forecasts values objects from database
 
@@ -537,7 +543,9 @@ def get_location(session: Session, gsp_id: int, label: Optional[str] = None) -> 
         if label is None:
             label = f"GSP_{gsp_id}"
 
-        location = LocationSQL(gsp_id=gsp_id, label=label)
+        location = LocationSQL(
+            gsp_id=gsp_id, label=label, installed_capacity_mw=installed_capacity_mw
+        )
         if gsp_id == 0:
             location.label = national_gb_label
         session.add(location)
