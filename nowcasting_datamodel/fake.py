@@ -187,9 +187,9 @@ def make_fake_gsp_yields_for_one_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    # make 3 days of fake data
-    for i in range(48 * 3):
-        datetime_utc = t0_datetime_utc - timedelta(days=3) + timedelta(minutes=i * 30)
+    # make 2 days of fake data
+    for i in range(48 * 2):
+        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
         gsp_yield = GSPYieldSQL(
             datetime_utc=datetime_utc,
             solar_generation_kw=np.random.random() * installed_capacity_mw,
