@@ -519,7 +519,8 @@ def get_location(
     :param session: database session
     :param gsp_id: gsp id of the location
     :param label: label of the location
-    :param installed_capacity_mw: if a new location is created, this will be the installed capacity mw
+    :param installed_capacity_mw: if a new location is created,
+        this will be the installed capacity mw
 
     return: List of forecasts values objects from database
 
