@@ -76,5 +76,5 @@ def test_make_fake_gsp_yields(db_session):
     make_fake_gsp_yields(session=db_session, gsp_ids=list(range(0, 10)))
 
     assert len(db_session.query(LocationSQL).all()) == 10
-    # 3 days for each location, both regimes
-    assert len(db_session.query(GSPYieldSQL).all()) == 10 * 48 * 3 * 2
+    # 2 days for each location, both regimes
+    assert len(db_session.query(GSPYieldSQL).all()) == 10 * 48 * 2 * 2
