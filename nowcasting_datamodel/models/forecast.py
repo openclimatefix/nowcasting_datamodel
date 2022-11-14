@@ -120,15 +120,15 @@ class ForecastValueSQL(
 
     __table_args__ = (
         Index(
-            f"ix_forecast_value_forecast_id",  # Index name
+            "ix_forecast_value_forecast_id",  # Index name
             "forecast_id",  # Columns which are part of the index
         ),
         Index(
-            f"ix_forecast_created_utc",  # Index name
+            "ix_forecast_created_utc",  # Index name
             "created_utc",  # Columns which are part of the index
         ),
         Index(
-            f"ix_forecast_value_target_time",  # Index name
+            "ix_forecast_value_target_time",  # Index name
             "target_time",  # Columns which are part of the index
         ),
     )
@@ -230,15 +230,15 @@ make_partitions(2022, 8, 2024)
 class ForecastValueOld(ForecastValueSQLMixin, Base_Forecast):
     """Old ForecastValue table"""
 
-    __tablename__ = f"forecast_value_old"
+    __tablename__ = "forecast_value_old"
 
     __table_args__ = (
         Index(
-            f"ix_forecast_value_forecast_id_old",  # Index name
+            "ix_forecast_value_forecast_id_old",  # Index name
             "forecast_id",  # Columns which are part of the index
         ),
         Index(
-            f"ix_forecast_value_target_time_old",  # Index name
+            "ix_forecast_value_target_time_old",  # Index name
             "target_time",  # Columns which are part of the index
         ),
     )
@@ -322,7 +322,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
 
     __table_args__ = (
         Index(
-            f"idx_forecast_created_utc",  # Index name
+            "idx_forecast_created_utc",  # Index name
             "created_utc",  # Columns which are part of the index
         ),
     )
