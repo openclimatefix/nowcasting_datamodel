@@ -350,7 +350,7 @@ def get_forecast_values(
     start_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
-    model: Optional = ForecastValueSQL
+    model: Optional = ForecastValueSQL,
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
@@ -365,12 +365,17 @@ def get_forecast_values(
     :param forecast_horizon_minutes: Optional filter on forecast horizon. For example
         forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
         target time. Note this only works for non-historic data.
+    :param model: Can be 'ForecastValueSQL' or 'ForecastValueSevenDaysSQL'
 
     return: List of forecasts values objects from database
 
     """
 
     # start main query
+    assert model.__tablename__ in [
+        ForecastValueSevenDaysSQL.__tablename__,
+        ForecastValueSQL.__tablename__,
+    ]
     query = session.query(model)
 
     if only_return_latest:
