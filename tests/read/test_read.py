@@ -102,13 +102,13 @@ def test_read_gsp_id(db_session, forecasts):
 def test_read_target_time(db_session):
 
     f1 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
+        target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
     )
     f2 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=3, gsp_id=1
+        target_time=datetime(2023, 1, 1, 1), expected_power_generation_megawatts=3, gsp_id=1
     )
     f3 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
+        target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
     )
     f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2, f3])
     f.historic = True
@@ -117,7 +117,7 @@ def test_read_target_time(db_session):
         session=db_session,
         gsp_id=f.location.gsp_id,
         historic=True,
-        start_target_time=datetime(2022, 1, 1, 0, 30),
+        start_target_time=datetime(2023, 1, 1, 0, 30),
     )
     assert forecast_read is not None
     assert forecast_read.location.gsp_id == f.location.gsp_id
@@ -156,12 +156,12 @@ def test_get_forecast_values_latest_gsp_id(db_session):
         ForecastValueLatestSQL(
             gsp_id=1,
             expected_power_generation_megawatts=1,
-            target_time=datetime(2022, 1, 1, tzinfo=timezone.utc),
+            target_time=datetime(2023, 1, 1, tzinfo=timezone.utc),
         ),
         ForecastValueLatestSQL(
             gsp_id=1,
             expected_power_generation_megawatts=1,
-            target_time=datetime(2022, 1, 1, 0, 30, tzinfo=timezone.utc),
+            target_time=datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc),
         ),
     ]
     db_session.add_all(f1)
@@ -216,19 +216,20 @@ def test_get_latest_forecast_created_utc_national(db_session):
     assert created_utc == f2.created_utc
 
 
+@freeze_time('2023-01-01')
 def test_get_forecast_values_gsp_id_latest(db_session):
     _ = make_fake_forecast(
-        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 1, tzinfo=timezone.utc)
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2023, 1, 1, tzinfo=timezone.utc)
     )
     forecast_2 = make_fake_forecast(
-        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2022, 1, 2, tzinfo=timezone.utc)
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2023, 1, 2, tzinfo=timezone.utc)
     )
 
     forecast_values_read = get_forecast_values(
         session=db_session,
         gsp_id=1,
         only_return_latest=True,
-        start_datetime=datetime(2022, 1, 2, tzinfo=timezone.utc),
+        start_datetime=datetime(2023, 1, 2, tzinfo=timezone.utc),
     )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
@@ -262,7 +263,7 @@ def test_get_all_gsp_ids_latest_forecast_historic(db_session):
     f1[0].historic = True
     f1[0].forecast_values_latest = [
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2023, 1, 1)
         )
     ]
     db_session.add_all(f1)
@@ -283,10 +284,11 @@ def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
     assert len(forecasts[0].forecast_values) == N_FAKE_FORECASTS
 
 
+@freeze_time("2023-01-01")
 def test_get_all_gsp_ids_latest_forecast_filter(db_session):
 
     f1 = make_fake_forecasts(
-        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2020, 1, 1)
+        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2023, 1, 1)
     )
     db_session.add_all(f1)
     db_session.add_all(f1[0].forecast_values)
@@ -311,24 +313,24 @@ def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
     """Test get all historic forecast from all gsp but filter on starttime"""
 
     f1 = make_fake_forecasts(
-        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2020, 1, 1)
+        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2022, 9, 1)
     )
     f1[0].historic = True
     f1[0].forecast_values_latest = [
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2022, 1, 1)
+            gsp_id=1, expected_power_generation_megawatts=1, target_time=datetime(2023, 1, 1)
         ),
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=3, target_time=datetime(2022, 1, 1, 1)
+            gsp_id=1, expected_power_generation_megawatts=3, target_time=datetime(2023, 1, 1, 1)
         ),
         ForecastValueLatestSQL(
-            gsp_id=1, expected_power_generation_megawatts=2, target_time=datetime(2022, 1, 1, 0, 30)
+            gsp_id=1, expected_power_generation_megawatts=2, target_time=datetime(2023, 1, 1, 0, 30)
         ),
     ]
 
     db_session.add_all(f1)
 
-    target_time = datetime(2022, 1, 1, 0, 30)
+    target_time = datetime(2023, 1, 1, 0, 30)
     forecast = get_all_gsp_ids_latest_forecast(
         session=db_session, start_target_time=target_time, historic=True
     )[0]

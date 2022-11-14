@@ -25,11 +25,11 @@ from nowcasting_datamodel.update import (
 def test_model_duplicate_key(db_session):
 
     f1 = ForecastValueLatestSQL(
-        gsp_id=1, target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1
+        gsp_id=1, target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1
     )
 
     f2 = ForecastValueLatestSQL(
-        gsp_id=1, target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=2
+        gsp_id=1, target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=2
     )
 
     db_session.add(f1)
@@ -46,9 +46,9 @@ def test_update_one_gsp(db_session):
 
     assert len(db_session.query(ForecastSQL).all()) == 0
 
-    f1 = ForecastValueSQL(target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1.1)
+    f1 = ForecastValueSQL(target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1.1)
     f2 = ForecastValueSQL(
-        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2.1
+        target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=2.1
     )
     f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f1, f2])
     forecast_sql = f[0]
@@ -66,10 +66,10 @@ def test_update_one_gsp(db_session):
 
     # new forecast is made
     # create and add
-    f3 = ForecastValueSQL(target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=3)
+    f3 = ForecastValueSQL(target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=3)
 
     f4 = ForecastValueSQL(
-        target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=4
+        target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=4
     )
     f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f3, f4])
     forecast_sql = f[0]
@@ -101,17 +101,17 @@ def test_update_all_forecast_latest(db_session):
 
 
 def test_update_one_gsp_wtih_time_step(db_session):
-    with freeze_time("2022-01-01") as f:
+    with freeze_time("2023-01-01") as f:
         db_session.query(ForecastValueSQL).delete()
         db_session.query(ForecastSQL).delete()
 
         assert len(db_session.query(ForecastSQL).all()) == 0
 
         f1 = ForecastValueSQL(
-            target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1
+            target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1
         )
         f2 = ForecastValueSQL(
-            target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2
+            target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=2
         )
         f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f1, f2])
         forecast_sql = f[0]
@@ -125,15 +125,15 @@ def test_update_one_gsp_wtih_time_step(db_session):
     assert len(db_session.query(ForecastSQL).all()) == 2
     assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).all()) == 1
 
-    with freeze_time("2022-01-01 00:30") as f:
+    with freeze_time("2023-01-01 00:30") as f:
         # new forecast is made
         # create and add
         f3 = ForecastValueSQL(
-            target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=3
+            target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=3
         )
 
         f4 = ForecastValueSQL(
-            target_time=datetime(2022, 1, 1, 1), expected_power_generation_megawatts=4
+            target_time=datetime(2023, 1, 1, 1), expected_power_generation_megawatts=4
         )
         f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f3, f4])
         forecast_sql = f[0]
@@ -161,7 +161,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
 
         assert (
             forecasts_historic[0].forecast_creation_time.isoformat()
-            == datetime(2022, 1, 1, 0, 30, tzinfo=timezone.utc).isoformat()
+            == datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc).isoformat()
         )
 
 
