@@ -1,19 +1,19 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import (
     N_FAKE_FORECASTS,
-    make_fake_forecasts,
     make_fake_forecast_value,
+    make_fake_forecasts,
 )
+from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
     ForecastValueSQL,
 )
-from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.update import (
     add_forecast_last_7_days_and_remove_old_data,
     change_forecast_value_to_forecast_last_7_days,

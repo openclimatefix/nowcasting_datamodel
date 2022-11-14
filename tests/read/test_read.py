@@ -216,7 +216,7 @@ def test_get_latest_forecast_created_utc_national(db_session):
     assert created_utc == f2.created_utc
 
 
-@freeze_time('2023-01-01')
+@freeze_time("2023-01-01")
 def test_get_forecast_values_gsp_id_latest(db_session):
     _ = make_fake_forecast(
         gsp_id=1, session=db_session, t0_datetime_utc=datetime(2023, 1, 1, tzinfo=timezone.utc)

@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timezone
+
 from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecast

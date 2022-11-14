@@ -3,12 +3,12 @@ from datetime import datetime, timezone
 from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
-    ForecastValueSevenDaysSQL,
     ForecastValueLatestSQL,
+    ForecastValueSevenDaysSQL,
     ForecastValueSQL,
 )
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
-from nowcasting_datamodel.save import save, save_pv_system, save_all_forecast_values_seven_days
+from nowcasting_datamodel.save import save, save_all_forecast_values_seven_days, save_pv_system
 
 
 def test_save(db_session):
