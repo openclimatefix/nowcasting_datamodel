@@ -6,7 +6,11 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL
 from nowcasting_datamodel.models.forecast import ForecastSQL
-from nowcasting_datamodel.update import update_all_forecast_latest
+from nowcasting_datamodel.update import (
+    add_forecast_last_7_days_and_remove_old_data,
+    change_forecast_value_to_forecast_last_7_days,
+    update_all_forecast_latest,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +43,9 @@ def save(
         session=session, forecasts=forecasts, update_national=update_national, update_gsp=update_gsp
     )
     session.commit()
+
+    logger.debug("Saving to last seven days table")
+    save_all_forecast_values_seven_days(session=session,forecasts=forecasts)
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
@@ -79,3 +86,25 @@ def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
         pv_system = pv_systems[0]
 
     return pv_system
+
+
+def save_all_forecast_values_seven_days(session: Session, forecasts: List[ForecastSQL]):
+    """
+    Save all the forecast values in the last seven days table
+
+    :param session: database sessions
+    :param forecasts: list of forecasts
+    """
+
+    # get all values together
+    forecast_values_last_7_days = []
+    for forecast in forecasts:
+        for forecast_value in forecast.forecast_values:
+            forecast_values_last_7_days.append(
+                change_forecast_value_to_forecast_last_7_days(forecast_value)
+            )
+
+    # add them to the database
+    add_forecast_last_7_days_and_remove_old_data(
+        session=session, forecast_values=forecast_values_last_7_days
+    )

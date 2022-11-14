@@ -243,7 +243,7 @@ def change_forecast_value_to_forecast_last_7_days(
     """
 
     forecast_new = ForecastValueSevenDaysSQL()
-    for key in ForecastValueLatestSQL.__table__.columns.keys():
+    for key in ForecastValueSQL.__table__.columns.keys():
         if hasattr(forecast, key):
             setattr(forecast_new, key, getattr(forecast, key))
 
