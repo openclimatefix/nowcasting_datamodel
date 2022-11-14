@@ -134,7 +134,6 @@ class ForecastValueSQL(
     )
 
 
-
 def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
     """Make partitions"""
     partitions = []
@@ -168,6 +167,13 @@ def get_partitions(start_year: int, start_month: int, end_year: int, end_month: 
 
 
 def make_partitions(start_year: int, start_month: int, end_year: int):
+    """
+    Make partitions
+
+    :param start_year: year to start
+    :param start_month: month to end
+    :param end_year: end year (exclusive)
+    """
     for year in range(start_year, end_year):
 
         if year != start_year:
@@ -222,6 +228,8 @@ make_partitions(2022, 8, 2024)
 
 # legacy table, this means migration still work
 class ForecastValueOld(ForecastValueSQLMixin, Base_Forecast):
+    """Old ForecastValue table"""
+
     __tablename__ = f"forecast_value_old"
 
     __table_args__ = (
@@ -430,7 +438,9 @@ class ManyForecasts(EnhancedBaseModel):
 
 
 class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast):
-    """One Forecast of generation at one timestamp
+    """
+    One Forecast of generation at one timestamp
+
     This table will only save the last week of data.
     """
 

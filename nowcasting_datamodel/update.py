@@ -8,12 +8,12 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
+from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
     ForecastValueSQL,
 )
-from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.read.read import (
     get_latest_forecast,
     get_latest_forecast_for_gsps,
@@ -268,7 +268,5 @@ def add_forecast_last_7_days_and_remove_old_data(
     now_minus_7_days = datetime.now(tz=timezone.utc) - timedelta(days=7)
 
     query = session.query(ForecastValueSevenDaysSQL)
-    query = query.where(
-        ForecastValueSevenDaysSQL.target_time < now_minus_7_days
-    )
+    query = query.where(ForecastValueSevenDaysSQL.target_time < now_minus_7_days)
     query.delete()
