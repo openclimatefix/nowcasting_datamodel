@@ -99,13 +99,13 @@ class ForecastValueSQLMixin(CreatedMixin):
     """
 
     uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
-    target_time = Column(DateTime(timezone=True), index=True, nullable=False, primary_key=True)
-    expected_power_generation_megawatts = Column(Float)
+    target_time = Column(DateTime(timezone=True), nullable=False, primary_key=True)
+    expected_power_generation_megawatts = Column(Float(precision=6))
 
     @declared_attr
     def forecast_id(self):
         """Link with Forecast table"""
-        return Column(Integer, ForeignKey("forecast.id"), index=True)
+        return Column(Integer, ForeignKey("forecast.id"))
 
 
 class ForecastValueSQL(
@@ -117,6 +117,21 @@ class ForecastValueSQL(
     """
 
     __tablename__ = "forecast_value"
+
+    __table_args__ = (
+        Index(
+            f"ix_forecast_value_forecast_id",  # Index name
+            "forecast_id",  # Columns which are part of the index
+        ),
+        Index(
+            f"ix_forecast_created_utc",  # Index name
+            "created_utc",  # Columns which are part of the index
+        ),
+        Index(
+            f"ix_forecast_value_target_time",  # Index name
+            "target_time",  # Columns which are part of the index
+        ),
+    )
 
 
 class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast
@@ -152,6 +167,74 @@ def get_partitions(start_year: int, end_year: int):
     return partitions
 
 
+def make_partitions(start_year: int, start_month: int, end_year: int):
+    for year in range(start_year, end_year):
+
+        if year != start_year:
+            start_month = 1
+
+        for month in range(start_month, 13):
+
+            if month == 12:
+                year_end = year + 1
+                month_end = 1
+            else:
+                year_end = year
+                month_end = month + 1
+
+            if month < 10:
+                month = f"0{month}"
+            if month_end < 10:
+                month_end = f"0{month_end}"
+
+            class ForecastValueYearMonth(ForecastValueSQLMixin, Base_Forecast):
+                __tablename__ = f"forecast_value_{year}_{month}"
+
+                __table_args__ = (
+                    Index(
+                        f"forecast_value_{year}_{month}_created_utc_idx",  # Index name
+                        "created_utc",  # Columns which are part of the index
+                    ),
+                    Index(
+                        f"forecast_value_{year}_{month}_target_time_idx",  # Index name
+                        "target_time",  # Columns which are part of the index
+                    ),
+                    Index(
+                        f"forecast_value_{year}_{month}_forecast_id_idx",  # Index name
+                        "forecast_id",  # Columns which are part of the index
+                    ),
+                )
+
+            ForecastValueYearMonth.__table__.add_is_dependent_on(ForecastValueSQL.__table__)
+
+            event.listen(
+                ForecastValueYearMonth.__table__,
+                "after_create",
+                DDL(
+                    f"ALTER TABLE forecast_value ATTACH PARTITION forecast_value_{year}_{month} "
+                    f"VALUES FROM ('{year}-{month}-01') TO ('{year_end}-{month_end}-01');"
+                ),
+            )
+
+make_partitions(2022, 8, 2024)
+
+
+# legacy table, this means migration still work
+class ForecastValueOld(ForecastValueSQLMixin, Base_Forecast):
+    __tablename__ = f"forecast_value_old"
+
+    __table_args__ = (
+        Index(
+            f"ix_forecast_value_forecast_id_old",  # Index name
+            "forecast_id",  # Columns which are part of the index
+        ),
+        Index(
+            f"ix_forecast_value_target_time_old",  # Index name
+            "target_time",  # Columns which are part of the index
+        ),
+    )
+
+
 class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     """One Forecast of generation at one timestamp
 
@@ -173,7 +256,7 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     )
 
     target_time = Column(DateTime(timezone=True), index=True, primary_key=True)
-    expected_power_generation_megawatts = Column(Float)
+    expected_power_generation_megawatts = Column(Float(precision=6))
     gsp_id = Column(Integer, index=True, primary_key=True)
     is_primary = Column(Boolean, default=True)
 
@@ -227,6 +310,13 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     """Forecast SQL model"""
 
     __tablename__ = "forecast"
+
+    __table_args__ = (
+        Index(
+            f"idx_forecast_created_utc",  # Index name
+            "created_utc",  # Columns which are part of the index
+        ),
+    )
 
     id = Column(Integer, primary_key=True)
     forecast_creation_time = Column(DateTime(timezone=True))
