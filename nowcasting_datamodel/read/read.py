@@ -24,6 +24,7 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
+    ForecastValueSevenDaysSQL,
     ForecastValueSQL,
 )
 
@@ -349,6 +350,7 @@ def get_forecast_values(
     start_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
+    model: Optional = ForecastValueSQL
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
@@ -369,28 +371,28 @@ def get_forecast_values(
     """
 
     # start main query
-    query = session.query(ForecastValueSQL)
+    query = session.query(model)
 
     if only_return_latest:
-        query = query.distinct(ForecastValueSQL.target_time)
+        query = query.distinct(model.target_time)
 
     if start_datetime is not None:
-        query = query.filter(ForecastValueSQL.target_time >= start_datetime)
+        query = query.filter(model.target_time >= start_datetime)
 
         # also filter on creation time, to speed up things
         created_utc_filter = start_datetime - timedelta(days=1)
-        query = query.filter(ForecastValueSQL.created_utc >= created_utc_filter)
+        query = query.filter(model.created_utc >= created_utc_filter)
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
 
     if forecast_horizon_minutes is not None:
 
         # this seems to only work for postgres
         query = query.filter(
-            ForecastValueSQL.target_time - ForecastValueSQL.created_utc
+            model.target_time - model.created_utc
             >= text(f"interval '{forecast_horizon_minutes} minute'")
         )
         query = query.filter(
-            ForecastValueSQL.created_utc - datetime.now(tz=timezone.utc)
+            model.created_utc - datetime.now(tz=timezone.utc)
             <= text(f"interval '{forecast_horizon_minutes} minute'")
         )
 
@@ -401,7 +403,7 @@ def get_forecast_values(
         query = query.filter(LocationSQL.gsp_id == gsp_id)
 
     # order by target time and created time desc
-    query = query.order_by(ForecastValueSQL.target_time, ForecastValueSQL.created_utc.desc())
+    query = query.order_by(model.target_time, model.created_utc.desc())
 
     # get all results
     forecasts = query.all()
