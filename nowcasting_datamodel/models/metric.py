@@ -22,6 +22,7 @@ from nowcasting_datamodel.utils import datetime_must_have_timezone
 # 1. Metric
 ########
 
+
 class MetricSQL(Base_Forecast):
     """Metric metadata"""
 
