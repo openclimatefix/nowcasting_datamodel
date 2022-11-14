@@ -37,7 +37,7 @@ def test_make_fake_input_data_last_updated():
 
 def test_make_fake_forecast_value():
 
-    target = datetime(2022, 1, 1, tzinfo=timezone.utc)
+    target = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
     forecast_value_sql: ForecastValueSQL = make_fake_forecast_value(target_time=target)
     forecast_value = ForecastValue.from_orm(forecast_value_sql)
@@ -52,10 +52,10 @@ def test_make_fake_forecast(db_session):
 
     from sqlalchemy import text
 
-    f = ForecastValueSQL(target_time="2021-01-01 12:00:00", expected_power_generation_megawatts=3)
+    f = ForecastValueSQL(target_time="2023-01-01 12:00:00", expected_power_generation_megawatts=3)
     db_session.add(f)
     db_session.commit()
-    tables = db_session.execute(text("SELECT * FROM forecast_value_2022_01")).all()
+    tables = db_session.execute(text("SELECT * FROM forecast_value_2023_01")).all()
 
 
 def test_make_fake_forecasts(db_session):

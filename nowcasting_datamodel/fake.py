@@ -71,7 +71,7 @@ def make_fake_forecast(
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
+        t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
     # create
     if forecast_values is None:
@@ -142,7 +142,7 @@ def make_fake_national_forecast(
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
+        t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
     # create
     forecast_values = []

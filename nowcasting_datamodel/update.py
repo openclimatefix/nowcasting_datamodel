@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
+from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
@@ -229,3 +230,43 @@ def get_gsp_ids(include_national: bool = True, include_gsps: bool = True) -> Lis
     if include_gsps:
         gsp_ids = gsp_ids + list(range(1, N_GSP + 1))
     return gsp_ids
+
+
+def change_forecast_value_to_forecast_last_7_days(
+    forecast: ForecastValueSQL,
+) -> ForecastValueSevenDaysSQL:
+    """
+    Make a ForecastValueSevenDaysSQL object from a ForecastValueSQL
+
+    :param forecast: original forecast value
+    :return: forecast value seven days sql
+    """
+
+    forecast_new = ForecastValueSevenDaysSQL()
+    for key in ForecastValueSQL.__table__.columns.keys():
+        if hasattr(forecast, key):
+            setattr(forecast_new, key, getattr(forecast, key))
+
+    return forecast_new
+
+
+def add_forecast_last_7_days_and_remove_old_data(
+    forecast_values: List[ForecastValueSevenDaysSQL], session: Session
+):
+    """
+    Add forecast values and delete old values
+
+    :param forecast_values:
+    :param session:
+    :return:
+    """
+
+    # add forecast
+    session.add_all(forecast_values)
+
+    # remove old data
+    now_minus_7_days = datetime.now(tz=timezone.utc) - timedelta(days=7)
+
+    query = session.query(ForecastValueSevenDaysSQL)
+    query = query.where(ForecastValueSevenDaysSQL.target_time < now_minus_7_days)
+    query.delete()

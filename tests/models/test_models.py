@@ -62,11 +62,11 @@ def test_forecast_latest_to_pydantic(forecast_sql):
     forecast_sql = forecast_sql[0]
 
     f1 = ForecastValueLatestSQL(
-        target_time=datetime(2022, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
+        target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
     )
 
     f2 = ForecastValueLatestSQL(
-        gsp_id=1, target_time=datetime(2022, 1, 1, 0, 30), expected_power_generation_megawatts=2
+        gsp_id=1, target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=2
     )
 
     forecast_sql.forecast_values_latest = [f1, f2]

@@ -37,8 +37,10 @@ class DatabaseConnection:
         self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
 
+    def make_partitions(self):
+        """Make partitions tables (useful for testing)"""
         # get partitions
-        self.partitions = get_partitions(2019, 2023)
+        self.partitions = get_partitions(2019, 1, 2022, 7)
 
         # make partitions
         for partition in self.partitions:
