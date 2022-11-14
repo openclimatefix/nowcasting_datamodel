@@ -119,6 +119,15 @@ class ForecastValueSQL(
     __tablename__ = "forecast_value"
 
 
+class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast
+):
+    """One Forecast of generation at one timestamp
+    This table will only save the last week of data.
+    """
+
+    __tablename__ = "forecast_value_last_seven_days"
+
+
 def get_partitions(start_year: int, end_year: int):
     """Make partitions"""
     partitions = []
