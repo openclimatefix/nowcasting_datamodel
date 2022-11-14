@@ -59,6 +59,7 @@ def db_connection():
 
     connection = DatabaseConnection(url=url, echo=False)
     connection.create_all()
+    connection.make_partitions()
 
     yield connection
 

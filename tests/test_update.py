@@ -1,15 +1,25 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import pytest
 from freezegun import freeze_time
 
-from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
+from nowcasting_datamodel.fake import (
+    N_FAKE_FORECASTS,
+    make_fake_forecasts,
+    make_fake_forecast_value,
+)
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
     ForecastValueSQL,
 )
-from nowcasting_datamodel.update import update_all_forecast_latest, update_forecast_latest
+from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
+from nowcasting_datamodel.update import (
+    add_forecast_last_7_days_and_remove_old_data,
+    change_forecast_value_to_forecast_last_7_days,
+    update_all_forecast_latest,
+    update_forecast_latest,
+)
 
 
 def test_model_duplicate_key(db_session):
@@ -192,3 +202,36 @@ def test_update_all_forecast_latest_update_gsps(db_session):
         forecasts=f1, session=db_session, update_national=True, update_gsp=True
     )
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
+
+
+def test_change_forecast_value_to_forecast_last_7_days(db_session):
+
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 0
+
+    now = datetime.now(tz=timezone.utc)
+    forecast_value = make_fake_forecast_value(target_time=now)
+
+    forecast_value_last_seven_days = change_forecast_value_to_forecast_last_7_days(
+        forecast=forecast_value
+    )
+    add_forecast_last_7_days_and_remove_old_data(
+        forecast_values=[forecast_value_last_seven_days], session=db_session
+    )
+
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 1
+
+
+def test_forecast_last_7_days_old_data(db_session):
+
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 0
+
+    now_minus_8_days = datetime.now(tz=timezone.utc) - timedelta(days=8)
+    forecast_value = ForecastValueSevenDaysSQL(
+        target_time=now_minus_8_days, expected_power_generation_megawatts=1
+    )
+
+    add_forecast_last_7_days_and_remove_old_data(
+        forecast_values=[forecast_value], session=db_session
+    )
+
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 0

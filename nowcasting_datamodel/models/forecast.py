@@ -134,20 +134,20 @@ class ForecastValueSQL(
     )
 
 
-class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast
-):
-    """One Forecast of generation at one timestamp
-    This table will only save the last week of data.
-    """
 
-    __tablename__ = "forecast_value_last_seven_days"
-
-
-def get_partitions(start_year: int, end_year: int):
+def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
     """Make partitions"""
     partitions = []
-    for year in range(start_year, end_year):
-        for month in range(1, 13):
+    for year in range(start_year, end_year + 1):
+
+        if year != start_year:
+            start_month = 1
+        if year == end_year:
+            end_month_loop = end_month
+        else:
+            end_month_loop = 13
+
+        for month in range(start_month, end_month_loop):
             if month == 12:
                 year_end = year + 1
                 month_end = 1
@@ -212,9 +212,10 @@ def make_partitions(start_year: int, start_month: int, end_year: int):
                 "after_create",
                 DDL(
                     f"ALTER TABLE forecast_value ATTACH PARTITION forecast_value_{year}_{month} "
-                    f"VALUES FROM ('{year}-{month}-01') TO ('{year_end}-{month_end}-01');"
+                    f"for VALUES FROM ('{year}-{month}-01') TO ('{year_end}-{month_end}-01');"
                 ),
             )
+
 
 make_partitions(2022, 8, 2024)
 
@@ -426,3 +427,11 @@ class ManyForecasts(EnhancedBaseModel):
     def normalize(self):
         """Normalize forecasts by installed capacity mw"""
         self.forecasts = [forecast.normalize() for forecast in self.forecasts]
+
+
+class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast):
+    """One Forecast of generation at one timestamp
+    This table will only save the last week of data.
+    """
+
+    __tablename__ = "forecast_value_last_seven_days"
