@@ -445,3 +445,14 @@ class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast):
     """
 
     __tablename__ = "forecast_value_last_seven_days"
+
+    __table_args__ = (
+        Index(
+            "idx_forecast_value_last_seven_days_created_utc",  # Index name
+            "created_utc",  # Columns which are part of the index
+        ),
+        Index(
+            "idx_forecast_value_last_seven_days_target_time",  # Index name
+            "target_time",  # Columns which are part of the index
+        ),
+    )
