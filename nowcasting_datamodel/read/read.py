@@ -248,6 +248,7 @@ def get_latest_forecast_for_gsps(
     session: Session,
     start_created_utc: Optional[datetime] = None,
     start_target_time: Optional[datetime] = None,
+    end_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
     gsp_ids: List[int] = None,
@@ -259,6 +260,8 @@ def get_latest_forecast_for_gsps(
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
     :param start_target_time:
         Filter: forecast values target time should be larger than this datetime
+    :param end_target_time:
+        Filter: forecast values target time should be before than this datetime
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
@@ -289,7 +292,10 @@ def get_latest_forecast_for_gsps(
     # filter on target time
     if start_target_time is not None:
         query = filter_query_on_target_time(
-            query=query, start_target_time=start_target_time, historic=historic
+            query=query,
+            start_target_time=start_target_time,
+            historic=historic,
+            end_target_time=end_target_time,
         )
 
     query = query.join(LocationSQL)
@@ -315,7 +321,12 @@ def get_latest_forecast_for_gsps(
     return forecasts
 
 
-def filter_query_on_target_time(query, start_target_time, historic: bool):
+def filter_query_on_target_time(
+    query,
+    historic: bool,
+    start_target_time: Optional[datetime] = None,
+    end_target_time: Optional[datetime] = None,
+):
     """
     Filter query on start target time
 
@@ -331,14 +342,21 @@ def filter_query_on_target_time(query, start_target_time, historic: bool):
         forecast_value_model = ForecastValueSQL
         join_object = ForecastSQL.forecast_values
 
-    if start_target_time is not None:
-        logger.debug(f"Filtering '{start_target_time=}'")
-        query = query.join(join_object).filter(
-            forecast_value_model.target_time >= start_target_time
-        )
+    if (start_target_time is not None) or (end_target_time is not None):
+        if start_target_time is not None:
+            logger.debug(f"Filtering '{start_target_time=}'")
+            query = query.join(join_object).filter(
+                forecast_value_model.target_time >= start_target_time
+            )
+        if end_target_time is not None:
+            logger.debug(f"Filtering '{end_target_time=}'")
+            query = query.join(join_object).filter(
+                forecast_value_model.target_time <= end_target_time
+            )
 
         if historic:
             query = query.options(contains_eager(join_object)).populate_existing()
+
         query.order_by(join_object)
 
     return query
