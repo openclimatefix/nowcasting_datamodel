@@ -8,6 +8,7 @@ from nowcasting_datamodel.fake import (
     make_fake_input_data_last_updated,
     make_fake_location,
     make_fake_national_forecast,
+    make_fake_intensity,
 )
 from nowcasting_datamodel.models import (
     Forecast,
@@ -21,6 +22,17 @@ from nowcasting_datamodel.models import (
     LocationSQL,
 )
 from nowcasting_datamodel.models.forecast import ForecastValueSQL
+
+
+def test_make_fake_intensity():
+
+    assert make_fake_intensity(datetime(2022, 1, 1)) == 0
+    assert make_fake_intensity(datetime(2022, 1, 1, 6)) == 0
+    assert 0 < make_fake_intensity(datetime(2022, 1, 1, 9)) < 1
+    assert make_fake_intensity(datetime(2022, 1, 1, 12)) == 1
+    assert 0 < make_fake_intensity(datetime(2022, 1, 1, 15)) < 1
+    assert make_fake_intensity(datetime(2022, 1, 1, 18)) == 0
+    assert make_fake_intensity(datetime(2022, 1, 2)) == 0
 
 
 def test_make_fake_location():
