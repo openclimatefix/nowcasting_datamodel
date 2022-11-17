@@ -46,6 +46,7 @@ def save(
 
     logger.debug("Saving to last seven days table")
     save_all_forecast_values_seven_days(session=session, forecasts=forecasts)
+    session.commit()
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
