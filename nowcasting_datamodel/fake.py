@@ -18,6 +18,7 @@ from nowcasting_datamodel.update import change_forecast_value_to_latest
 
 # 2 days in the past + 8 hours forward at 30 mins interval
 N_FAKE_FORECASTS = (24 * 2 + 8) * 2
+TOTAL_MINUTES_IN_ONE_DAY = 24 * 60
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
@@ -37,11 +38,17 @@ def make_fake_input_data_last_updated() -> InputDataLastUpdatedSQL:
     return InputDataLastUpdatedSQL(gsp=now, nwp=now, pv=now, satellite=now)
 
 
-def make_fake_forecast_value(target_time, forecast_maximum: Optional[int] = 1) -> ForecastValueSQL:
-    """Make fake fprecast value"""
+def make_fake_forecast_value(
+    target_time, forecast_maximum: Optional[int] = 1, random_factor: Optional[float] = 1
+) -> ForecastValueSQL:
+    """Make fake forecast value"""
+
+    intensity = make_fake_intensity(target_time)
+    power = forecast_maximum * intensity * random_factor
+
     return ForecastValueSQL(
         target_time=target_time,
-        expected_power_generation_megawatts=np.random.random() * forecast_maximum,
+        expected_power_generation_megawatts=power,
     )
 
 
@@ -73,6 +80,8 @@ def make_fake_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
+    random_factor = 0.9 + 0.1 * np.random.random()
+
     # create
     if forecast_values is None:
         forecast_values = []
@@ -80,7 +89,9 @@ def make_fake_forecast(
         for i in range(N_FAKE_FORECASTS):
             target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
             f = make_fake_forecast_value(
-                target_time=target_datetime_utc, forecast_maximum=location.installed_capacity_mw
+                target_time=target_datetime_utc,
+                forecast_maximum=location.installed_capacity_mw,
+                random_factor=random_factor,
             )
             forecast_values.append(f)
 
@@ -144,11 +155,13 @@ def make_fake_national_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
+    random_factor = 0.9 + 0.1 * np.random.random()
+
     # create
     forecast_values = []
     for i in range(N_FAKE_FORECASTS):
         target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
-        f = make_fake_forecast_value(target_time=target_datetime_utc)
+        f = make_fake_forecast_value(target_time=target_datetime_utc, random_factor=random_factor)
         forecast_values.append(f)
 
     forecast = ForecastSQL(
@@ -187,12 +200,18 @@ def make_fake_gsp_yields_for_one_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
+    random_factor = 0.9 + 0.1 * np.random.random()
+
     # make 2 days of fake data
     for i in range(48 * 2):
         datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
+
+        intensity = make_fake_intensity(datetime_utc)
+        power = installed_capacity_mw * intensity * random_factor
+
         gsp_yield = GSPYieldSQL(
             datetime_utc=datetime_utc,
-            solar_generation_kw=np.random.random() * installed_capacity_mw,
+            solar_generation_kw=power,
             regime="in-day",
         )
         gsp_yield.location = location
@@ -205,6 +224,22 @@ def make_fake_gsp_yields_for_one_location(
         gsp_yield.location = location
 
         session.add(gsp_yield)
+
+
+def make_fake_intensity(datetime_utc: datetime):
+    """
+    Make a fake intesnity value based on the time of the day
+
+    :param datetime_utc:
+    :return: inteisty, between 0 and 1
+    """
+    fraction_of_day = (datetime_utc.hour * 60 + datetime_utc.minute) / TOTAL_MINUTES_IN_ONE_DAY
+    # use single cos**2 wave for intensity, but set night time to zero
+    if (fraction_of_day > 0.25) & (fraction_of_day < 0.75):
+        intensity = np.cos(2 * np.pi * fraction_of_day) ** 2
+    else:
+        intensity = 0.0
+    return intensity
 
 
 def make_fake_gsp_yields(
