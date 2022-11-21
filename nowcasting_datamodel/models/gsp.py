@@ -6,7 +6,7 @@
 """
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
@@ -37,7 +37,7 @@ class LocationSQL(Base_Forecast):
     installed_capacity_mw = Column(Integer, nullable=True)
 
     forecast = relationship("ForecastSQL", back_populates="location")
-    gsp_yield = relationship("GSPYieldSQL", back_populates="location")
+    gsp_yields = relationship("GSPYieldSQL", back_populates="location")
     metric_value = relationship("MetricValueSQL", back_populates="location")
 
 
@@ -52,6 +52,8 @@ class Location(EnhancedBaseModel):
     installed_capacity_mw: Optional[int] = Field(
         None, description="The installed capacity of the GSP in MW"
     )
+
+    gsp_yields: Optional[List["GSPYield"]] = Field([], description="List of gsp yields")
 
     rm_mode = True
 
@@ -81,8 +83,8 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
     solar_generation_kw = Column(Float)
     regime = Column(String, nullable=True)
 
-    # many (forecasts) to one (location)
-    location = relationship("LocationSQL", back_populates="gsp_yield")
+    # many (gsp_yields) to one (location)
+    location = relationship("LocationSQL", back_populates="gsp_yields")
     location_id = Column(Integer, ForeignKey("location.id"), index=True)
 
     Index("ix_gsp_yield_datetime_utc_desc", datetime_utc.desc())
@@ -130,3 +132,6 @@ class GSPYield(EnhancedBaseModel):
             solar_generation_kw=self.solar_generation_kw,
             regime=self.regime,
         )
+
+
+Location.update_forward_refs()
