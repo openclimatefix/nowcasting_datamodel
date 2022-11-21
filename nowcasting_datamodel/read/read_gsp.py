@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 from sqlalchemy import desc
 from sqlalchemy.orm import Session, joinedload
 
-from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL, GSPYield
+from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
 logger = logging.getLogger(__name__)
 
