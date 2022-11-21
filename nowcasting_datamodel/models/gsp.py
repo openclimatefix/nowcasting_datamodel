@@ -71,12 +71,6 @@ class Location(EnhancedBaseModel):
         )
 
 
-class LocationWithGSPYields(Location):
-    """Location object with GSPYields"""
-
-    gsp_yields: Optional[List["GSPYield"]] = Field([], description="List of gsp yields")
-
-
 class GSPYieldSQL(Base_Forecast, CreatedMixin):
     """GSP Yield data"""
 
