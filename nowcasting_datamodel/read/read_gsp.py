@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, contains_eager
 
 from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
@@ -177,10 +177,7 @@ def get_gsp_yield_by_location(
     # start main query
     query = session.query(LocationSQL)
     query = query.join(GSPYieldSQL)
-    query = query.options(joinedload(LocationSQL.gsp_yields))
-    query = query.where(
-        LocationSQL.id == GSPYieldSQL.location_id,
-    )
+    query = query.where(LocationSQL.id == GSPYieldSQL.location_id)
 
     # filter on regime
     if regime is not None:
@@ -200,6 +197,9 @@ def get_gsp_yield_by_location(
 
     # select only the gsp systems we want
     query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
+
+    # load only once
+    query = query.options(contains_eager(LocationSQL.gsp_yields))
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
