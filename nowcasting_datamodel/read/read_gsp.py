@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import List, Optional, Union
 
 from sqlalchemy import desc
-from sqlalchemy.orm import Session, joinedload, contains_eager
+from sqlalchemy.orm import Session, contains_eager, joinedload
 
 from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL
 
