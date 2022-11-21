@@ -207,6 +207,7 @@ def test_get_gsp_yield_by_location(db_session):
 
     locations = [LocationWithGSPYields.from_orm(l) for l in locations_with_gsp_yields]
     assert len(locations[0].gsp_yields) == 2
+    assert locations_with_gsp_yields[0].gsp_yields[0].datetime_utc.tzinfo == timezone.utc
 
 
 def test_get_gsp_yield_by_location_extra(db_session):
