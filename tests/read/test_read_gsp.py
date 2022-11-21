@@ -6,8 +6,8 @@ import numpy as np
 from nowcasting_datamodel.models import GSPYield, Location, LocationSQL
 from nowcasting_datamodel.read.read_gsp import (
     get_gsp_yield,
-    get_latest_gsp_yield,
     get_gsp_yield_by_location,
+    get_latest_gsp_yield,
 )
 
 logger = logging.getLogger(__name__)
