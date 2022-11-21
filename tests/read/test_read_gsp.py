@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import numpy as np
 
-from nowcasting_datamodel.models import GSPYield, Location, LocationSQL
+from nowcasting_datamodel.models import GSPYield, Location, LocationSQL, LocationWithGSPYields
 from nowcasting_datamodel.read.read_gsp import (
     get_gsp_yield,
     get_gsp_yield_by_location,
@@ -205,7 +205,7 @@ def test_get_gsp_yield_by_location(db_session):
     assert locations_with_gsp_yields[0].gsp_id == 1
     assert len(locations_with_gsp_yields[0].gsp_yields) == 2
 
-    locations = [Location.from_orm(l) for l in locations_with_gsp_yields]
+    locations = [LocationWithGSPYields.from_orm(l) for l in locations_with_gsp_yields]
     assert len(locations[0].gsp_yields) == 2
 
 
