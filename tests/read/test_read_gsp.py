@@ -207,3 +207,17 @@ def test_get_gsp_yield_by_location(db_session):
 
     locations = [Location.from_orm(l) for l in locations_with_gsp_yields]
     assert len(locations[0].gsp_yields) == 2
+
+
+def test_get_gsp_yield_by_location_extra(db_session):
+    _ = setup_gsp_yields(db_session)
+
+    locations_with_gsp_yields = get_gsp_yield_by_location(
+        session=db_session,
+        gsp_ids=[1, 2],
+        start_datetime_utc=datetime(2022, 1, 1),
+        end_datetime_utc=datetime(2022, 2, 1),
+        regime="day-after",
+    )
+
+    assert len(locations_with_gsp_yields) == 0
