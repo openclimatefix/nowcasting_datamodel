@@ -209,4 +209,8 @@ def get_gsp_yield_by_location(
     # get all results
     locations: List[LocationSQL] = query.all()
 
+    for location in locations:
+        for gsp_yield in location.gsp_yields:
+            gsp_yield.datetime_utc = gsp_yield.datetime_utc.replace(tzinfo=timezone.utc)
+
     return locations

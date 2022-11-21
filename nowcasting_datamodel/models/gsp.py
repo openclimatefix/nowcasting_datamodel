@@ -53,8 +53,6 @@ class Location(EnhancedBaseModel):
         None, description="The installed capacity of the GSP in MW"
     )
 
-    gsp_yields: Optional[List["GSPYield"]] = Field([], description="List of gsp yields")
-
     rm_mode = True
 
     def to_orm(self) -> LocationSQL:
@@ -134,4 +132,7 @@ class GSPYield(EnhancedBaseModel):
         )
 
 
-Location.update_forward_refs()
+class LocationWithGSPYields(Location):
+    """Location object with GSPYields"""
+
+    gsp_yields: Optional[List[GSPYield]] = Field([], description="List of gsp yields")
