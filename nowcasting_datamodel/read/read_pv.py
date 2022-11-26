@@ -103,8 +103,7 @@ def get_latest_pv_yield(
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
-        PVSystemSQL.id, desc(PVYieldSQL.datetime_utc), desc(
-            PVYieldSQL.created_utc)
+        PVSystemSQL.id, desc(PVYieldSQL.datetime_utc), desc(PVYieldSQL.created_utc)
     )
 
     # get all results
@@ -112,8 +111,7 @@ def get_latest_pv_yield(
 
     # add utc timezone
     for pv_yield in pv_yields:
-        pv_yield.datetime_utc = pv_yield.datetime_utc.replace(
-            tzinfo=timezone.utc)
+        pv_yield.datetime_utc = pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
 
     if not append_to_pv_systems:
         return pv_yields
@@ -129,11 +127,9 @@ def get_latest_pv_yield(
             pv_systems_with_pv_yields.append(pv_system)
 
         # add pv systems that dont have any pv yields
-        pv_systems_with_pv_yields_ids = [
-            pv_system.id for pv_system in pv_systems_with_pv_yields]
+        pv_systems_with_pv_yields_ids = [pv_system.id for pv_system in pv_systems_with_pv_yields]
 
-        logger.debug(
-            f"Found {len(pv_systems_with_pv_yields_ids)} pv systems with pv yields")
+        logger.debug(f"Found {len(pv_systems_with_pv_yields_ids)} pv systems with pv yields")
 
         pv_systems_with_no_pv_yields = []
         for pv_system in pv_systems:
@@ -142,8 +138,7 @@ def get_latest_pv_yield(
 
                 pv_systems_with_no_pv_yields.append(pv_system)
 
-        logger.debug(
-            f"Found {len(pv_systems_with_no_pv_yields)} pv systems with no pv yields")
+        logger.debug(f"Found {len(pv_systems_with_no_pv_yields)} pv systems with no pv yields")
 
         all_pv_systems = pv_systems_with_pv_yields + pv_systems_with_no_pv_yields
 
@@ -204,7 +199,6 @@ def get_pv_yield(
     pv_yields: List[PVYieldSQL] = query.all()
 
     for pv_yield in pv_yields:
-        pv_yield.datetime_utc = pv_yield.datetime_utc.replace(
-            tzinfo=timezone.utc)
+        pv_yield.datetime_utc = pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
 
     return pv_yields
