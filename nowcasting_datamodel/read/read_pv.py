@@ -127,13 +127,9 @@ def get_latest_pv_yield(
             pv_systems_with_pv_yields.append(pv_system)
 
         # add pv systems that dont have any pv yields
-        pv_systems_with_pv_yields_ids = [
-            pv_system.id for pv_system in pv_systems_with_pv_yields
-        ]
+        pv_systems_with_pv_yields_ids = [pv_system.id for pv_system in pv_systems_with_pv_yields]
 
-        logger.debug(
-            f"Found {len(pv_systems_with_pv_yields_ids)} pv systems with pv yields"
-        )
+        logger.debug(f"Found {len(pv_systems_with_pv_yields_ids)} pv systems with pv yields")
 
         pv_systems_with_no_pv_yields = []
         for pv_system in pv_systems:
@@ -142,9 +138,7 @@ def get_latest_pv_yield(
 
                 pv_systems_with_no_pv_yields.append(pv_system)
 
-        logger.debug(
-            f"Found {len(pv_systems_with_no_pv_yields)} pv systems with no pv yields"
-        )
+        logger.debug(f"Found {len(pv_systems_with_no_pv_yields)} pv systems with no pv yields")
 
         all_pv_systems = pv_systems_with_pv_yields + pv_systems_with_no_pv_yields
 
