@@ -1,0 +1,25 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "branberry",
+      "name": "Brandon Ly",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20285369?v=4",
+      "profile": "http://lostcoding.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "nowcasting_datamodel",
+  "projectOwner": "openclimatefix"
+}
