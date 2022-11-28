@@ -198,4 +198,7 @@ def get_pv_yield(
     # get all results
     pv_yields: List[PVYieldSQL] = query.all()
 
+    for pv_yield in pv_yields:
+        pv_yield.datetime_utc = pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
+
     return pv_yields

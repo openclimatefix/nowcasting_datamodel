@@ -72,7 +72,9 @@ def test_get_latest_pv_yield_correct_data(db_session_pv, pv_yields_and_systems):
     pv_system_sql_1.correct_data = False
 
     pv_yields = get_latest_pv_yield(
-        session=db_session_pv, pv_systems=[pv_system_sql_1, pv_system_sql_2], correct_data=True
+        session=db_session_pv,
+        pv_systems=[pv_system_sql_1, pv_system_sql_2],
+        correct_data=True,
     )
 
     # read database
@@ -147,18 +149,22 @@ def test_read_pv_yield_correct_data(db_session_pv, pv_yields_and_systems):
 
 
 def test_read_pv_yield_start_utc(db_session_pv, pv_yields_and_systems):
-
-    assert (
-        len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1], start_utc=datetime(2022, 1, 2)))
-        == 1
+    pv_yields = get_pv_yield(
+        session=db_session_pv, pv_systems_ids=[1], start_utc=datetime(2022, 1, 2)
     )
+    assert len(pv_yields) == 1
+    assert pv_yields[0].datetime_utc == datetime(2022, 1, 2, tzinfo=timezone.utc)
 
 
 def test_read_pv_yield_end_utc(db_session_pv, pv_yields_and_systems):
-
-    assert (
-        len(
-            get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2], end_utc=datetime(2022, 1, 2))
-        )
-        == 2
+    pv_yields = get_pv_yield(
+        session=db_session_pv,
+        pv_systems_ids=[1, 2],
+        end_utc=datetime(2022, 1, 2),
     )
+    assert len(pv_yields) == 2
+
+    print(pv_yields)
+
+    assert pv_yields[0].datetime_utc == datetime(2022, 1, 1, tzinfo=timezone.utc)
+    assert pv_yields[1].datetime_utc == datetime(2022, 1, 1, tzinfo=timezone.utc)
