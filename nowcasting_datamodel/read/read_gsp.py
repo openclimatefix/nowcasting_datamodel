@@ -151,6 +151,9 @@ def get_gsp_yield(
     # get all results
     gsp_yields: List[GSPYieldSQL] = query.all()
 
+    for gsp_yield in gsp_yields:
+        gsp_yield.datetime_utc = gsp_yield.datetime_utc.replace(tzinfo=timezone.utc)
+
     return gsp_yields
 
 
