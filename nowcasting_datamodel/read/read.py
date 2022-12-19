@@ -484,6 +484,9 @@ def get_forecast_values_latest(
     # get all results
     forecast_values_latest = query.all()
 
+    for forecast_value in forecast_values_latest:
+        forecast_value.created_utc = forecast_value.created_utc.replace(tzinfo=timezone.utc)
+
     return forecast_values_latest
 
 
