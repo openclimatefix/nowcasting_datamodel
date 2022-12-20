@@ -172,6 +172,9 @@ def get_latest_forecast(
 
     logger.debug(f"Found forecasts for gsp id: {gsp_id} {historic=} {forecast=}")
 
+    for forecast_value in forecast.forecast_values:
+        forecast_value.created_utc = forecast_value.created_utc.replace(tzinfo=timezone.utc)
+
     return forecast
 
 
@@ -318,6 +321,12 @@ def get_latest_forecast_for_gsps(
 
     forecasts = sort_all_forecast_value(forecasts)
 
+    # add utc timezone
+    for forecast in forecasts:
+        forecast.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+        for forecast_value in forecast.forecast_values:
+            forecast_value.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+
     return forecasts
 
 
@@ -431,6 +440,10 @@ def get_forecast_values(
     # get all results
     forecasts = query.all()
 
+    # add utc timezone
+    for forecast in forecasts:
+        forecast.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+
     return forecasts
 
 
@@ -470,6 +483,9 @@ def get_forecast_values_latest(
 
     # get all results
     forecast_values_latest = query.all()
+
+    for forecast_value in forecast_values_latest:
+        forecast_value.created_utc = forecast_value.created_utc.replace(tzinfo=timezone.utc)
 
     return forecast_values_latest
 
