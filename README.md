@@ -1,6 +1,6 @@
 # nowcasting_datamodel
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 Datamodel for the nowcasting project
 
@@ -111,6 +111,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tbody>
     <tr>
       <td align="center"><a href="http://lostcoding.com"><img src="https://avatars.githubusercontent.com/u/20285369?v=4?s=100" width="100px;" alt="Brandon Ly"/><br /><sub><b>Brandon Ly</b></sub></a><br /><a href="https://github.com/openclimatefix/nowcasting_datamodel/commits?author=branberry" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/lucasc896"><img src="https://avatars.githubusercontent.com/u/1273006?v=4?s=100" width="100px;" alt="Chris Lucas"/><br /><sub><b>Chris Lucas</b></sub></a><br /><a href="https://github.com/openclimatefix/nowcasting_datamodel/commits?author=lucasc896" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
