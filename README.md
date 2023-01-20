@@ -85,6 +85,13 @@ These sets up `postgres` in a docker container and runs the tests in another doc
 This slightly more complicated testing framework is needed (compared to running `pytest`)
 as some queries can not be fully tested on a `sqlite` database
 
+### Mac M1 users
+An upstream builds issue of libgp may cause the following error:
+
+`sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) SCRAM authentication requires libpq version 10 or above`
+
+As suggested in this [thread](https://stackoverflow.com/questions/62807717/how-can-i-solve-postgresql-scram-authentication-problem), a temporary fix is to set the env variable `DOCKER_DEFAULT_PLATFORM=linux/amd64` prior to building the test images - although this reportedly comes with performance penalties.
+
 ## 🛠️ infrastructure
 
 `.github/workflows` contains a number of CI actions
