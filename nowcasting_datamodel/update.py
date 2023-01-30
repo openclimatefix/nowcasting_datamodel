@@ -268,7 +268,7 @@ def add_forecast_last_7_days_and_remove_old_data(
     # remove old data
     now_minus_7_days = datetime.now(tz=timezone.utc) - timedelta(days=7)
 
-    logger.debug(f'Removing data before {now_minus_7_days}')
+    logger.debug(f"Removing data before {now_minus_7_days}")
     query = session.query(ForecastValueSevenDaysSQL)
     query = query.where(ForecastValueSevenDaysSQL.target_time < now_minus_7_days)
     query.delete()

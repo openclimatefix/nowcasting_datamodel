@@ -170,7 +170,7 @@ def make_fake_national_forecast(
         location=location,
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
-        historic=False
+        historic=False,
     )
 
     return forecast
