@@ -408,8 +408,20 @@ def get_forecast_values(
     ]
     query = session.query(model)
 
+    # make distinct and order by columns
+    order_by_columns = []
     if only_return_latest:
-        query = query.distinct(LocationSQL.gsp_id, model.target_time)
+        distinct_columns = []
+        if (gsp_id is not None) or (gsp_ids is not None):
+            distinct_columns.append(LocationSQL.gsp_id)
+            order_by_columns.append(LocationSQL.gsp_id)
+        distinct_columns.append(model.target_time)
+
+        query = query.distinct(*distinct_columns)
+
+    # add order by columns
+    order_by_columns.append(model.target_time)
+    order_by_columns.append(model.created_utc.desc())
 
     if start_datetime is not None:
         query = query.filter(model.target_time >= start_datetime)
@@ -445,7 +457,7 @@ def get_forecast_values(
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
 
     # order by target time and created time desc
-    query = query.order_by(LocationSQL.gsp_id, model.target_time, model.created_utc.desc())
+    query = query.order_by(*order_by_columns)
 
     # get all results
     forecasts = query.all()
