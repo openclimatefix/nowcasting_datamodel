@@ -153,7 +153,7 @@ def make_fake_national_forecast(
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
+        t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
