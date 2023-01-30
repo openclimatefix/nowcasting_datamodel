@@ -17,7 +17,7 @@ repos:
 
   # python code formatting/linting
   - repo: https://github.com/PyCQA/pydocstyle
-    rev: 6.1.1
+    rev: 6.3.0
     hooks:
       - id: pydocstyle
         args:
@@ -40,7 +40,7 @@ repos:
             "nowcasting_datamodel",
           ]
   - repo: https://github.com/PyCQA/isort
-    rev: 5.11.4
+    rev: 5.12.0
     hooks:
       - id: isort
         args: [--profile, black, --line-length, "100", "nowcasting_datamodel"]
