@@ -374,6 +374,7 @@ def filter_query_on_target_time(
 def get_forecast_values(
     session: Session,
     gsp_id: Optional[int] = None,
+    gsp_ids: Optional[int] = None,
     start_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
@@ -384,6 +385,8 @@ def get_forecast_values(
 
     :param session: database session
     :param gsp_id: optional to gsp id, to filter query on
+        If None is given then all are returned. This should be changed to [gsp_id]
+    :param gsp_ids: optional to provide multiple gsp id, to filter query on
         If None is given then all are returned.
     :param start_datetime: optional to filterer target_time by start_datetime
         If None is given then all are returned.
@@ -406,7 +409,7 @@ def get_forecast_values(
     query = session.query(model)
 
     if only_return_latest:
-        query = query.distinct(model.target_time)
+        query = query.distinct(LocationSQL.gsp_id, model.target_time)
 
     if start_datetime is not None:
         query = query.filter(model.target_time >= start_datetime)
@@ -430,12 +433,19 @@ def get_forecast_values(
 
     # filter on gsp_id
     if gsp_id is not None:
+        logger.warning('We should now use "gsp_ids" not "gsp_id"')
         query = query.join(ForecastSQL)
         query = query.join(LocationSQL)
         query = query.filter(LocationSQL.gsp_id == gsp_id)
 
+    if gsp_ids is not None:
+        logger.debug(f'Filtering for {gsp_ids=}')
+        query = query.join(ForecastSQL)
+        query = query.join(LocationSQL)
+        query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
+
     # order by target time and created time desc
-    query = query.order_by(model.target_time, model.created_utc.desc())
+    query = query.order_by(LocationSQL.gsp_id, model.target_time, model.created_utc.desc())
 
     # get all results
     forecasts = query.all()
