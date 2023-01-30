@@ -78,7 +78,7 @@ def make_fake_forecast(
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
+        t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
@@ -153,7 +153,7 @@ def make_fake_national_forecast(
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2023, 1, 1, tzinfo=timezone.utc)
+        t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
@@ -170,6 +170,7 @@ def make_fake_national_forecast(
         location=location,
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
+        historic=False
     )
 
     return forecast
@@ -194,7 +195,7 @@ def make_fake_gsp_yields_for_one_location(
         installed_capacity_mw = 10
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2022, 1, 1, tzinfo=timezone.utc)
+        t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
     location = get_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw

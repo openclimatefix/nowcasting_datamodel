@@ -225,7 +225,7 @@ def make_partitions(start_year: int, start_month: int, end_year: int):
             )
 
 
-make_partitions(2022, 8, 2024)
+make_partitions(2022, 8, 2025)
 
 
 # legacy table, this means migration still work

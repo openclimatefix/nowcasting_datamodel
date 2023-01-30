@@ -46,6 +46,7 @@ def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQ
             input_data_last_updated=forecast.input_data_last_updated,
             model=get_model(session=session, name="historic", version="all"),
         )
+        session.add(forecast_historic)
     else:
         logger.debug("Found historic forecast")
 
@@ -267,6 +268,7 @@ def add_forecast_last_7_days_and_remove_old_data(
     # remove old data
     now_minus_7_days = datetime.now(tz=timezone.utc) - timedelta(days=7)
 
+    logger.debug(f'Removing data before {now_minus_7_days}')
     query = session.query(ForecastValueSevenDaysSQL)
     query = query.where(ForecastValueSevenDaysSQL.target_time < now_minus_7_days)
     query.delete()
