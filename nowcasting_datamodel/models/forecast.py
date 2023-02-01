@@ -347,7 +347,9 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     forecast_values_latest = relationship(
         "ForecastValueLatestSQL", back_populates="forecast_latest"
     )
-    forecast_values_last_seven_days = relationship("ForecastValueSevenDaysSQL", back_populates="forecast")
+    forecast_values_last_seven_days = relationship(
+        "ForecastValueSevenDaysSQL", back_populates="forecast"
+    )
 
     # many (forecasts) to one (input_data_last_updated)
     input_data_last_updated = relationship("InputDataLastUpdatedSQL", back_populates="forecast")
