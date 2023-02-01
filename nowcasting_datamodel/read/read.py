@@ -451,7 +451,7 @@ def get_forecast_values(
         query = query.filter(LocationSQL.gsp_id == gsp_id)
 
     if gsp_ids is not None:
-        logger.debug(f'Filtering for {gsp_ids=}')
+        logger.debug(f"Filtering for {gsp_ids=}")
         query = query.join(ForecastSQL)
         query = query.join(LocationSQL)
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))

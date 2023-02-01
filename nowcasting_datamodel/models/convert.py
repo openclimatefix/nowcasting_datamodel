@@ -2,7 +2,7 @@
 
 from typing import List
 
-from nowcasting_datamodel.models import ForecastValue, ForecastValueSevenDaysSQL, Forecast
+from nowcasting_datamodel.models import Forecast, ForecastValue, ForecastValueSevenDaysSQL
 
 
 def convert_list_forecast_value_seven_days_sql_to_list_forecast(

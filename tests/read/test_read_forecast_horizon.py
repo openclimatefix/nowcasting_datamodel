@@ -63,7 +63,7 @@ def test_get_latest_forecast_created_utc_multi_gsp(db_session):
     db_session.commit()
 
     forecast_values = get_forecast_values(
-        session=db_session, forecast_horizon_minutes=120, gsp_ids=[1,2], only_return_latest=True
+        session=db_session, forecast_horizon_minutes=120, gsp_ids=[1, 2], only_return_latest=True
     )
     assert len(forecast_values) == 32
     assert forecast_values[0].forecast.location.gsp_id == 1
@@ -79,5 +79,3 @@ def test_get_latest_forecast_created_utc_multi_gsp(db_session):
 
     assert forecast_values[-1].target_time == datetime(2023, 1, 1, 19, 30, tzinfo=timezone.utc)
     assert forecast_values[-1].forecast.location.gsp_id == 2
-
-
