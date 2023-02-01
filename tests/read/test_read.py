@@ -111,7 +111,9 @@ def test_read_target_time(db_session):
     f3 = ForecastValueLatestSQL(
         target_time=datetime(2024, 1, 1, 0, 30), expected_power_generation_megawatts=2, gsp_id=1
     )
-    f = make_fake_forecast(gsp_id=1, session=db_session, forecast_values_latest=[f1, f2, f3], historic=True)
+    f = make_fake_forecast(
+        gsp_id=1, session=db_session, forecast_values_latest=[f1, f2, f3], historic=True
+    )
     db_session.add(f)
 
     forecast_read = get_latest_forecast(
@@ -225,7 +227,7 @@ def test_get_forecast_values_gsp_id_latest(db_session):
     forecast_2 = make_fake_forecast(
         gsp_id=1, session=db_session, t0_datetime_utc=datetime(2024, 1, 2, tzinfo=timezone.utc)
     )
-    db_session.add_all([forecast_1,forecast_2])
+    db_session.add_all([forecast_1, forecast_2])
 
     forecast_values_read = get_forecast_values(
         session=db_session,
