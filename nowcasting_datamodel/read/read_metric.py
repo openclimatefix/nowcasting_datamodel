@@ -99,7 +99,7 @@ def get_metric_value(
         query = query.filter(MetricValueSQL.forecast_horizon_minutes == forecast_horizon_minutes)
     else:
         # select forecast_horizon_minutes is Null, which gets the last forecast
-        query = query.filter(MetricValueSQL.forecast_horizon_minutes == None)
+        query = query.filter(MetricValueSQL.forecast_horizon_minutes is None)
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
