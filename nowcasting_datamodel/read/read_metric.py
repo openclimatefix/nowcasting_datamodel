@@ -103,7 +103,7 @@ def get_metric_value(
 
     # order by 'created_utc' desc, so we get the latest one
     query = query.order_by(
-        DatetimeIntervalSQL.start_datetime_utc, DatetimeIntervalSQL.created_utc.desc()
+        DatetimeIntervalSQL.start_datetime_utc, MetricValueSQL.created_utc.desc()
     )
 
     # filter
