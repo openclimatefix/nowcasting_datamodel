@@ -133,6 +133,8 @@ class ForecastValueSQL(
         ),
     )
 
+    forecast = relationship("ForecastSQL", back_populates="forecast_values")
+
 
 def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
     """Make partitions"""
