@@ -99,7 +99,6 @@ def update_forecast_latest(
     # 2. create forecast value latest
     forecast_values = []
     for forecast_value in forecast.forecast_values:
-
         forecast_value_latest = change_forecast_value_to_latest(
             forecast_value, gsp_id=forecast.location.gsp_id, forecast_id=forecast_historic.id
         )
@@ -182,7 +181,6 @@ def update_all_forecast_latest(
     logger.debug(f"There are {len(forecasts)} forecasts that we will update")
 
     for forecast in forecasts:
-
         # chose the correct forecast historic
         logger.debug("Getting gsp")
         gsp_id = forecast.location.gsp_id

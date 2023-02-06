@@ -9,7 +9,6 @@ from nowcasting_datamodel.national import make_national_forecast
 
 
 def test_make_national_forecast(forecasts_all, db_session):
-
     forecasts_all = [Forecast.from_orm(f) for f in forecasts_all]
 
     locations = db_session.query(LocationSQL).all()
@@ -33,7 +32,6 @@ def test_make_national_forecast(forecasts_all, db_session):
 
 
 def test_make_national_forecast_error(forecasts_all, db_session):
-
     forecasts_all = [Forecast.from_orm(f) for f in forecasts_all]
     forecasts_all[0].location.gsp_id = 2
 

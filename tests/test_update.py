@@ -23,7 +23,6 @@ from nowcasting_datamodel.update import (
 
 
 def test_model_duplicate_key(db_session):
-
     f1 = ForecastValueLatestSQL(
         gsp_id=1, target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1
     )
@@ -40,7 +39,6 @@ def test_model_duplicate_key(db_session):
 
 
 def test_update_one_gsp(db_session):
-
     db_session.query(ForecastValueSQL).delete()
     db_session.query(ForecastSQL).delete()
 
@@ -205,7 +203,6 @@ def test_update_all_forecast_latest_update_gsps(db_session):
 
 
 def test_change_forecast_value_to_forecast_last_7_days(db_session):
-
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 0
 
     now = datetime.now(tz=timezone.utc)
@@ -222,7 +219,6 @@ def test_change_forecast_value_to_forecast_last_7_days(db_session):
 
 
 def test_forecast_last_7_days_old_data(db_session):
-
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 0
 
     now_minus_8_days = datetime.now(tz=timezone.utc) - timedelta(days=8)

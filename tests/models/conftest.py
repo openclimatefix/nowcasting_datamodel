@@ -24,11 +24,9 @@ def datetime_interval():
 
 @pytest.fixture
 def metric():
-
     return Metric(name="test_metric", description="just a test metric really")
 
 
 @pytest.fixture
 def location():
-
     return Location(label="GSP_1", gsp_id=1)

@@ -18,7 +18,6 @@ def test_pv_system_error():
 
 
 def test_make_fake_pv_yield():
-
     pv_yield = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=-1)
     assert pv_yield.solar_generation_kw == 0
 

@@ -18,7 +18,6 @@ def test_save_pv_system(db_session_pv):
 
 
 def test_save_pv_system_repeat(db_session_pv, pv_systems):
-
     # add extra systems that is already there
     save_pv_system(session=db_session_pv, pv_system=pv_systems[0])
 
@@ -27,7 +26,6 @@ def test_save_pv_system_repeat(db_session_pv, pv_systems):
 
 
 def test_save_pv_system_correct_data(db_session_pv, pv_systems):
-
     pv_systems[0].correct_data = False
     pv_systems_get = get_pv_systems(session=db_session_pv, correct_data=True)
     assert len(pv_systems_get) == 1
@@ -40,7 +38,6 @@ def test_save_pv_system_correct_data(db_session_pv, pv_systems):
 
 
 def test_get_pv_system(db_session_pv, pv_systems):
-
     pv_systems_get = get_pv_systems(session=db_session_pv)
     assert len(pv_systems_get) == 2
 
@@ -131,7 +128,6 @@ def test_get_latest_pv_yield_append(db_session_pv, pv_yields_and_systems):
 
 
 def test_read_pv_yield(db_session_pv, pv_yields_and_systems):
-
     assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1])) == 2
     assert len(get_pv_yield(session=db_session_pv, pv_systems_ids=[1, 2])) == 3
 

@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 def setup_gsp_yields(db_session):
-
     gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1)
     gsp_yield_1_sql = gsp_yield_1.to_orm()
 
@@ -45,7 +44,6 @@ def setup_gsp_yields(db_session):
 
 
 def test_get_latest_gsp_yield(db_session):
-
     gsps = setup_gsp_yields(db_session)
 
     gsp_yields = get_latest_gsp_yield(session=db_session, gsps=gsps)
@@ -77,7 +75,6 @@ def test_get_latest_gsp_yield_datetime(db_session):
 
 
 def test_get_latest_gsp_yield_append_no_yields(db_session):
-
     gsp_sql_1: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
     gsp_sql_2: LocationSQL = Location(gsp_id=2, label="GSP_2", status_interval_minutes=5).to_orm()
 
@@ -132,7 +129,6 @@ def test_get_gsp_yield(db_session):
 
 
 def test_get_gsp_yield_regime(db_session):
-
     gsp_yield_1 = GSPYield(
         datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1, regime="in-day"
     )

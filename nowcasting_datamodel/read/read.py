@@ -432,7 +432,6 @@ def get_forecast_values(
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
 
     if forecast_horizon_minutes is not None:
-
         # this seems to only work for postgres
         query = query.filter(
             model.target_time - model.created_utc

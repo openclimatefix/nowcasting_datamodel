@@ -14,7 +14,6 @@ from nowcasting_datamodel.models.forecast import (
 
 
 def test_normalize_forecasts(forecasts_all):
-
     v = forecasts_all[0].forecast_values[0].expected_power_generation_megawatts
     forecasts_all = [Forecast.from_orm(f) for f in forecasts_all]
 
@@ -29,7 +28,6 @@ def test_normalize_forecasts(forecasts_all):
 
 
 def test_normalize_forecasts_no_installed_capacity(forecasts_all):
-
     forecast = Forecast.from_orm(forecasts_all[0])
     forecast.location.installed_capacity_mw = None
 

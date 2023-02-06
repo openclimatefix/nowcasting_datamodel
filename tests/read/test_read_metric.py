@@ -5,7 +5,6 @@ from nowcasting_datamodel.read.read_metric import get_datetime_interval, get_met
 
 
 def test_get_metric(db_session):
-
     db_session.add(MetricSQL(name="test"))
 
     metric = get_metric(session=db_session, name="test")
@@ -23,7 +22,6 @@ def test_get_new_metric(db_session):
 
 
 def test_get_datetime_interval(db_session):
-
     start_datetime = datetime(2022, 1, 1)
     end_datetime = datetime(2022, 1, 1)
     db_session.add(
@@ -39,7 +37,6 @@ def test_get_datetime_interval(db_session):
 
 
 def test_get_new_datetime_interval(db_session):
-
     start_datetime = datetime(2022, 1, 1)
     end_datetime = datetime(2022, 1, 1)
     assert len(db_session.query(DatetimeIntervalSQL).all()) == 0

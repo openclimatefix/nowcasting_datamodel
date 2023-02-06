@@ -46,7 +46,6 @@ logger = logging.getLogger(__name__)
 
 
 def test_get_all_location(db_session):
-
     db_session.add(LocationSQL(label="GSP_1", gsp_id=1))
     db_session.add(LocationSQL(label="GSP_2", gsp_id=2))
 
@@ -58,7 +57,6 @@ def test_get_all_location(db_session):
 
 
 def test_get_national_location(db_session):
-
     db_session.add(LocationSQL(label=national_gb_label, gsp_id=0))
 
     location = get_location(session=db_session, gsp_id=0)
@@ -73,7 +71,6 @@ def test_get_national_location(db_session):
 
 
 def test_get_model(db_session):
-
     model_read_1 = get_model(session=db_session, name="test_name", version="9.9.9")
     model_read_2 = get_model(session=db_session, name="test_name", version="9.9.9")
 
@@ -84,7 +81,6 @@ def test_get_model(db_session):
 
 
 def test_get_forecast(db_session, forecasts):
-
     forecast_read = get_latest_forecast(session=db_session)
 
     assert forecast_read.location.gsp_id == forecasts[-1].location.gsp_id
@@ -94,14 +90,12 @@ def test_get_forecast(db_session, forecasts):
 
 
 def test_read_gsp_id(db_session, forecasts):
-
     forecast_read = get_latest_forecast(session=db_session, gsp_id=forecasts[1].location.gsp_id)
     assert forecast_read.location.gsp_id == forecasts[1].location.gsp_id
 
 
 @freeze_time("2024-01-01")
 def test_read_target_time(db_session):
-
     f1 = ForecastValueLatestSQL(
         target_time=datetime(2024, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
     )
@@ -130,7 +124,6 @@ def test_read_target_time(db_session):
 
 
 def test_get_forecast_values(db_session, forecasts):
-
     forecast_values_read = get_forecast_values(session=db_session)
     assert len(forecast_values_read) == 10 * N_FAKE_FORECASTS
 
@@ -139,7 +132,6 @@ def test_get_forecast_values(db_session, forecasts):
 
 
 def test_get_forecast_values_gsp_id(db_session, forecasts):
-
     forecast_values_read = get_forecast_values(
         session=db_session, gsp_id=forecasts[0].location.gsp_id
     )
@@ -152,7 +144,6 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
 
 
 def test_get_forecast_values_latest_gsp_id(db_session):
-
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     f1[0].historic = True
     f1[0].forecast_values_latest = [
@@ -244,7 +235,6 @@ def test_get_forecast_values_gsp_id_latest(db_session):
 
 
 def test_get_all_gsp_ids_latest_forecast(db_session):
-
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     db_session.add_all(f1)
 
@@ -262,7 +252,6 @@ def test_get_all_gsp_ids_latest_forecast(db_session):
 
 
 def test_get_all_gsp_ids_latest_forecast_historic(db_session):
-
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
     f1[0].historic = True
     f1[0].forecast_values_latest = [
@@ -278,7 +267,6 @@ def test_get_all_gsp_ids_latest_forecast_historic(db_session):
 
 
 def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
-
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
 
     forecasts = get_all_gsp_ids_latest_forecast(session=db_session, preload_children=True)
@@ -290,7 +278,6 @@ def test_get_all_gsp_ids_latest_forecast_pre_load(db_session):
 
 @freeze_time("2023-01-01")
 def test_get_all_gsp_ids_latest_forecast_filter(db_session):
-
     f1 = make_fake_forecasts(
         gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2023, 1, 1)
     )
@@ -343,7 +330,6 @@ def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
 
 
 def test_get_national_latest_forecast(db_session):
-
     f1 = make_fake_national_forecast(session=db_session)
     db_session.add(f1)
 
@@ -354,7 +340,6 @@ def test_get_national_latest_forecast(db_session):
 
 
 def test_get_pv_system(db_session_pv):
-
     pv_system = PVSystem.from_orm(make_fake_pv_system())
     save_pv_system(session=db_session_pv, pv_system=pv_system)
 
@@ -367,7 +352,6 @@ def test_get_pv_system(db_session_pv):
 
 
 def test_get_latest_input_data_last_updated(db_session):
-
     yesterday = datetime.now(tz=timezone.utc) - timedelta(hours=24)
     now = datetime.now(tz=timezone.utc)
 
@@ -384,7 +368,6 @@ def test_get_latest_input_data_last_updated(db_session):
 
 
 def test_update_latest_input_data_last_updated(db_session):
-
     yesterday = datetime.now(tz=timezone.utc) - timedelta(hours=24)
     now = datetime.now(tz=timezone.utc)
 
@@ -403,7 +386,6 @@ def test_update_latest_input_data_last_updated(db_session):
 
 @freeze_time("2022-01-01")
 def test_update_latest_input_data_last_updated_freeze(db_session):
-
     yesterday = datetime.now(tz=timezone.utc) - timedelta(hours=24)
     now = datetime.now(tz=timezone.utc)
 
@@ -422,7 +404,6 @@ def test_update_latest_input_data_last_updated_freeze(db_session):
 
 @freeze_time("2022-01-01")
 def test_update_latest_input_data_last_updated_freeze_no_data(db_session):
-
     yesterday = datetime.now(tz=timezone.utc) - timedelta(hours=24)
     now = datetime.now(tz=timezone.utc)
 
