@@ -5,8 +5,8 @@ import pandas as pd
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.convert import (
-    convert_list_forecast_value_seven_days_sql_to_list_forecast,
     convert_df_to_national_forecast,
+    convert_list_forecast_value_seven_days_sql_to_list_forecast,
 )
 from nowcasting_datamodel.save import save_all_forecast_values_seven_days
 
@@ -27,7 +27,6 @@ def test_convert_list_forecast_value_seven_days_sql_to_list_forecast(db_session)
 
 
 def test_convert_df_to_national_forecast(db_session):
-
     # set up
     forecast_values_df = pd.DataFrame(
         columns=["target_datetime_utc", "forecast_mw"],
