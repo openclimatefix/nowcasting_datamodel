@@ -140,7 +140,6 @@ def get_partitions(start_year: int, start_month: int, end_year: int, end_month: 
     """Make partitions"""
     partitions = []
     for year in range(start_year, end_year + 1):
-
         if year != start_year:
             start_month = 1
         if year == end_year:
@@ -177,12 +176,10 @@ def make_partitions(start_year: int, start_month: int, end_year: int):
     :param end_year: end year (exclusive)
     """
     for year in range(start_year, end_year):
-
         if year != start_year:
             start_month = 1
 
         for month in range(start_month, 13):
-
             if month == 12:
                 year_end = year + 1
                 month_end = 1

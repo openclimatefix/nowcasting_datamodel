@@ -12,7 +12,6 @@ from nowcasting_datamodel.models.pv import Base_PV
 
 @pytest.fixture
 def forecast_sql(db_session):
-
     # create
     f = make_fake_forecasts(gsp_ids=[1], session=db_session)
 
@@ -24,7 +23,6 @@ def forecast_sql(db_session):
 
 @pytest.fixture
 def forecasts(db_session) -> List[ForecastSQL]:
-
     # create
     f = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
 
@@ -36,7 +34,6 @@ def forecasts(db_session) -> List[ForecastSQL]:
 
 @pytest.fixture
 def forecasts_all(db_session) -> List[ForecastSQL]:
-
     # create
     f = make_fake_forecasts(gsp_ids=list(range(1, N_GSP + 1)), session=db_session)
 
@@ -54,7 +51,6 @@ https://gist.github.com/kissgyorgy/e2365f25a213de44b9a2 helped me get going
 
 @pytest.fixture
 def db_connection():
-
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url, echo=False)
@@ -83,7 +79,6 @@ def db_session(db_connection):
 
 @pytest.fixture
 def db_connection_pv():
-
     url = os.getenv("DB_URL_PV", "sqlite:///test_pv.db")
 
     connection = DatabaseConnection(url=url, base=Base_PV)

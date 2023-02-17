@@ -41,7 +41,6 @@ def make_national_forecast(
     # make pandas dataframe of all the forecast values with a gsp id
     forecast_values_flat = []
     for forecast in forecasts:
-
         gsp_id = forecast.location.gsp_id
 
         one_gsp = pd.DataFrame(

@@ -25,7 +25,6 @@ from nowcasting_datamodel.models.forecast import ForecastValueSQL
 
 
 def test_make_fake_intensity():
-
     assert make_fake_intensity(datetime(2022, 1, 1)) == 0
     assert make_fake_intensity(datetime(2022, 1, 1, 6)) == 0
     assert 0 < make_fake_intensity(datetime(2022, 1, 1, 9)) < 1
@@ -48,7 +47,6 @@ def test_make_fake_input_data_last_updated():
 
 
 def test_make_fake_forecast_value():
-
     target = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
     forecast_value_sql: ForecastValueSQL = make_fake_forecast_value(target_time=target)

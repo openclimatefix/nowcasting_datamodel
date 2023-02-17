@@ -21,7 +21,6 @@ def test_metric(metric):
 
 
 def test_metric_value(datetime_interval, metric, location):
-
     metric_value = MetricValue(
         value=7.8,
         metric=metric,

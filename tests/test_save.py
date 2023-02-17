@@ -39,7 +39,6 @@ def test_save(db_session):
 
 
 def test_save_pv_system(db_session_pv):
-
     pv_systems = db_session_pv.query(PVSystemSQL).all()
     assert len(pv_systems) == 0
 
@@ -57,7 +56,6 @@ def test_save_pv_system(db_session_pv):
 
 
 def test_save_all_forecast_values_seven_days(db_session):
-
     now = datetime.now(tz=timezone.utc)
     forecasts = make_fake_forecasts(gsp_ids=range(0, 3), session=db_session, t0_datetime_utc=now)
 
