@@ -1,11 +1,11 @@
 """ Functions to convert objects """
 
 import logging
-from typing import List
-from sqlalchemy.orm import Session
 from datetime import datetime, timezone
+from typing import List
 
 import pandas as pd
+from sqlalchemy.orm import Session
 
 from nowcasting_datamodel.models import (
     Forecast,
