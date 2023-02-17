@@ -14,9 +14,9 @@ from nowcasting_datamodel.models import (
     ForecastValueSevenDaysSQL,
 )
 from nowcasting_datamodel.read.read import (
-    get_model,
     get_latest_input_data_last_updated,
     get_location,
+    get_model,
 )
 
 logger = logging.getLogger()
