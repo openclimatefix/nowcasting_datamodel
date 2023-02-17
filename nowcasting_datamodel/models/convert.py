@@ -92,7 +92,6 @@ def convert_df_to_national_forecast(
     forecast_values = []
     for i, forecast_value in forecast_values_df.iterrows():
         # add timezone
-        print(forecast_value)
         target_time = forecast_value.target_datetime_utc.replace(tzinfo=timezone.utc)
         forecast_values.append(
             ForecastValue(
