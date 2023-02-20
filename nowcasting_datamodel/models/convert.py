@@ -1,8 +1,25 @@
 """ Functions to convert objects """
 
+import logging
+from datetime import datetime, timezone
 from typing import List
 
-from nowcasting_datamodel.models import Forecast, ForecastSQL, ForecastValue, ForecastValueSevenDaysSQL
+import pandas as pd
+from sqlalchemy.orm import Session
+
+from nowcasting_datamodel.models import (
+    Forecast,
+    ForecastSQL,
+    ForecastValue,
+    ForecastValueSevenDaysSQL,
+)
+from nowcasting_datamodel.read.read import (
+    get_latest_input_data_last_updated,
+    get_location,
+    get_model,
+)
+
+logger = logging.getLogger()
 
 
 def convert_list_forecast_value_seven_days_sql_to_list_forecast(
@@ -31,7 +48,7 @@ def convert_list_forecast_value_seven_days_sql_to_list_forecast(
                 location=forecast_value_sql.forecast.location,
                 input_data_last_updated=forecast_value_sql.forecast.input_data_last_updated,
                 forecast_values=[forecast_value_sql],
-                historic=forecast_value_sql.forecast.historic
+                historic=forecast_value_sql.forecast.historic,
             )
             forecast = Forecast.from_orm(forecast)
             forecasts_by_gsp[gsp_id] = forecast
@@ -39,3 +56,57 @@ def convert_list_forecast_value_seven_days_sql_to_list_forecast(
     forecasts = [forecast for forecast in forecasts_by_gsp.values()]
 
     return forecasts
+
+
+def convert_df_to_national_forecast(
+    forecast_values_df: pd.DataFrame, session: Session, model_name: str, version: str
+) -> ForecastSQL:
+    """
+    Make a ForecastSQL object from a dataframe.
+
+    :param forecast_values_df: Dataframe containing
+        -- target_datetime_utc
+        -- forecast_mw
+    :param: session: database session
+    :param: model_name: the name of the model
+    :param: version: the version of the model
+    :return: forecast object
+    """
+
+    logger.debug("Converting dataframe to National Forecast")
+
+    assert "target_datetime_utc" in forecast_values_df.columns
+    assert "forecast_mw" in forecast_values_df.columns
+
+    # get last input data
+    input_data_last_updated = get_latest_input_data_last_updated(session=session)
+
+    # get model name
+    model = get_model(name=model_name, version=version, session=session)
+
+    # get location
+    location = get_location(session=session, gsp_id=0)
+
+    # make forecast values
+    forecast_values = []
+    for i, forecast_value in forecast_values_df.iterrows():
+        # add timezone
+        target_time = forecast_value.target_datetime_utc.replace(tzinfo=timezone.utc)
+        forecast_values.append(
+            ForecastValue(
+                target_time=target_time,
+                expected_power_generation_megawatts=forecast_value.forecast_mw,
+            ).to_orm()
+        )
+
+    # make forecast object
+    forecast = ForecastSQL(
+        model=model,
+        forecast_creation_time=datetime.now(tz=timezone.utc),
+        location=location,
+        input_data_last_updated=input_data_last_updated,
+        forecast_values=forecast_values,
+        historic=False,
+    )
+
+    return forecast

@@ -456,7 +456,9 @@ def get_forecast_values(
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
 
         # prevent n+1 queries on forecasts after initial query
-        query = query.options(contains_eager(model.forecast, ForecastSQL.location)).populate_existing()
+        query = query.options(
+            contains_eager(model.forecast, ForecastSQL.location)
+        ).populate_existing()
 
     # order by target time and created time desc
     query = query.order_by(*order_by_columns)
