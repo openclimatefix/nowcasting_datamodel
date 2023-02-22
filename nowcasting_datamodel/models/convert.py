@@ -76,8 +76,12 @@ def convert_df_to_national_forecast(
 
     logger.debug("Converting dataframe to National Forecast")
 
-    assert "target_datetime_utc" in forecast_values_df.columns
-    assert "forecast_mw" in forecast_values_df.columns
+    assert (
+        "target_datetime_utc" in forecast_values_df.columns
+    ), f"'target_datetime_utc' not in the df columns. The columns are {forecast_values_df.columns}"
+    assert (
+        "forecast_mw" in forecast_values_df.columns
+    ), f"'forecast_mw' not in the df columns. The columns are {forecast_values_df.columns}"
 
     # get last input data
     input_data_last_updated = get_latest_input_data_last_updated(session=session)
