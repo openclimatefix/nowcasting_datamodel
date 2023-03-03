@@ -10,7 +10,7 @@ The followin tables are made with sqlamyc and pydantic
 from datetime import datetime
 
 from pydantic import Field, validator
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String, Time
 from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
@@ -131,6 +131,7 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     value = Column(Float, nullable=False)
     number_of_data_points = Column(Integer, nullable=False)
     forecast_horizon_minutes = Column(Integer, nullable=True)
+    time_of_day = Column(Time, nullable=True)
 
     # many (metric values) to one (metric)
     metric = relationship("MetricSQL", back_populates="metric_value")
