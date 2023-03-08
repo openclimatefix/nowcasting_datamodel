@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, pv_output, solar_sheffield_passiv
 from nowcasting_datamodel.read.read_pv import get_latest_pv_yield, get_pv_systems, get_pv_yield
-from nowcasting_datamodel.save import save_pv_system
+from nowcasting_datamodel.save.save import save_pv_system
 
 logger = logging.getLogger(__name__)
 

@@ -9,7 +9,6 @@ from nowcasting_datamodel.national import make_national_forecast
 
 
 def test_make_national_forecast(forecasts_all, db_session):
-    forecasts_all = [Forecast.from_orm(f) for f in forecasts_all]
 
     locations = db_session.query(LocationSQL).all()
     assert len(locations) == N_GSP

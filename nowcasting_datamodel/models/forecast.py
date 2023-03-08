@@ -305,6 +305,7 @@ class ForecastValue(EnhancedBaseModel):
         return ForecastValueSQL(
             target_time=self.target_time,
             expected_power_generation_megawatts=self.expected_power_generation_megawatts,
+            adjust_mw=self._adjust_mw
         )
 
     @classmethod
