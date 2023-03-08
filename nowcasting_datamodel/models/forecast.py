@@ -305,7 +305,7 @@ class ForecastValue(EnhancedBaseModel):
         return ForecastValueSQL(
             target_time=self.target_time,
             expected_power_generation_megawatts=self.expected_power_generation_megawatts,
-            adjust_mw=self._adjust_mw
+            adjust_mw=self._adjust_mw,
         )
 
     @classmethod
@@ -315,7 +315,7 @@ class ForecastValue(EnhancedBaseModel):
 
         # this is because from orm doesnt copy over '_' variables.
         # But we don't want to expose this in the API
-        if hasattr(obj, 'adjust_mw'):
+        if hasattr(obj, "adjust_mw"):
             m._adjust_mw = obj.adjust_mw
         else:
             m._adjust_mw = 0.0

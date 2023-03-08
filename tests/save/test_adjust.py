@@ -46,7 +46,7 @@ def test_reduce_metric_values_to_correct_forecast_horizon(latest_me):
 
 @freeze_time("2023-01-09 16:25")
 def test_add_adjust_to_forecasts(latest_me, db_session):
-    assert len(db_session.query(MetricValueSQL).all())>0
+    assert len(db_session.query(MetricValueSQL).all()) > 0
 
     datetime_now = datetime(2023, 1, 9, 16, 30, tzinfo=timezone.utc)
     forecasts = make_fake_forecasts(

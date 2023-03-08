@@ -96,7 +96,6 @@ def get_datetime_interval(
 def read_latest_me_national(
     session: Session, metric_name: str = "Half Hourly ME"
 ) -> List[MetricValueSQL]:
-
     """
     Get the latest me for the national forecast
 
