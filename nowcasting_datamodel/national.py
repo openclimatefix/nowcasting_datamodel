@@ -46,31 +46,38 @@ def make_national_forecast(
         one_gsp = pd.DataFrame(
             [ForecastValue.from_orm(value).dict() for value in forecast.forecast_values]
         )
+        adjusts_mw = [f.adjust_mw for f in forecast.forecast_values]
         one_gsp["gps_id"] = gsp_id
+        one_gsp["_adjust_mw"] = adjusts_mw
         # this is a data frame with the follow columns
-        # - gps_id
+        # - gsp_id
         # - target_time
         # - expected_power_generation_megawatts
 
         forecast_values_flat.append(one_gsp)
 
-    forecast_values = pd.concat(forecast_values_flat)
-    forecast_values[
+    forecast_values_df = pd.concat(forecast_values_flat)
+    forecast_values_df[
         "count"
     ] = 1  # this will be used later to check that there are 338 forecasts for each target_time
 
     # group by target time
-    forecast_values = forecast_values.groupby(["target_time"]).sum()
-    forecast_values.reset_index(inplace=True)
-    if (forecast_values["count"] != n_gsps).all():
-        m = f'The should should be {n_gsps}, but instead it is {forecast_values["count"]}'
+    forecast_values_df = forecast_values_df.groupby(["target_time"]).sum()
+    forecast_values_df.reset_index(inplace=True)
+    if (forecast_values_df["count"] != n_gsps).all():
+        m = f'The should should be {n_gsps}, but instead it is {forecast_values_df["count"]}'
         logger.debug(m)
         raise Exception(m)
 
     # change back to ForecastValue
-    forecast_values = [
-        ForecastValue(**forecast_value) for forecast_value in forecast_values.to_dict("records")
-    ]
+    forecast_values = []
+    for _, row in forecast_values_df.iterrows():
+        f = ForecastValue(
+            target_time=row["target_time"],
+            expected_power_generation_megawatts=row["expected_power_generation_megawatts"],
+        )
+        f._adjust_mw = row["_adjust_mw"]
+        forecast_values.append(f)
 
     # change to ForecastValueSQL
     forecast_values = [forecast_value.to_orm() for forecast_value in forecast_values]

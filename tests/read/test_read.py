@@ -40,7 +40,7 @@ from nowcasting_datamodel.read.read import (
     get_pv_system,
     update_latest_input_data_last_updated,
 )
-from nowcasting_datamodel.save import save_pv_system
+from nowcasting_datamodel.save.save import save_pv_system
 
 logger = logging.getLogger(__name__)
 

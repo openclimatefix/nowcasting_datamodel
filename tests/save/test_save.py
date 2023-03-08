@@ -8,7 +8,7 @@ from nowcasting_datamodel.models.forecast import (
     ForecastValueSQL,
 )
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
-from nowcasting_datamodel.save import save, save_all_forecast_values_seven_days, save_pv_system
+from nowcasting_datamodel.save.save import save, save_all_forecast_values_seven_days, save_pv_system
 
 
 def test_save(db_session):

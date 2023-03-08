@@ -14,7 +14,7 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
 from nowcasting_datamodel.read.read import get_location, get_model
-from nowcasting_datamodel.update import change_forecast_value_to_latest
+from nowcasting_datamodel.save.update import change_forecast_value_to_latest
 
 # 2 days in the past + 8 hours forward at 30 mins interval
 N_FAKE_FORECASTS = (24 * 2 + 8) * 2
@@ -49,6 +49,7 @@ def make_fake_forecast_value(
     return ForecastValueSQL(
         target_time=target_time,
         expected_power_generation_megawatts=power,
+        adjust_mw=0.0,
     )
 
 

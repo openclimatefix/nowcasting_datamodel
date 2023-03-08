@@ -6,7 +6,7 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL
 from nowcasting_datamodel.models.forecast import ForecastSQL
-from nowcasting_datamodel.update import (
+from nowcasting_datamodel.save.update import (
     add_forecast_last_7_days_and_remove_old_data,
     change_forecast_value_to_forecast_last_7_days,
     update_all_forecast_latest,
