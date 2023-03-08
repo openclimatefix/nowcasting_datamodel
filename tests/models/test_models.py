@@ -13,9 +13,27 @@ from nowcasting_datamodel.models.forecast import (
 )
 
 
-def test_normalize_forecasts(forecasts_all):
-    v = forecasts_all[0].forecast_values[0].expected_power_generation_megawatts
-    forecasts_all = [Forecast.from_orm(f) for f in forecasts_all]
+def test_adjust_forecasts(forecasts):
+    v = forecasts[0].forecast_values[0].expected_power_generation_megawatts
+    forecasts[0].forecast_values[0].adjust_mw = 1.23
+    forecasts = [Forecast.from_orm(f) for f in forecasts]
+
+    forecasts[0].adjust()
+    assert (
+        forecasts[0].forecast_values[0].expected_power_generation_megawatts
+        == v - 1.23
+    )
+
+    assert 'expected_power_generation_megawatts' in forecasts[0].forecast_values[0].dict()
+    assert '_adjust_mw' not in forecasts[0].forecast_values[0].dict()
+
+    m = ManyForecasts(forecasts=forecasts)
+    m.adjust()
+
+
+def test_normalize_forecasts(forecasts):
+    v = forecasts[0].forecast_values[0].expected_power_generation_megawatts
+    forecasts_all = [Forecast.from_orm(f) for f in forecasts]
 
     forecasts_all[0].normalize()
     assert (
@@ -27,8 +45,8 @@ def test_normalize_forecasts(forecasts_all):
     m.normalize()
 
 
-def test_normalize_forecasts_no_installed_capacity(forecasts_all):
-    forecast = Forecast.from_orm(forecasts_all[0])
+def test_normalize_forecasts_no_installed_capacity(forecasts):
+    forecast = Forecast.from_orm(forecasts[0])
     forecast.location.installed_capacity_mw = None
 
     v = forecast.forecast_values[0].expected_power_generation_megawatts

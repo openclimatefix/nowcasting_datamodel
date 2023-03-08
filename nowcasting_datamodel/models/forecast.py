@@ -101,6 +101,7 @@ class ForecastValueSQLMixin(CreatedMixin):
     uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
     target_time = Column(DateTime(timezone=True), nullable=False, primary_key=True)
     expected_power_generation_megawatts = Column(Float(precision=6))
+    adjust_mw = Column(Float, default=0.0)
 
     @declared_attr
     def forecast_id(self):
@@ -267,6 +268,7 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     expected_power_generation_megawatts = Column(Float(precision=6))
     gsp_id = Column(Integer, index=True, primary_key=True)
     is_primary = Column(Boolean, default=True)
+    adjust_mw = Column(Float, default=0.0)
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
@@ -289,6 +291,13 @@ class ForecastValue(EnhancedBaseModel):
         None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
     )
 
+    _adjust_mw: float = Field(
+        0.0,
+        description="The amount that the forecast should be adjusted by, "
+        "due to persistence errors. This way we keep the original ML prediction. "
+        "The _ at the start means it is not expose in the API",
+    )
+
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
 
     def to_orm(self) -> ForecastValueSQL:
@@ -298,6 +307,17 @@ class ForecastValue(EnhancedBaseModel):
             expected_power_generation_megawatts=self.expected_power_generation_megawatts,
         )
 
+    @classmethod
+    def from_orm(cls, obj: ForecastValueSQL):
+        """Make sure _adjust_mw is transfered also"""
+        m = super().from_orm(obj=obj)
+
+        # this is because from orm doesnt copy over '_' variables.
+        # But we don't want to expose this in the API
+        m._adjust_mw = obj.adjust_mw
+
+        return m
+
     def normalize(self, installed_capacity_mw):
         """Normalize forecasts by installed capacity mw"""
         if installed_capacity_mw in [0, None]:
@@ -306,6 +326,14 @@ class ForecastValue(EnhancedBaseModel):
             self.expected_power_generation_normalized = (
                 self.expected_power_generation_megawatts / installed_capacity_mw
             )
+
+        return self
+
+    def adjust(self):
+        """Adjust forecasts"""
+        self.expected_power_generation_megawatts = (
+            self.expected_power_generation_megawatts - self._adjust_mw
+        )
 
         return self
 
@@ -412,12 +440,21 @@ class Forecast(EnhancedBaseModel):
 
         return forecast
 
-    def normalize(self):
+    def normalize(self, adjust: bool = False):
         """Normalize forecasts by installed capacity mw"""
+
         self.forecast_values = [
             forecast_value.normalize(self.location.installed_capacity_mw)
             for forecast_value in self.forecast_values
         ]
+
+        return self
+
+    def adjust(self):
+        """Adjust forecasts by adjust values, useful for time persistence errors"""
+
+        print("start main")
+        self.forecast_values = [forecast_value.adjust() for forecast_value in self.forecast_values]
 
         return self
 
@@ -433,6 +470,10 @@ class ManyForecasts(EnhancedBaseModel):
     def normalize(self):
         """Normalize forecasts by installed capacity mw"""
         self.forecasts = [forecast.normalize() for forecast in self.forecasts]
+
+    def adjust(self):
+        """Adjust forecasts"""
+        self.forecasts = [forecast.adjust() for forecast in self.forecasts]
 
 
 class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast):
