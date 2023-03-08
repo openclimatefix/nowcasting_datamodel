@@ -25,3 +25,4 @@ class EnhancedBaseModel(BaseModel):
         alias_generator = convert_to_camelcase
         allow_population_by_field_name = True
         orm_mode = True
+        underscore_attrs_are_private = True
