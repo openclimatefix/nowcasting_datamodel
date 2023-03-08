@@ -11,6 +11,7 @@ from nowcasting_datamodel.save.update import (
     change_forecast_value_to_forecast_last_7_days,
     update_all_forecast_latest,
 )
+from nowcasting_datamodel.save.adjust import add_adjust_to_forecasts
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,8 @@ def save(
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     """
+    logger.debug("Add Adjust to forecasts")
+    add_adjust_to_forecasts(session=session, forecasts_sql=forecasts)
 
     # save objects to database
     logger.debug("Saving models")
