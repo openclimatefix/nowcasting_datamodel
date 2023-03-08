@@ -11,7 +11,7 @@ from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
 from nowcasting_datamodel.save.save import save, save_all_forecast_values_seven_days, save_pv_system
 
 
-def test_save(db_session):
+def test_save(db_session, latest_me):
     forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
 
     save(session=db_session, forecasts=forecasts)
