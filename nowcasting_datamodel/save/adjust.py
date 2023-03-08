@@ -1,12 +1,12 @@
 """ Methods for adding adjust values to the forecast"""
+import logging
+from datetime import datetime, timedelta
+from typing import List
+
 import pandas as pd
 
-from nowcasting_datamodel.models import ForecastSQL, ForecastValue, MetricValue, MetricValueSQL
+from nowcasting_datamodel.models import ForecastSQL, MetricValue, MetricValueSQL
 from nowcasting_datamodel.read.read_metric import read_latest_me_national
-from typing import List
-from datetime import datetime, timedelta
-
-import logging
 
 logger = logging.getLogger()
 
@@ -46,13 +46,13 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session, datetime_now
         target_time = forecast_value.target_time
         try:
             # get value from df
-            value = latest_me_df[latest_me_df['datetime'] == forecast_value.target_time]
+            value = latest_me_df[latest_me_df["datetime"] == forecast_value.target_time]
             value = value.iloc[0].value
 
             # add value to ForecastValueSQL
             forecast_value.adjust_mw = value
 
-        except Exception as e:
+        except Exception:
             logger.debug(f"Could not find ME value for {target_time} in {latest_me_df}")
 
 

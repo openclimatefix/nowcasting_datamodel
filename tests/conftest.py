@@ -114,15 +114,15 @@ def latest_me_not_in_database(db_session) -> List[MetricValueSQL]:
     d = DatetimeIntervalSQL(
         start_datetime_utc=datetime(2023, 1, 1), end_datetime_utc=datetime(2023, 1, 8)
     )
-    l = LocationSQL(gsp_id=0, label="test",installed_capacity_mw=2)
+    l = LocationSQL(gsp_id=0, label="test", installed_capacity_mw=2)
 
     db_session.add(metric)
     db_session.add(l)
     db_session.commit()
 
     metric_values = []
-    for forecast_horizon in range(0, 60*9, 30):
-        for minutes in range(0, 60*24, 30):
+    for forecast_horizon in range(0, 60 * 9, 30):
+        for minutes in range(0, 60 * 24, 30):
             time_of_day = time(hour=minutes // 60, minute=minutes % 60)
             m = MetricValueSQL(
                 value=forecast_horizon * 10000 + minutes,

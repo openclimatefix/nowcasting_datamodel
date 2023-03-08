@@ -19,13 +19,10 @@ def test_adjust_forecasts(forecasts):
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
     forecasts[0].adjust()
-    assert (
-        forecasts[0].forecast_values[0].expected_power_generation_megawatts
-        == v - 1.23
-    )
+    assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == v - 1.23
 
-    assert 'expected_power_generation_megawatts' in forecasts[0].forecast_values[0].dict()
-    assert '_adjust_mw' not in forecasts[0].forecast_values[0].dict()
+    assert "expected_power_generation_megawatts" in forecasts[0].forecast_values[0].dict()
+    assert "_adjust_mw" not in forecasts[0].forecast_values[0].dict()
 
     m = ManyForecasts(forecasts=forecasts)
     m.adjust()
