@@ -45,7 +45,7 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
     """
 
     # get the target time for the first forecast
-    datetime_now = forecast[0].forecast_values[0].target_time
+    datetime_now = forecast.forecast_values[0].target_time
 
     # 1. read metric values
     latest_me = read_latest_me_national(session=session)
