@@ -28,9 +28,7 @@ def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session):
     if len(forecast_national) != 1:
         logger.debug("Could not find single national forecast, tehre fore not adding adjust")
 
-    add_adjust_to_national_forecast(
-        forecast=forecast_national[0], session=session
-    )
+    add_adjust_to_national_forecast(forecast=forecast_national[0], session=session)
 
 
 def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
