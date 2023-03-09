@@ -269,10 +269,10 @@ def make_fake_me_latest():
     """ Make fake me Latest objects"""
     # create
     metric = MetricSQL(name="Half Hourly ME", description="test")
-    d = DatetimeIntervalSQL(
+    datetime_interval = DatetimeIntervalSQL(
         start_datetime_utc=datetime(2023, 1, 1), end_datetime_utc=datetime(2023, 1, 8)
     )
-    l = LocationSQL(gsp_id=0, label="test", installed_capacity_mw=2)
+    location = LocationSQL(gsp_id=0, label="test", installed_capacity_mw=2)
 
     metric_values = []
     for forecast_horizon in range(0, 60 * 9, 30):
@@ -283,9 +283,9 @@ def make_fake_me_latest():
                 time_of_day=time_of_day,
                 forecast_horizon_minutes=forecast_horizon,
                 number_of_data_points=1,
-                datetime_interval=d,
+                datetime_interval=datetime_interval,
                 metric=metric,
-                location=l,
+                location=location,
             )
             metric_values.append(m)
 
