@@ -335,9 +335,10 @@ class ForecastValue(EnhancedBaseModel):
 
     def adjust(self):
         """Adjust forecasts"""
-        self.expected_power_generation_megawatts = (
-            self.expected_power_generation_megawatts - self._adjust_mw
-        )
+        if isinstance(self._adjust_mw, float):
+            self.expected_power_generation_megawatts = (
+                self.expected_power_generation_megawatts - self._adjust_mw
+            )
 
         return self
 
