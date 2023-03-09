@@ -1,6 +1,8 @@
 """ Functions used to make fake forecasts"""
-from datetime import datetime, timedelta, timezone
-from typing import List, Optional
+from datetime import datetime, time
+from datetime import timedelta, timezone
+from typing import List
+from typing import Optional
 
 import numpy as np
 from sqlalchemy.orm import Session
@@ -11,8 +13,10 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     national_gb_label,
 )
-from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
-from nowcasting_datamodel.models.gsp import GSPYieldSQL, LocationSQL
+from nowcasting_datamodel.models import MetricValueSQL, MetricSQL, DatetimeIntervalSQL, LocationSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL
+from nowcasting_datamodel.models.forecast import ForecastValueSQL
+from nowcasting_datamodel.models.gsp import GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 from nowcasting_datamodel.save.update import change_forecast_value_to_latest
 
@@ -259,3 +263,30 @@ def make_fake_gsp_yields(
         make_fake_gsp_yields_for_one_location(
             gsp_id=gsp_id, session=session, t0_datetime_utc=t0_datetime_utc
         )
+
+
+def make_fake_me_latest():
+    """ Make fake me Latest objects"""
+    # create
+    metric = MetricSQL(name="Half Hourly ME", description="test")
+    d = DatetimeIntervalSQL(
+        start_datetime_utc=datetime(2023, 1, 1), end_datetime_utc=datetime(2023, 1, 8)
+    )
+    l = LocationSQL(gsp_id=0, label="test", installed_capacity_mw=2)
+
+    metric_values = []
+    for forecast_horizon in range(0, 60 * 9, 30):
+        for minutes in range(0, 60 * 24, 30):
+            time_of_day = time(hour=minutes // 60, minute=minutes % 60)
+            m = MetricValueSQL(
+                value=forecast_horizon * 10000 + minutes,
+                time_of_day=time_of_day,
+                forecast_horizon_minutes=forecast_horizon,
+                number_of_data_points=1,
+                datetime_interval=d,
+                metric=metric,
+                location=l,
+            )
+            metric_values.append(m)
+
+    return metric_values
