@@ -266,7 +266,7 @@ def make_fake_gsp_yields(
 
 
 def make_fake_me_latest():
-    """Make fake me Latest objects"""
+    """Make fake ME latest objects"""
     # create
     metric = MetricSQL(name="Half Hourly ME", description="test")
     datetime_interval = DatetimeIntervalSQL(
