@@ -76,6 +76,41 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 def reduce_metric_values_to_correct_forecast_horizon(
     latest_me: List[MetricValueSQL], datetime_now: datetime, hours_ahead=8
 ) -> pd.DataFrame:
+    """
+    Change all latest ME results 2D to 1D array
+
+    Start:
+    # time forecast_horizon value
+    # 00.00 0  0.1
+    # 00.00 30 0.2
+    # 00.00 60 0.6
+    # .....
+    # 00.30 0  0.11
+    # 00.30 30 0.21
+    # 00.30 60 0.61
+    # .....
+    # 23.30 0  0.11
+    # 23.30 30 0.21
+    # 23.30 60 0.61
+
+    Using datetime_now of 04:30
+
+    End:
+    # time forecast_horizon value
+    # 04.30 0  0.1
+    # 05.00 30 0.2
+    # 05.30 60 0.6
+    # .....
+
+    :param latest_me: list of latest me results for all time_of_day and all forecast_horizons
+    :param datetime_now: the dateteim now, so we know where to use forecast_horizons of 0
+    :param hours_ahead: how many hours ahead
+    :return: dataframe containing
+        'datetime'
+        'time_of_day'
+        'forecast_horizon'
+        'value'
+    """
 
     latest_me_df = pd.DataFrame([MetricValue.from_orm(m).dict() for m in latest_me])
 
