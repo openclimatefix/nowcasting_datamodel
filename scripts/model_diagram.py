@@ -10,13 +10,11 @@ Date: 2022-01-19
 
 import erdantic as erd
 
-from nowcasting_datamodel.models import GSPYield, Metric, MetricValue
+from nowcasting_datamodel.models import GSPYield, Metric, MetricValue, PVYield
 from nowcasting_datamodel.models.forecast import ManyForecasts
 
 diagram = erd.create(ManyForecasts, GSPYield, Metric, MetricValue)
 diagram.draw("diagram.png")
-
-from nowcasting_datamodel.models import PVYield
 
 diagram = erd.create(PVYield)
 diagram.draw("diagram_pv.png")
