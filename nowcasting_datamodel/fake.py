@@ -18,6 +18,7 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location, get_model
+from nowcasting_datamodel.read.read_metric import get_datetime_interval
 from nowcasting_datamodel.save.update import change_forecast_value_to_latest
 
 # 2 days in the past + 8 hours forward at 30 mins interval
@@ -153,7 +154,9 @@ def make_fake_national_forecast(
     session: Session, t0_datetime_utc: Optional[datetime] = None
 ) -> ForecastSQL:
     """Make national fake forecast"""
-    location = get_location(gsp_id=0, session=session, label=national_gb_label)
+    location = get_location(
+        gsp_id=0, session=session, label=national_gb_label, installed_capacity_mw=14000
+    )
     model = MLModelSQL(name="fake_model_national", version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
@@ -265,14 +268,20 @@ def make_fake_gsp_yields(
         )
 
 
-def make_fake_me_latest():
+def make_fake_me_latest(session: Session):
     """Make fake ME latest objects"""
     # create
     metric = MetricSQL(name="Half Hourly ME", description="test")
-    datetime_interval = DatetimeIntervalSQL(
-        start_datetime_utc=datetime(2023, 1, 1), end_datetime_utc=datetime(2023, 1, 8)
+    datetime_interval = get_datetime_interval(
+        session=session,
+        start_datetime_utc=datetime(2023, 1, 1),
+        end_datetime_utc=datetime(2023, 1, 8),
     )
-    location = LocationSQL(gsp_id=0, label="test", installed_capacity_mw=2)
+    location = get_location(
+        gsp_id=0, session=session, installed_capacity_mw=14000, label=national_gb_label
+    )
+
+    session.add_all([location, datetime_interval, metric])
 
     metric_values = []
     for forecast_horizon in range(0, 60 * 9, 30):
