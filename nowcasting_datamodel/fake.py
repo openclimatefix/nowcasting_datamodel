@@ -1,21 +1,21 @@
 """ Functions used to make fake forecasts"""
-from datetime import datetime, time
-from datetime import timedelta, timezone
-from typing import List
-from typing import Optional
+from datetime import datetime, time, timedelta, timezone
+from typing import List, Optional
 
 import numpy as np
 from sqlalchemy.orm import Session
 
 from nowcasting_datamodel.models import (
+    DatetimeIntervalSQL,
     InputDataLastUpdatedSQL,
+    LocationSQL,
+    MetricSQL,
+    MetricValueSQL,
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
 )
-from nowcasting_datamodel.models import MetricValueSQL, MetricSQL, DatetimeIntervalSQL, LocationSQL
-from nowcasting_datamodel.models.forecast import ForecastSQL
-from nowcasting_datamodel.models.forecast import ForecastValueSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location, get_model
 from nowcasting_datamodel.save.update import change_forecast_value_to_latest
@@ -266,7 +266,7 @@ def make_fake_gsp_yields(
 
 
 def make_fake_me_latest():
-    """ Make fake me Latest objects"""
+    """Make fake me Latest objects"""
     # create
     metric = MetricSQL(name="Half Hourly ME", description="test")
     datetime_interval = DatetimeIntervalSQL(
