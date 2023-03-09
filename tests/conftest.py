@@ -109,7 +109,7 @@ def db_session_pv(db_connection_pv):
 @pytest.fixture
 def latest_me(db_session) -> List[MetricValueSQL]:
     # create
-    metric_values = make_fake_me_latest()
+    metric_values = make_fake_me_latest(session=db_session)
 
     # add
     db_session.add_all(metric_values)
