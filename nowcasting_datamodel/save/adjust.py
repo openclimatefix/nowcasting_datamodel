@@ -12,7 +12,14 @@ logger = logging.getLogger()
 
 
 def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session):
+    """
+    Adjust National Forecast by ME over the last week
 
+    Note that no objects are returned as sqlalchemy objects can be adjust on the spot
+
+    :param forecasts_sql: list of forecasts
+    :param session: database sessions
+    """
     logger.debug("Adding Adjusts to National forecast")
 
     # get the national forecast only
@@ -21,27 +28,39 @@ def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session):
     if len(forecast_national) != 1:
         logger.debug("Could not find single national forecast, tehre fore not adding adjust")
 
-    datetime_now = forecast_national[0].forecast_values[0].target_time
-
     add_adjust_to_national_forecast(
-        forecast=forecast_national[0], session=session, datetime_now=datetime_now
+        forecast=forecast_national[0], session=session
     )
 
 
-def add_adjust_to_national_forecast(forecast: ForecastSQL, session, datetime_now: datetime):
+def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
+    """
+    Add adjust to national forecast.
 
-    # read metric values
+    1. Get latest me results for time_of_day and forecast horizont
+    2. Reduce latest me results relevant for now
+    3. Add Me to adjust_mw property in ForecastValueSQL
+
+    :param forecast: national forecast
+    :param session:
+    :return:
+    """
+
+    # get the target time for the first forecast
+    datetime_now = forecast[0].forecast_values[0].target_time
+
+    # 1. read metric values
     latest_me = read_latest_me_national(session=session)
     assert len(latest_me) > 0
 
-    # filter value down to now onwards
+    # 2. filter value down to now onwards
     # change to dataframe
     latest_me_df = reduce_metric_values_to_correct_forecast_horizon(
         latest_me=latest_me, datetime_now=datetime_now
     )
     assert len(latest_me_df) > 0
 
-    # add values to forecast_values
+    # 3. add values to forecast_values
     for forecast_value in forecast.forecast_values:
         target_time = forecast_value.target_time
         try:
