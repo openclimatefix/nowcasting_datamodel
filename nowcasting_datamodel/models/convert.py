@@ -93,12 +93,12 @@ def convert_df_to_national_forecast(
         # add timezone
         target_time = forecast_value.target_datetime_utc.replace(tzinfo=timezone.utc)
         forecast_value_sql = ForecastValue(
-                target_time=target_time,
-                expected_power_generation_megawatts=forecast_value.forecast_mw,
-            ).to_orm()
+            target_time=target_time,
+            expected_power_generation_megawatts=forecast_value.forecast_mw,
+        ).to_orm()
         forecast_value_sql.adjust_mw = 0.0
         forecast_values.append(forecast_value_sql)
-        
+
     # make forecast object
     forecast = ForecastSQL(
         model=model,

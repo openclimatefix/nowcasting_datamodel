@@ -44,4 +44,3 @@ def test_convert_df_to_national_forecast(db_session):
     # check it can be committed
     db_session.add_all(forecast)
     db_session.commit()
-
