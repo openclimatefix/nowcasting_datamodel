@@ -42,5 +42,5 @@ def test_convert_df_to_national_forecast(db_session):
     assert len(forecast.forecast_values) == 2
 
     # check it can be committed
-    db_session.add_all(forecast)
+    db_session.add(forecast)
     db_session.commit()
