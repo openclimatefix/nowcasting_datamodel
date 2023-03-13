@@ -333,11 +333,17 @@ class ForecastValue(EnhancedBaseModel):
 
         return self
 
-    def adjust(self):
+    def adjust(self, limit: float = 0.0):
         """Adjust forecasts"""
         if isinstance(self._adjust_mw, float):
+            adjust_mw = self._adjust_mw
+            if adjust_mw > limit:
+                adjust_mw = limit
+            elif adjust_mw < -limit:
+                adjust_mw = -limit
+
             self.expected_power_generation_megawatts = (
-                self.expected_power_generation_megawatts - self._adjust_mw
+                self.expected_power_generation_megawatts - adjust_mw
             )
 
         return self
@@ -455,11 +461,13 @@ class Forecast(EnhancedBaseModel):
 
         return self
 
-    def adjust(self):
+    def adjust(self, limit: float = 0.0):
         """Adjust forecasts by adjust values, useful for time persistence errors"""
 
         print("start main")
-        self.forecast_values = [forecast_value.adjust() for forecast_value in self.forecast_values]
+        self.forecast_values = [
+            forecast_value.adjust(limit=limit) for forecast_value in self.forecast_values
+        ]
 
         return self
 
@@ -476,9 +484,9 @@ class ManyForecasts(EnhancedBaseModel):
         """Normalize forecasts by installed capacity mw"""
         self.forecasts = [forecast.normalize() for forecast in self.forecasts]
 
-    def adjust(self):
+    def adjust(self, limit: float = 0.0):
         """Adjust forecasts"""
-        self.forecasts = [forecast.adjust() for forecast in self.forecasts]
+        self.forecasts = [forecast.adjust(limit=limit) for forecast in self.forecasts]
 
 
 class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast):
