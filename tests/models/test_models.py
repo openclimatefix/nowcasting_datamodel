@@ -42,7 +42,7 @@ def test_adjust_forecast_below_zero(forecasts):
     forecasts[0].forecast_values[0].adjust_mw = v + 100
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
-    forecasts[0].adjust(limit=v*3)
+    forecasts[0].adjust(limit=v * 3)
 
     ## validate
     Forecast(**forecasts[0].dict())
