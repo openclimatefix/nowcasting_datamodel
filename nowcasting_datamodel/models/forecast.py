@@ -234,7 +234,7 @@ def make_partitions(start_year: int, start_month: int, end_year: int):
             )
 
 
-make_partitions(2022, 8, 2025)
+make_partitions(2022, 8, 2024)
 
 
 # legacy table, this means migration still work
@@ -264,6 +264,18 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
 
     __tablename__ = "forecast_value_latest"
 
+    # add a unique condition on 'gsp_id' and 'target_time'
+    __table_args__ = (
+        Index(
+            "uix_1",  # Index name
+            "gsp_id",
+            "target_time",  # Columns which are part of the index
+            "model_id",
+            unique=True,
+            postgresql_where=Column("is_primary"),  # The condition
+        ),
+    )
+
     target_time = Column(DateTime(timezone=True), index=True, primary_key=True)
     expected_power_generation_megawatts = Column(Float(precision=6))
     gsp_id = Column(Integer, index=True, primary_key=True)
@@ -273,9 +285,6 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
-
-    # add a unique condition on 'gsp_id', 'target_time' and 'model_id'
-    UniqueConstraint("gsp_id", "target_time", "model_id", name="uix_1")
 
     Index("index_forecast_value_latest", CreatedMixin.created_utc.desc())
 
