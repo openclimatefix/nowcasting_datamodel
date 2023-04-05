@@ -54,15 +54,18 @@ def get_blend_forecast_values_latest(
 
         if len(forecast_values_one_model) == 0:
             logger.debug(
-                f"No forecast values for {model_name} for gsp_id {gsp_id} and start_datetime {start_datetime}"
+                f"No forecast values for {model_name} for gsp_id {gsp_id} "
+                f"and start_datetime {start_datetime}"
             )
         else:
             logger.debug(
-                f"Found {len(forecast_values_one_model)} values for {model_name} for gsp_id {gsp_id} and start_datetime {start_datetime}"
+                f"Found {len(forecast_values_one_model)} values for {model_name} "
+                f"for gsp_id {gsp_id} and start_datetime {start_datetime}"
             )
             forecast_values_all_model.append([model_name, forecast_values_one_model])
 
-    # if all forecasts are later than 2 hours, then we use the blend, otherwise we only use forecast less than 2 hours
+    # if all forecasts are later than 2 hours, then we use the blend,
+    # otherwise we only use forecast less than 2 hours
     if one_forecast_created_within_timedelta:
         # remove all forecasts that are older than 2 hours
         forecast_values_all_model_valid = []
@@ -275,7 +278,8 @@ def make_weights_df(model_names, weights, start_datetime_now=None):
             end_weight = weight["end_weight"]
 
         logger.debug(
-            f"Making weights for {start_horizon_hour} to {end_horizon_hour} hours with weights {start_weight} to {end_weight}"
+            f"Making weights for {start_horizon_hour} to {end_horizon_hour} "
+            f"hours with weights {start_weight} to {end_weight}"
         )
 
         start_datetime = (
