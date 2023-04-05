@@ -264,12 +264,12 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
 
     __tablename__ = "forecast_value_latest"
 
-    # add a unique condition on 'gsp_id' and 'target_time'
+    # add a unique condition on 'gsp_id',  'target_time' and 'model_id'
     __table_args__ = (
         Index(
             "uix_1",  # Index name
-            "gsp_id",
-            "target_time",  # Columns which are part of the index
+            "gsp_id",  # Columns which are part of the index
+            "target_time",
             "model_id",
             unique=True,
             postgresql_where=Column("is_primary"),  # The condition
