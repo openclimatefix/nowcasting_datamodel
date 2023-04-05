@@ -1,8 +1,9 @@
-""" Read database functions
+""" Blends forecasts together
 
-1. Get the latest forecast
-2. get the latest forecasts for all gsp ids
-3. get all forecast values
+1. creates weights for blending
+2. get forecast values for each model
+3. blends them together
+
 """
 import logging
 from datetime import datetime, timedelta, timezone
@@ -33,11 +34,13 @@ def get_blend_forecast_values_latest(
     :param gsp_id: gsp id, to filter query on
     :param start_datetime: optional to filterer target_time by start_datetime
         If None is given then all are returned.
+    :param model_names: list of model names to use for blending
+    :param weights: list of weights to use for blending, see structure in make_weights_df
 
-
-    return: List of forecasts values latest objects from database
-
+    return: List of forecasts values blended from different models
     """
+
+    logger.info(f"Getting blend forecast for gsp_id {gsp_id} and start_datetime {start_datetime}")
 
     if model_names is None:
         model_names = ["cnn", "National_xg"]
@@ -182,6 +185,9 @@ def get_blend_forecast_values_latest(
         duplicated["expected_power_generation_megawatts"] = (
             duplicated["expected_power_generation_megawatts"] * duplicated["weight"]
         )
+        duplicated["adjust_mw"] = (
+                duplicated["adjust_mw"] * duplicated["weight"]
+        )
         duplicated.drop(columns=["created_utc"], inplace=True)
 
         # sum the weights
@@ -193,6 +199,7 @@ def get_blend_forecast_values_latest(
 
         # divide by the sum of the weights
         duplicated["expected_power_generation_megawatts"] /= duplicated["weight"]
+        duplicated["adjust_mw"] /= duplicated["weight"]
 
         logger.debug(duplicated)
 
@@ -206,11 +213,12 @@ def get_blend_forecast_values_latest(
     forecast_values = []
     logger.debug(forecast_values_blended)
     for i, row in forecast_values_blended.iterrows():
+        print(row)
         forecast_value = ForecastValue(
             target_time=row.target_time,
             expected_power_generation_megawatts=row.expected_power_generation_megawatts,
-            _adjust_mw=row.adjust_mw,
         )
+        forecast_value._adjust_mw = row.adjust_mw
         forecast_values.append(forecast_value)
 
     return forecast_values
