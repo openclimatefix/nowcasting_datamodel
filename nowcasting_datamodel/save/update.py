@@ -101,7 +101,10 @@ def update_forecast_latest(
     forecast_values = []
     for forecast_value in forecast.forecast_values:
         forecast_value_latest = change_forecast_value_to_latest(
-            forecast_value, gsp_id=forecast.location.gsp_id, forecast_id=forecast_historic.id
+            forecast_value,
+            gsp_id=forecast.location.gsp_id,
+            forecast_id=forecast_historic.id,
+            model_id=forecast_historic.model_id
         )
         forecast_values.append(forecast_value_latest.__dict__)
 
@@ -114,7 +117,7 @@ def update_forecast_latest(
 
 
 def change_forecast_value_to_latest(
-    forecast_value: ForecastValueSQL, gsp_id: int, forecast_id: Optional[int] = None
+    forecast_value: ForecastValueSQL, gsp_id: int, forecast_id: Optional[int] = None, model_id: Optional[int] = None,
 ) -> ForecastValueLatestSQL:
     """
     Make a ForecastValueLatestSQL from a ForecastValueQL object
@@ -122,6 +125,7 @@ def change_forecast_value_to_latest(
     :param forecast_value: forecast value object
     :param gsp_id: gsp id
     :param forecast_id: forecast joining id
+    :param model_id: model joining id
     :return: forecast value latest object
     """
 
@@ -132,6 +136,9 @@ def change_forecast_value_to_latest(
     forecast_value_dict["gsp_id"] = gsp_id
     if forecast_id is not None:
         forecast_value_dict["forecast_id"] = forecast_id
+
+    if model_id is not None:
+        forecast_value_dict["model_id"] = model_id
 
     return ForecastValueLatestSQL(**forecast_value_dict)
 

@@ -259,6 +259,7 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
             "uix_1",  # Index name
             "gsp_id",
             "target_time",  # Columns which are part of the index
+            "model_id",
             unique=True,
             postgresql_where=Column("is_primary"),  # The condition
         ),
@@ -272,6 +273,8 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
+
+    model_id = Column(Integer, ForeignKey("model.id"), index=True)
 
     Index("index_forecast_value_latest", CreatedMixin.created_utc.desc())
 
