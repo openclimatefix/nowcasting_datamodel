@@ -185,9 +185,7 @@ def get_blend_forecast_values_latest(
         duplicated["expected_power_generation_megawatts"] = (
             duplicated["expected_power_generation_megawatts"] * duplicated["weight"]
         )
-        duplicated["adjust_mw"] = (
-                duplicated["adjust_mw"] * duplicated["weight"]
-        )
+        duplicated["adjust_mw"] = duplicated["adjust_mw"] * duplicated["weight"]
         duplicated.drop(columns=["created_utc"], inplace=True)
 
         # sum the weights

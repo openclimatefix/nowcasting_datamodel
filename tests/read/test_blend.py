@@ -137,12 +137,12 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
 
         if model == model_1:
             power = 1
-            adjust=0
+            adjust = 0
         else:
             power = 2
             adjust = 100
 
-        forecast_horizon_minutes = [0,30,7*30,15*30]
+        forecast_horizon_minutes = [0, 30, 7 * 30, 15 * 30]
         f1[0].forecast_values_latest = [
             ForecastValueLatestSQL(
                 gsp_id=1,
@@ -150,7 +150,9 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 model_id=model.id,
                 adjust_mw=adjust,
-            ) for t in forecast_horizon_minutes]
+            )
+            for t in forecast_horizon_minutes
+        ]
 
         db_session.add_all(f1)
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 8
