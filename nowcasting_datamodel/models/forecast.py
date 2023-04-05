@@ -256,13 +256,12 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     target_time = Column(DateTime(timezone=True), index=True, primary_key=True)
     expected_power_generation_megawatts = Column(Float(precision=6))
     gsp_id = Column(Integer, index=True, primary_key=True)
+    model_id = Column(Integer, index=True, primary_key=True, default=-1)
     is_primary = Column(Boolean, default=True)
     adjust_mw = Column(Float, default=0.0)
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
-
-    model_id = Column(Integer, index=True, default=None)
 
     # add a unique condition on 'gsp_id', 'target_time' and 'model_id'
     UniqueConstraint('gsp_id', 'target_time', 'model_id', name='uix_1')
