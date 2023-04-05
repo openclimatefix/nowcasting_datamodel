@@ -9,27 +9,12 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import pandas as pd
-from sqlalchemy import desc, text
-from sqlalchemy.orm import contains_eager, joinedload
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import (
-    InputDataLastUpdatedSQL,
-    LocationSQL,
-    MLModelSQL,
-    PVSystemSQL,
-    StatusSQL,
-    national_gb_label,
-)
-from nowcasting_datamodel.read.read import get_forecast_values_latest
 from nowcasting_datamodel.models.forecast import (
-    ForecastSQL,
-    ForecastValueLatestSQL,
-    ForecastValueSevenDaysSQL,
-    ForecastValueSQL,
     ForecastValue,
 )
+from nowcasting_datamodel.read.read import get_forecast_values_latest
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +79,7 @@ def get_blend_forecast_values_latest(
                 logger.debug(f"forecast {model_name} is older than 2 hours, so not using it")
     else:
         # use all forecast:
-        logger.debug(f"using all forecasts as all are older than 2 hours")
+        logger.debug("using all forecasts as all are older than 2 hours")
         forecast_values_all_model_valid = forecast_values_all_model
 
     # merge into pandas dataframe with columns
@@ -173,7 +158,7 @@ def get_blend_forecast_values_latest(
 
         logger.debug(f"Now blending the duplicated target times using {weights_df}")
 
-        forecast_values_all_model_target_time = pd.DataFrame()
+        pd.DataFrame()
         # unstack the weights
         weights_one_df = weights_df.stack()
         weights_one_df.name = "weight"
@@ -192,8 +177,7 @@ def get_blend_forecast_values_latest(
 
         # multiply the expected power generation by the weight
         duplicated["expected_power_generation_megawatts"] = (
-            duplicated["expected_power_generation_megawatts"]
-            * duplicated["weight"]
+            duplicated["expected_power_generation_megawatts"] * duplicated["weight"]
         )
         duplicated.drop(columns=["created_utc"], inplace=True)
 
@@ -201,11 +185,11 @@ def get_blend_forecast_values_latest(
         duplicated = duplicated.groupby(["target_time"]).sum()
 
         # make sure target_time is a columns
-        duplicated['target_time'] = duplicated.index
+        duplicated["target_time"] = duplicated.index
         duplicated.reset_index(inplace=True, drop=True)
 
         # divide by the sum of the weights
-        duplicated['expected_power_generation_megawatts'] /= duplicated['weight']
+        duplicated["expected_power_generation_megawatts"] /= duplicated["weight"]
 
         logger.debug(duplicated)
 
@@ -231,7 +215,6 @@ def get_blend_forecast_values_latest(
 
 def make_weights_df(model_names, weights, start_datetime_now=None):
     """Makes weights to half an hour and blocks
-
 
     A pd data frame like
     target_time weight cnn National_xg

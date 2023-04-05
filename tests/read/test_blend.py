@@ -156,7 +156,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
             ForecastValueLatestSQL(
                 gsp_id=1,
                 expected_power_generation_megawatts=power,
-                target_time=datetime(2023, 1, 1, 3,30, tzinfo=timezone.utc),
+                target_time=datetime(2023, 1, 1, 3, 30, tzinfo=timezone.utc),
                 model_id=model.id,
             ),
             ForecastValueLatestSQL(
@@ -182,4 +182,3 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
     assert forecast_values_read[1].expected_power_generation_megawatts == 1
     assert forecast_values_read[2].expected_power_generation_megawatts == 1.5
     assert forecast_values_read[3].expected_power_generation_megawatts == 2
-
