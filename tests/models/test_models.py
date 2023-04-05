@@ -121,6 +121,7 @@ def test_forecast_latest_to_pydantic(forecast_sql):
     forecast = Forecast.from_orm_latest(forecast_sql=forecast_sql)
     assert forecast.forecast_values[0] == ForecastValue.from_orm(f1)
 
+
 def test_forecast_latest_distinct_target_time(db_session):
 
     f1 = ForecastValueLatestSQL(
@@ -157,17 +158,23 @@ def test_forecast_latest_distinct_model_id(db_session):
 
     m1 = MLModelSQL(name="test_1", version="0.1")
     m2 = MLModelSQL(name="test_2", version="0.2")
-    db_session.add_all([m1,m2])
+    db_session.add_all([m1, m2])
     db_session.commit()
 
     f1 = ForecastValueLatestSQL(
-        target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1, gsp_id=1, model_id=1
+        target_time=datetime(2023, 1, 1),
+        expected_power_generation_megawatts=1,
+        gsp_id=1,
+        model_id=1,
     )
     db_session.add(f1)
     db_session.commit()
 
     f2 = ForecastValueLatestSQL(
-        target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=2, model_id=2, gsp_id=1
+        target_time=datetime(2023, 1, 1),
+        expected_power_generation_megawatts=2,
+        model_id=2,
+        gsp_id=1,
     )
     db_session.add(f2)
     db_session.commit()
@@ -178,4 +185,3 @@ def test_forecast_latest_distinct_model_id(db_session):
     #     )
     #     db_session.add(f2)
     #     db_session.commit()
-

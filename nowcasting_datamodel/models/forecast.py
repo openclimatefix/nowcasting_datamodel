@@ -11,7 +11,18 @@ from datetime import datetime
 from typing import List
 
 from pydantic import Field, validator
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, UniqueConstraint, event, func
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    UniqueConstraint,
+    event,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
@@ -264,7 +275,7 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
 
     # add a unique condition on 'gsp_id', 'target_time' and 'model_id'
-    UniqueConstraint('gsp_id', 'target_time', 'model_id', name='uix_1')
+    UniqueConstraint("gsp_id", "target_time", "model_id", name="uix_1")
 
     Index("index_forecast_value_latest", CreatedMixin.created_utc.desc())
 

@@ -104,7 +104,7 @@ def update_forecast_latest(
             forecast_value,
             gsp_id=forecast.location.gsp_id,
             forecast_id=forecast_historic.id,
-            model_id=forecast_historic.model_id
+            model_id=forecast_historic.model_id,
         )
         forecast_values.append(forecast_value_latest.__dict__)
 
@@ -117,7 +117,10 @@ def update_forecast_latest(
 
 
 def change_forecast_value_to_latest(
-    forecast_value: ForecastValueSQL, gsp_id: int, forecast_id: Optional[int] = None, model_id: Optional[int] = None,
+    forecast_value: ForecastValueSQL,
+    gsp_id: int,
+    forecast_id: Optional[int] = None,
+    model_id: Optional[int] = None,
 ) -> ForecastValueLatestSQL:
     """
     Make a ForecastValueLatestSQL from a ForecastValueQL object
