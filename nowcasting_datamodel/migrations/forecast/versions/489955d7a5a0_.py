@@ -1,4 +1,10 @@
-"""empty message
+"""Add model_id to forecast_value_latest
+
+Found to run this migration I have to set nullable=True and then run
+
+update forecast_value_latest
+set model_id=-1
+This took ~3 minutes
 
 Revision ID: 489955d7a5a0
 Revises: 09f38fe306a4
