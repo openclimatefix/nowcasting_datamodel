@@ -14,9 +14,6 @@ from nowcasting_datamodel.read.read import get_model
 logger = logging.getLogger(__name__)
 
 
-
-
-
 @freeze_time("2023-01-01 00:00:01")
 def test_make_weights_df():
     start_datetime = datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc)
@@ -52,7 +49,9 @@ def test_make_weights_df():
 def test_make_weights_df_yesterday():
     start_datetime = datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
 
-    weights = make_weights_df(model_names=["test_1", "test_2"], weights=None, start_datetime=start_datetime)
+    weights = make_weights_df(
+        model_names=["test_1", "test_2"], weights=None, start_datetime=start_datetime
+    )
     assert len(weights) == 49 + 16
     assert "test_1" in weights.columns
     assert "test_2" in weights.columns
@@ -69,19 +68,17 @@ def test_make_weights_df_yesterday():
     assert weights["test_1"][49] == 1
     assert weights["test_2"][49] == 0
 
-    assert weights["test_1"][49+3] == 1
-    assert weights["test_2"][49+3] == 0
+    assert weights["test_1"][49 + 3] == 1
+    assert weights["test_2"][49 + 3] == 0
 
-    assert weights["test_1"][49+7] == 0.5
-    assert weights["test_2"][49+7] == 0.5
+    assert weights["test_1"][49 + 7] == 0.5
+    assert weights["test_2"][49 + 7] == 0.5
 
-    assert weights["test_1"][49+11] == 0
-    assert weights["test_2"][49+11] == 1
+    assert weights["test_1"][49 + 11] == 0
+    assert weights["test_2"][49 + 11] == 1
 
-    assert weights["test_1"][49+15] == 0
-    assert weights["test_2"][49+15] == 1
-
-
+    assert weights["test_1"][49 + 15] == 0
+    assert weights["test_2"][49 + 15] == 1
 
 
 @freeze_time("2023-01-01 00:00:01")
@@ -121,6 +118,7 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
         forecast_values_read[0].expected_power_generation_megawatts
         == f1[0].forecast_values_latest[0].expected_power_generation_megawatts
     )
+
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
@@ -175,12 +173,12 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
 
         if model == model_1:
             power = 1
-            adjust=0
+            adjust = 0
         else:
             power = 2
             adjust = 100
 
-        forecast_horizon_minutes = [0,30,8*30,15*30]
+        forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30]
         f1[0].forecast_values_latest = [
             ForecastValueLatestSQL(
                 gsp_id=1,
@@ -188,7 +186,9 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 model_id=model.id,
                 adjust_mw=adjust,
-            ) for t in forecast_horizon_minutes]
+            )
+            for t in forecast_horizon_minutes
+        ]
 
         db_session.add_all(f1)
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 8
