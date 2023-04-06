@@ -18,8 +18,11 @@ from nowcasting_datamodel.models.forecast import (
 from nowcasting_datamodel.read.read import get_forecast_values_latest
 
 logger = logging.getLogger(__name__)
+<<<<<<< HEAD
 # import structlog
 # logger = structlog.get_logger(__name__)
+=======
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
 
 
 def get_blend_forecast_values_latest(
@@ -71,7 +74,10 @@ def get_blend_forecast_values_latest(
 
     # if all forecasts are later than 2 hours, then we use the blend,
     # otherwise we only use forecast less than 2 hours
+<<<<<<< HEAD
     print(forecast_values_all_model)
+=======
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
     if one_forecast_created_within_timedelta:
         # remove all forecasts that are older than 2 hours
         forecast_values_all_model_valid = []
@@ -225,7 +231,11 @@ def get_blend_forecast_values_latest(
     return forecast_values
 
 
+<<<<<<< HEAD
 def make_weights_df(model_names, weights, start_datetime=None):
+=======
+def make_weights_df(model_names, weights, start_datetime_now=None):
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
     """Makes weights to half an hour and blocks
 
     A pd data frame like
@@ -257,6 +267,7 @@ def make_weights_df(model_names, weights, start_datetime=None):
             },
         ]
     # get time now rounded up to 30 mins
+<<<<<<< HEAD
     start_datetime_now = datetime.now(tz=timezone.utc).replace(second=0, microsecond=0)
     if start_datetime_now.minute >= 30:
         start_datetime_now += timedelta(hours=1)
@@ -271,6 +282,19 @@ def make_weights_df(model_names, weights, start_datetime=None):
     weights_all_df = []
     for i in range(len(weights)):
         weight = weights[i]
+=======
+    if start_datetime_now is None:
+        start_datetime_now = datetime.now().replace(second=0, microsecond=0)
+        if start_datetime_now.minute >= 30:
+            start_datetime_now += timedelta(hours=1)
+            start_datetime_now = start_datetime_now.replace(minute=00)
+        else:
+            start_datetime_now = start_datetime_now.replace(minute=30)
+
+    # make dataframe of 8 hours in 30 minutes chunks from now
+    weights_all_df = []
+    for weight in weights:
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
         if "start_horizon_hour" not in weight:
             start_horizon_hour = 0
         else:
@@ -289,6 +313,7 @@ def make_weights_df(model_names, weights, start_datetime=None):
         else:
             end_weight = weight["end_weight"]
 
+<<<<<<< HEAD
         # add the first weight to the dataframe, from  start_datetime to start_datetime_now.
         # This could be for the two days before now
         if i == 0:
@@ -298,25 +323,40 @@ def make_weights_df(model_names, weights, start_datetime=None):
             weights_df[model_names] = start_weight
             weights_all_df.append(weights_df)
 
+=======
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
         logger.debug(
             f"Making weights for {start_horizon_hour} to {end_horizon_hour} "
             f"hours with weights {start_weight} to {end_weight}"
         )
 
+<<<<<<< HEAD
         start_datetime_one_weight = (
             start_datetime_now + timedelta(hours=start_horizon_hour) - timedelta(minutes=30)
         )
         if start_horizon_hour == 0:
             start_datetime_one_weight += timedelta(minutes=30)
+=======
+        start_datetime = (
+            start_datetime_now + timedelta(hours=start_horizon_hour) - timedelta(minutes=30)
+        )
+        if start_horizon_hour == 0:
+            start_datetime += timedelta(minutes=30)
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
         end_datetime = (
             start_datetime_now + timedelta(hours=end_horizon_hour) - timedelta(minutes=30)
         )
         if end_horizon_hour == 8:
             end_datetime += timedelta(minutes=30)
 
+<<<<<<< HEAD
         logger.debug(f"Making weights from {start_datetime_one_weight} to {end_datetime}")
         weights_df = pd.DataFrame(
             index=pd.date_range(start=start_datetime_one_weight, end=end_datetime, freq="30min")
+=======
+        weights_df = pd.DataFrame(
+            index=pd.date_range(start=start_datetime, end=end_datetime, freq="30min")
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
         )
         # get rid of last timestamp
         weights_df = weights_df[:-1]
@@ -325,18 +365,28 @@ def make_weights_df(model_names, weights, start_datetime=None):
         assert len(model_names) == len(end_weight)
         for model_name, start_weight, end_weight in zip(model_names, start_weight, end_weight):
             weights_df[model_name] = start_weight + (end_weight - start_weight) * (
+<<<<<<< HEAD
                 weights_df.index - start_datetime_one_weight
             ) / (end_datetime - start_datetime_one_weight)
 
         logger.debug(weights_df)
+=======
+                weights_df.index - start_datetime
+            ) / (end_datetime - start_datetime)
+
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
         weights_all_df.append(weights_df)
 
     weights_all_df = pd.concat(weights_all_df)
     weights_all_df = weights_all_df[~weights_all_df.index.duplicated(keep="first")]
 
     # only keep from now
+<<<<<<< HEAD
     logger.debug(weights_all_df)
     logger.debug(start_datetime)
     weights_all_df = weights_all_df[weights_all_df.index >= start_datetime]
+=======
+    weights_all_df = weights_all_df[weights_all_df.index >= start_datetime_now]
+>>>>>>> cb9e3f2cf3b703fba45fa3b4e042078c756cd047
 
     return weights_all_df

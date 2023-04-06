@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 
+
 @freeze_time("2023-01-01 00:00:01")
 def test_make_weights_df():
     start_datetime = datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc)
@@ -160,6 +161,7 @@ def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
         forecast_values_read[0].expected_power_generation_megawatts
         == f1[0].forecast_values_latest[0].expected_power_generation_megawatts
     )
+
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
