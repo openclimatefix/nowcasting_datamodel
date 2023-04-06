@@ -476,6 +476,7 @@ def get_forecast_values(
 def get_forecast_values_latest(
     session: Session,
     gsp_id: int,
+    model_name: Optional[str] = None,
     start_datetime: Optional[datetime] = None,
 ) -> List[ForecastValueLatestSQL]:
     """
@@ -503,6 +504,10 @@ def get_forecast_values_latest(
     # filter on gsp_id
     if gsp_id is not None:
         query = query.filter(ForecastValueLatestSQL.gsp_id == gsp_id)
+
+    if model_name is not None:
+        query = query.join(MLModelSQL, ForecastValueLatestSQL.model_id == MLModelSQL.id)
+        query = query.filter(MLModelSQL.name == model_name)
 
     # order by target time and created time desc
     query = query.order_by(ForecastValueLatestSQL.target_time)
