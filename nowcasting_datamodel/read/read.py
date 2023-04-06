@@ -124,6 +124,7 @@ def get_latest_forecast(
     gsp_id: Optional[int] = None,
     historic: bool = False,
     start_target_time: Optional[datetime] = None,
+    model_name: Optional[str] = None,
 ) -> ForecastSQL:
     """
     Read forecasts
@@ -135,6 +136,7 @@ def get_latest_forecast(
     :param historic: Option to load historic values or not
     :param start_target_time:
         Filter: forecast values target time should be larger than this datetime
+    :param model_name: Filter: model name
 
     return: List of forecasts objects from database
     """
@@ -151,6 +153,7 @@ def get_latest_forecast(
         start_target_time=start_target_time,
         historic=historic,
         gsp_ids=gsp_ids,
+        model_name=model_name,
     )
 
     if forecasts is None:
@@ -255,6 +258,7 @@ def get_latest_forecast_for_gsps(
     preload_children: Optional[bool] = False,
     historic: bool = False,
     gsp_ids: List[int] = None,
+    model_name: Optional[int] = None,
 ):
     """
     Read forecasts
@@ -268,10 +272,13 @@ def get_latest_forecast_for_gsps(
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
+    :param model_name: Option to filter on model name
 
     :return: List of forecasts objects from database
 
     """
+    logger.debug(f"Getting latest forecast for gsps {gsp_ids} {historic=} {model_name=}")
+
     order_by_cols = []
 
     # start main query
@@ -291,6 +298,11 @@ def get_latest_forecast_for_gsps(
 
     # filter on historic
     query = query.filter(ForecastSQL.historic == historic)
+
+    # filter on model name
+    if model_name is not None:
+        query = query.join(MLModelSQL)
+        query = query.filter(MLModelSQL.name == model_name)
 
     # filter on target time
     if start_target_time is not None:
@@ -677,7 +689,7 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
     return locations
 
 
-def get_model(session: Session, name: str, version: str) -> MLModelSQL:
+def get_model(session: Session, name: str, version: Optional[str]) -> MLModelSQL:
     """
     Get model object from name and version
 
