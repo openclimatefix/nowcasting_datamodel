@@ -17,24 +17,28 @@ from nowcasting_datamodel.models.forecast import (
 from nowcasting_datamodel.read.read import (
     get_latest_forecast,
     get_latest_forecast_for_gsps,
-    get_model,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQL:
+def get_historic_forecast(
+    session: Session, forecast: ForecastSQL, model_name: Optional[str] = None
+) -> ForecastSQL:
     """
     Get historic forecast
 
     :param session:
     :param gsp_id:
+    :param model_name: the model name to filter on
     :return:
     """
 
     gsp_id = forecast.location.gsp_id
 
-    forecast_historic = get_latest_forecast(session=session, gsp_id=gsp_id, historic=True)
+    forecast_historic = get_latest_forecast(
+        session=session, gsp_id=gsp_id, historic=True, model_name=model_name
+    )
 
     if forecast_historic is None:
         logger.debug("Could not find a historic forecast, so will make one")
@@ -44,7 +48,7 @@ def get_historic_forecast(session: Session, forecast: ForecastSQL) -> ForecastSQ
             forecast_creation_time=datetime.now(timezone.utc),
             location=forecast.location,
             input_data_last_updated=forecast.input_data_last_updated,
-            model=get_model(session=session, name="historic", version="all"),
+            model=forecast.model,
         )
         session.add(forecast_historic)
         session.commit()
@@ -79,7 +83,10 @@ def upsert(session: Session, model, rows: List[dict]):
 
 
 def update_forecast_latest(
-    forecast: ForecastSQL, session: Session, forecast_historic: Optional[ForecastSQL] = None
+    forecast: ForecastSQL,
+    session: Session,
+    forecast_historic: Optional[ForecastSQL] = None,
+    model_name: Optional[str] = None,
 ):
     """
     Update the forecast_values table
@@ -90,12 +97,15 @@ def update_forecast_latest(
     3. upsert them (update and or insert)
 
     :param forecast:
+    :param model_name: the model name to filter on
     :return:
     """
 
     # 1. get forecast object
     if forecast_historic is None:
-        forecast_historic = get_historic_forecast(session=session, forecast=forecast)
+        forecast_historic = get_historic_forecast(
+            session=session, forecast=forecast, model_name=model_name
+        )
 
     # 2. create forecast value latest
     forecast_values = []
@@ -106,6 +116,7 @@ def update_forecast_latest(
             forecast_id=forecast_historic.id,
             model_id=forecast_historic.model_id,
         )
+        logger.debug(f"{forecast_historic.model_id=}")
         forecast_values.append(forecast_value_latest.__dict__)
 
     # upsert forecast values
@@ -151,6 +162,7 @@ def update_all_forecast_latest(
     session: Session,
     update_national: Optional[bool] = True,
     update_gsp: Optional[bool] = True,
+    model_name: Optional[str] = None,
 ):
     """
     Update all latest forecasts
@@ -160,6 +172,7 @@ def update_all_forecast_latest(
     :param session: sqlalmacy session
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
+    :param model_name: Optional (default None), if not None will only update the forecasts
     """
 
     logger.debug("Getting the earliest forecast target time for the first forecast")
@@ -184,6 +197,7 @@ def update_all_forecast_latest(
         preload_children=True,
         gsp_ids=gsp_ids,
         start_target_time=start_target_time,
+        model_name=model_name,
     )
     # get all these ids, so we only have to load it once
     historic_gsp_ids = [forecast.location.gsp_id for forecast in forecasts_historic_all_gsps]
@@ -220,7 +234,10 @@ def update_all_forecast_latest(
             logger.debug(f"Found historic for GSP id {gsp_id}")
 
         update_forecast_latest(
-            forecast=forecast, session=session, forecast_historic=forecast_historic
+            forecast=forecast,
+            session=session,
+            forecast_historic=forecast_historic,
+            model_name=model_name,
         )
         session.commit()
 

@@ -8,6 +8,7 @@ from nowcasting_datamodel.fake import (
     make_fake_forecast_value,
     make_fake_forecasts,
 )
+from nowcasting_datamodel.read.read import get_model
 from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
@@ -187,6 +188,56 @@ def test_update_all_forecast_latest_update_national(db_session):
         forecasts=f1, session=db_session, update_national=True, update_gsp=False
     )
     assert len(db_session.query(ForecastValueLatestSQL).all()) == N_FAKE_FORECASTS
+
+
+def test_update_all_forecast_latest_update_national_model(db_session):
+
+    model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
+    model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
+
+    db_session.add_all([model_1, model_2])
+
+    assert model_1.id == 1
+    assert model_2.id == 2
+
+    f1 = make_fake_forecasts(gsp_ids=list(range(0, 1)), session=db_session)
+    f1[0].model = model_1
+    db_session.add_all(f1)
+
+    f2 = make_fake_forecasts(gsp_ids=list(range(0, 1)), session=db_session)
+    f2[0].model = model_2
+    db_session.add_all(f2)
+
+    update_all_forecast_latest(
+        forecasts=f1,
+        session=db_session,
+        update_national=True,
+        update_gsp=False,
+        model_name=model_1.name,
+    )
+    update_all_forecast_latest(
+        forecasts=f1,
+        session=db_session,
+        update_national=True,
+        update_gsp=False,
+        model_name=model_1.name,
+    )
+    assert len(db_session.query(ForecastSQL).all()) == 3
+    forecast_values = db_session.query(ForecastValueLatestSQL).all()
+    assert forecast_values[0].model_id == model_1.id
+    assert forecast_values[-1].model_id == model_1.id
+    assert len(forecast_values) == N_FAKE_FORECASTS
+
+    update_all_forecast_latest(
+        forecasts=f2,
+        session=db_session,
+        update_national=True,
+        update_gsp=False,
+        model_name=model_2.name,
+    )
+    assert len(db_session.query(ForecastSQL).all()) == 4
+    forecast_values = db_session.query(ForecastValueLatestSQL).all()
+    assert len(forecast_values) == 2 * N_FAKE_FORECASTS
 
 
 def test_update_all_forecast_latest_update_gsps(db_session):

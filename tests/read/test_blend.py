@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @freeze_time("2023-01-01 00:00:01")
 def test_make_weights_df():
-    start_datetime = datetime(2023, 1, 1, 0, 30)
+    start_datetime = datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc)
 
     weights = make_weights_df(model_names=["test_1", "test_2"], weights=None)
     assert len(weights) == 16
@@ -45,9 +45,43 @@ def test_make_weights_df():
     assert weights["test_2"][15] == 1
 
 
-#
+@freeze_time("2023-01-02 00:00:01")
+def test_make_weights_df_yesterday():
+    start_datetime = datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+
+    weights = make_weights_df(
+        model_names=["test_1", "test_2"], weights=None, start_datetime=start_datetime
+    )
+    assert len(weights) == 49 + 16
+    assert "test_1" in weights.columns
+    assert "test_2" in weights.columns
+
+    assert weights.index[0].isoformat() == start_datetime.isoformat()
+    assert (
+        weights.index[15].isoformat()
+        == (start_datetime + timedelta(hours=7, minutes=30)).isoformat()
+    )
+
+    assert weights["test_1"][0] == 1
+    assert weights["test_2"][0] == 0
+
+    assert weights["test_1"][49] == 1
+    assert weights["test_2"][49] == 0
+
+    assert weights["test_1"][49 + 3] == 1
+    assert weights["test_2"][49 + 3] == 0
+
+    assert weights["test_1"][49 + 7] == 0.5
+    assert weights["test_2"][49 + 7] == 0.5
+
+    assert weights["test_1"][49 + 11] == 0
+    assert weights["test_2"][49 + 11] == 1
+
+    assert weights["test_1"][49 + 15] == 0
+    assert weights["test_2"][49 + 15] == 1
 
 
+@freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_one_model(db_session):
 
     model = get_model(session=db_session, name="test_1", version="0.0.1")
@@ -86,6 +120,7 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
     )
 
 
+@freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
 
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
@@ -126,6 +161,7 @@ def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
     )
 
 
+@freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
 
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
@@ -142,7 +178,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
             power = 2
             adjust = 100
 
-        forecast_horizon_minutes = [0, 30, 7 * 30, 15 * 30]
+        forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30]
         f1[0].forecast_values_latest = [
             ForecastValueLatestSQL(
                 gsp_id=1,
