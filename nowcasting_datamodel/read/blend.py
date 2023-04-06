@@ -20,7 +20,6 @@ from nowcasting_datamodel.read.read import get_forecast_values_latest
 logger = logging.getLogger(__name__)
 
 
-
 def get_blend_forecast_values_latest(
     session: Session,
     gsp_id: int,
@@ -223,7 +222,6 @@ def get_blend_forecast_values_latest(
     return forecast_values
 
 
-
 def make_weights_df(model_names, weights, start_datetime=None):
     """Makes weights to half an hour and blocks
 
@@ -297,12 +295,10 @@ def make_weights_df(model_names, weights, start_datetime=None):
             weights_df[model_names] = start_weight
             weights_all_df.append(weights_df)
 
-
         logger.debug(
             f"Making weights for {start_horizon_hour} to {end_horizon_hour} "
             f"hours with weights {start_weight} to {end_weight}"
         )
-
 
         start_datetime_one_weight = (
             start_datetime_now + timedelta(hours=start_horizon_hour) - timedelta(minutes=30)
@@ -316,11 +312,10 @@ def make_weights_df(model_names, weights, start_datetime=None):
         if end_horizon_hour == 8:
             end_datetime += timedelta(minutes=30)
 
-
         logger.debug(f"Making weights from {start_datetime_one_weight} to {end_datetime}")
         weights_df = pd.DataFrame(
-            index=pd.date_range(start=start_datetime_one_weight, end=end_datetime, freq="30min"))
-
+            index=pd.date_range(start=start_datetime_one_weight, end=end_datetime, freq="30min")
+        )
 
         # get rid of last timestamp
         weights_df = weights_df[:-1]
@@ -332,7 +327,6 @@ def make_weights_df(model_names, weights, start_datetime=None):
                 weights_df.index - start_datetime_one_weight
             ) / (end_datetime - start_datetime_one_weight)
 
-
         weights_all_df.append(weights_df)
 
     weights_all_df = pd.concat(weights_all_df)
@@ -342,6 +336,5 @@ def make_weights_df(model_names, weights, start_datetime=None):
     logger.debug(weights_all_df)
     logger.debug(start_datetime)
     weights_all_df = weights_all_df[weights_all_df.index >= start_datetime]
-
 
     return weights_all_df
