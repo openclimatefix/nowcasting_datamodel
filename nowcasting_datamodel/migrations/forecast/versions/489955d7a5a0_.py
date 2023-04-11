@@ -4,7 +4,16 @@ Found to run this migration I have to set nullable=True and then run
 
 update forecast_value_latest
 set model_id=-1
-This took ~3 minutes
+This took ~3 minutes.
+
+Then you might need too
+run this
+
+alter table forecast_value_latest
+drop constraint forecast_value_latest_pkey;
+
+alter table forecast_value_latest
+add constraint forecast_value_latest_pkey primary key (target_time, gsp_id, model_id);
 
 Revision ID: 489955d7a5a0
 Revises: 09f38fe306a4
