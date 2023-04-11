@@ -211,7 +211,6 @@ def get_blend_forecast_values_latest(
     forecast_values = []
     logger.debug(forecast_values_blended)
     for i, row in forecast_values_blended.iterrows():
-        print(row)
         forecast_value = ForecastValue(
             target_time=row.target_time,
             expected_power_generation_megawatts=row.expected_power_generation_megawatts,
