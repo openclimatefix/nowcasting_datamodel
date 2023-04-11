@@ -114,7 +114,7 @@ def update_forecast_latest(
             forecast_value,
             gsp_id=forecast.location.gsp_id,
             forecast_id=forecast_historic.id,
-            model_id=forecast_historic.model_id,
+            model_id=forecast.model_id,
         )
         logger.debug(f"{forecast_historic.model_id=}")
         forecast_values.append(forecast_value_latest.__dict__)
