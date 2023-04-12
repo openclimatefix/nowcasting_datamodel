@@ -25,7 +25,6 @@ from freezegun import freeze_time
 
 
 def test_reduce_metric_values_to_correct_forecast_horizon(latest_me):
-
     datetime_now = datetime(2022, 1, 9, 16, 30)
 
     print(latest_me[0])

@@ -83,7 +83,6 @@ def test_make_weights_df_yesterday():
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_one_model(db_session):
-
     model = get_model(session=db_session, name="test_1", version="0.0.1")
 
     f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
@@ -122,7 +121,6 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
-
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
 
@@ -163,7 +161,6 @@ def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
-
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
 
