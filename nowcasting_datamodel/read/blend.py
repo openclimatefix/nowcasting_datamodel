@@ -211,9 +211,15 @@ def get_blend_forecast_values_latest(
     forecast_values = []
     logger.debug(forecast_values_blended)
     for i, row in forecast_values_blended.iterrows():
+
+        # make sure we don't have negative values
+        expected_power_generation_megawatts = row.expected_power_generation_megawatts
+        if expected_power_generation_megawatts < 0:
+            expected_power_generation_megawatts = 0
+
         forecast_value = ForecastValue(
             target_time=row.target_time,
-            expected_power_generation_megawatts=row.expected_power_generation_megawatts,
+            expected_power_generation_megawatts=expected_power_generation_megawatts,
         )
         forecast_value._adjust_mw = row.adjust_mw
         forecast_values.append(forecast_value)
