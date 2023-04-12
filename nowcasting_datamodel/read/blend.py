@@ -124,6 +124,7 @@ def get_blend_forecast_values_latest(
 
     # join into one dataframe
     forecast_values_all_model = pd.concat(forecast_values_all_model_df, axis=0)
+    forecast_values_all_model.reset_index(inplace=True)
 
     logger.debug(forecast_values_all_model)
 
