@@ -176,7 +176,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
         else:
             power = 2
             adjust = 100
-            forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30, 16*30]
+            forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30, 16 * 30]
 
         f1[0].forecast_values_latest = [
             ForecastValueLatestSQL(
@@ -201,7 +201,10 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
     )
 
     assert len(forecast_values_read) == 7
-    assert forecast_values_read[0].target_time == (forecasts['test_1'])[0].forecast_values_latest[0].target_time
+    assert (
+        forecast_values_read[0].target_time
+        == (forecasts["test_1"])[0].forecast_values_latest[0].target_time
+    )
     assert forecast_values_read[0].expected_power_generation_megawatts == 1
     assert forecast_values_read[1].expected_power_generation_megawatts == 1
     assert forecast_values_read[2].expected_power_generation_megawatts == 1
@@ -219,7 +222,6 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_negative(db_session):
-
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
 
@@ -308,4 +310,3 @@ def test_get_blend_forecast_values_latest_negative(db_session):
     assert forecast_values_read[1].expected_power_generation_megawatts == 0
     assert forecast_values_read[2].expected_power_generation_megawatts == 0
     assert forecast_values_read[3].expected_power_generation_megawatts == 0
-
