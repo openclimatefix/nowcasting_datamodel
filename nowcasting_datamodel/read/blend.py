@@ -73,7 +73,6 @@ def get_blend_forecast_values_latest(
         # remove all forecasts that are older than 2 hours
         forecast_values_all_model_valid = []
         for model_name, forecast_values_one_model in forecast_values_all_model:
-
             one_forecast_created_within_timedelta = forecast_values_one_model[
                 0
             ].created_utc < datetime.now(timezone.utc) - timedelta(hours=2)
@@ -96,7 +95,6 @@ def get_blend_forecast_values_latest(
     logger.debug(f"Getting values from {len(forecast_values_all_model_valid)} models")
     forecast_values_all_model_df = []
     for model_name, forecast_values_one_model in forecast_values_all_model_valid:
-
         logger.debug(f"Making dataframe for {model_name}")
 
         values_list = [
@@ -162,7 +160,6 @@ def get_blend_forecast_values_latest(
 
     # only do this if there are duplicated
     if len(duplicated) > 0:
-
         logger.debug(f"Now blending the duplicated target times using {weights_df}")
 
         pd.DataFrame()

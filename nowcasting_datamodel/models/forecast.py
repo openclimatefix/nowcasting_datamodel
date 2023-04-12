@@ -348,7 +348,6 @@ class ForecastValue(EnhancedBaseModel):
     def adjust(self, limit: float = 0.0):
         """Adjust forecasts"""
         if isinstance(self._adjust_mw, float):
-
             adjust_mw = self._adjust_mw
             if adjust_mw > limit:
                 adjust_mw = limit

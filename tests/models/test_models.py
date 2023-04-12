@@ -123,7 +123,6 @@ def test_forecast_latest_to_pydantic(forecast_sql):
 
 
 def test_forecast_latest_distinct_target_time(db_session):
-
     f1 = ForecastValueLatestSQL(
         target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
     )
@@ -139,7 +138,6 @@ def test_forecast_latest_distinct_target_time(db_session):
 
 
 def test_forecast_latest_distinct_gsp(db_session):
-
     f1 = ForecastValueLatestSQL(
         target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
     )
@@ -155,7 +153,6 @@ def test_forecast_latest_distinct_gsp(db_session):
 
 
 def test_forecast_latest_distinct_model_id(db_session):
-
     m1 = MLModelSQL(name="test_1", version="0.1")
     m2 = MLModelSQL(name="test_2", version="0.2")
     db_session.add_all([m1, m2])

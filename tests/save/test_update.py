@@ -191,7 +191,6 @@ def test_update_all_forecast_latest_update_national(db_session):
 
 
 def test_update_all_forecast_latest_update_national_model(db_session):
-
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
 
