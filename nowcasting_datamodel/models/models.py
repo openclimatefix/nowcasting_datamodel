@@ -39,6 +39,7 @@ class MLModelSQL(Base_Forecast):
     version = Column(String)
 
     forecast = relationship("ForecastSQL", back_populates="model")
+    metric_value = relationship("MetricValueSQL", back_populates="model")
 
 
 class MLModel(EnhancedBaseModel):
