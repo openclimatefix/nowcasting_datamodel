@@ -9,8 +9,8 @@ from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models.metric import DatetimeIntervalSQL, MetricSQL, MetricValueSQL
 from nowcasting_datamodel.models import MLModelSQL
+from nowcasting_datamodel.models.metric import DatetimeIntervalSQL, MetricSQL, MetricValueSQL
 
 logger = logging.getLogger(__name__)
 

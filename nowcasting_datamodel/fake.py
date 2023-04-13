@@ -296,7 +296,7 @@ def make_fake_me_latest(session: Session):
                 datetime_interval=datetime_interval,
                 metric=metric,
                 location=location,
-                model=model
+                model=model,
             )
             metric_values.append(m)
 
