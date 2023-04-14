@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import numpy as np
@@ -150,7 +150,6 @@ def extract_weight_variables(weight):
 
 
 def get_weights_for_forecast_horizon(forecast_horizon_hours: int, weights) -> List[float]:
-
     logger.debug(f"Getting weights for forecast horizon {forecast_horizon_hours} from {weights}")
     if weights is None:
         weights = default_weights
