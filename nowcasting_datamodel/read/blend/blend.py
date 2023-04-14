@@ -13,15 +13,15 @@ from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.forecast import ForecastValue, ForecastValueSevenDaysSQL
 from nowcasting_datamodel.read.blend.utils import (
-    check_forecast_created_utc,
-    convert_list_forecast_values_to_df,
-    convert_df_to_list_forecast_values,
     blend_forecasts_together,
+    check_forecast_created_utc,
+    convert_df_to_list_forecast_values,
+    convert_list_forecast_values_to_df,
 )
 from nowcasting_datamodel.read.blend.weights import (
     make_weights_df,
 )
-from nowcasting_datamodel.read.read import get_forecast_values_latest, get_forecast_values
+from nowcasting_datamodel.read.read import get_forecast_values, get_forecast_values_latest
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,6 @@ def get_blend_forecast_values_latest(
                 session=session, gsp_id=gsp_id, start_datetime=start_datetime, model_name=model_name
             )
         else:
-
             forecast_values_one_model = get_forecast_values(
                 session=session,
                 gsp_ids=[gsp_id],
