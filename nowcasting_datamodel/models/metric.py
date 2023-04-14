@@ -132,6 +132,7 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     number_of_data_points = Column(Integer, nullable=False)
     forecast_horizon_minutes = Column(Integer, nullable=True)
     time_of_day = Column(Time, nullable=True)
+    model_name = Column(String, nullable=True)
 
     # many (metric values) to one (metric)
     metric = relationship("MetricSQL", back_populates="metric_value")
@@ -145,9 +146,7 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     datetime_interval = relationship("DatetimeIntervalSQL", back_populates="metric_value")
     datetime_interval_id = Column(Integer, ForeignKey("datetime_interval.id"), index=True)
 
-    # many (metric values) to one (model)
-    model = relationship("MLModelSQL", back_populates="metric_value")
-    model_id = Column(Integer, ForeignKey("model.id"), index=True)
+
 
 
 class MetricValue(EnhancedBaseModel):
