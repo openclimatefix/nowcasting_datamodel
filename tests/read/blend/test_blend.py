@@ -2,12 +2,11 @@ import logging
 from datetime import datetime, timezone, timedelta
 
 from freezegun import freeze_time
+
 from nowcasting_datamodel.fake import (
     make_fake_forecasts,
 )
-from nowcasting_datamodel.models.forecast import (
-    ForecastValueLatestSQL, ForecastValueSevenDaysSQL
-)
+from nowcasting_datamodel.models.forecast import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.read.blend.blend import get_blend_forecast_values_latest
 from nowcasting_datamodel.read.read import get_model
 
@@ -272,7 +271,9 @@ def test_get_blend_forecast_values_latest_forecast_horizon(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 # model_id=model.id,
                 adjust_mw=adjust,
-                created_utc=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t) - timedelta(hours=4.1),
+                created_utc=datetime(2023, 1, 1, tzinfo=timezone.utc)
+                + timedelta(minutes=t)
+                - timedelta(hours=4.1),
             )
             for t in forecast_horizon_minutes
         ]
@@ -293,7 +294,7 @@ def test_get_blend_forecast_values_latest_forecast_horizon(db_session):
         gsp_id=f1[0].location.gsp_id,
         start_datetime=datetime(2022, 12, 31, 0, 0, tzinfo=timezone.utc),
         model_names=["test_1", "test_2"],
-        forecast_horizon_minutes=4*60
+        forecast_horizon_minutes=4 * 60,
     )
 
     assert len(forecast_values_read) == 7

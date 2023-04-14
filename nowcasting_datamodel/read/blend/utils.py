@@ -1,5 +1,7 @@
-from datetime import datetime, timezone, timedelta
 import logging
+from datetime import datetime, timedelta, timezone
+from typing import List
+
 import pandas as pd
 
 from nowcasting_datamodel.models import ForecastValue
@@ -7,8 +9,17 @@ from nowcasting_datamodel.models import ForecastValue
 logger = logging.getLogger(__name__)
 
 
-def check_forecast_created_utc(forecast_values_all_model):
-    one_forecast_created_within_timedelta=False
+def check_forecast_created_utc(forecast_values_all_model) -> List[str, List[ForecastValue]]:
+    """
+    Check if forecasts are valid.
+
+    We only consider forecast less than 2 hours old.
+    If all forecast are older than 2 hours, we used both.
+
+    :param forecast_values_all_model: list of forecast
+    :return: list of valid forecasts
+    """
+    one_forecast_created_within_timedelta = False
 
     # if all forecasts are later than 2 hours, then we use the blend,
     # otherwise we only use forecast less than 2 hours
@@ -17,8 +28,8 @@ def check_forecast_created_utc(forecast_values_all_model):
         forecast_values_all_model_valid = []
         for model_name, forecast_values_one_model in forecast_values_all_model:
             one_forecast_created_within_timedelta = forecast_values_one_model[
-                                                        0
-                                                    ].created_utc < datetime.now(timezone.utc) - timedelta(hours=2)
+                0
+            ].created_utc < datetime.now(timezone.utc) - timedelta(hours=2)
 
             if one_forecast_created_within_timedelta:
                 logger.debug(f"Will be using forecast {model_name} as it is newer than 2 hours")
@@ -33,11 +44,16 @@ def check_forecast_created_utc(forecast_values_all_model):
 
 
 def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
-    # merge into pandas dataframe with columns
-    # - "expected_power_generation_megawatts",
-    # - "adjust_mw",
-    # - "created_utc",
-    # - "model_name",
+    """
+    Conert list of forecast values to a pandas dataframe
+
+    :param forecast_values_all_model_valid:
+    :return: merged into pandas dataframe with columns
+     - "expected_power_generation_megawatts",
+     - "adjust_mw",
+     - "created_utc",
+     - "model_name",
+    """
     logger.debug(f"Getting values from {len(forecast_values_all_model_valid)} models")
     forecast_values_all_model_df = []
     for model_name, forecast_values_one_model in forecast_values_all_model_valid:
@@ -72,6 +88,12 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
 
 
 def convert_df_to_list_forecast_values(forecast_values_blended):
+    """
+    Convert the blended dataframe to a list of ForecastValue objects
+
+    :param forecast_values_blended: Needs to have the columns 'target_time' and 'expected_power_generation_megawatts
+    :return:
+    """
     # change in to list of ForecastValue objects
     forecast_values = []
     logger.debug(forecast_values_blended)
@@ -91,6 +113,14 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
 
 
 def blend_forecasts_together(forecast_values_all_model, weights_df):
+    """
+    Blend the forecasts together using the weights_df
+
+    :param forecast_values_all_model: Dataframe containing the columns 'target_time',
+        'expected_power_generation_megawatts', 'adjust_mw', 'model_name'
+    :param weights_df: Dataframe of weights with columns 'model_name' and 'weight'
+    :return: Dataframe with the columns 'target_time', 'expected_power_generation_megawatts', 'adjust_mw'
+    """
     # blend together
     # lets deal with unique target times first
     logger.debug(forecast_values_all_model["target_time"])
@@ -139,7 +169,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
         # multiply the expected power generation by the weight
         duplicated["expected_power_generation_megawatts"] = (
-                duplicated["expected_power_generation_megawatts"] * duplicated["weight"]
+            duplicated["expected_power_generation_megawatts"] * duplicated["weight"]
         )
         duplicated["adjust_mw"] = duplicated["adjust_mw"] * duplicated["weight"]
         duplicated.drop(columns=["created_utc"], inplace=True)

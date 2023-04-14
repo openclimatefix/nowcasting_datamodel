@@ -1,9 +1,9 @@
+import logging
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
-import logging
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,9 @@ def make_weights_df(
         weights_for_forecast_horizon = get_weights_for_forecast_horizon(
             weights=weights, forecast_horizon_hours=int(forecast_horizon_minutes / 60)
         )
-        logger.debug(f'weights for forecast_horizon {weights_for_forecast_horizon} {forecast_horizon_minutes=}')
+        logger.debug(
+            f"weights for forecast_horizon {weights_for_forecast_horizon} {forecast_horizon_minutes=}"
+        )
 
     # make dataframe of 8 hours in 30 minutes chunks from now
     weights_all_df = []
@@ -158,10 +160,14 @@ def get_weights_for_forecast_horizon(forecast_horizon_hours: int, weights) -> Li
         end_horizon_hour, end_weight, start_horizon_hour, start_weight = extract_weight_variables(
             weight
         )
-        logger.debug(f"Checking {start_horizon_hour} to {end_horizon_hour} hours with weights {start_weight} to {end_weight}")
+        logger.debug(
+            f"Checking {start_horizon_hour} to {end_horizon_hour} hours with weights {start_weight} to {end_weight}"
+        )
 
         if start_horizon_hour < forecast_horizon_hours < end_horizon_hour:
-            logger.debug(f"Interpolating between {start_weight} and {end_weight} for forecast horizon {forecast_horizon_hours}")
+            logger.debug(
+                f"Interpolating between {start_weight} and {end_weight} for forecast horizon {forecast_horizon_hours}"
+            )
             end_weight = np.array(end_weight)
             start_weight = np.array(start_weight)
             f = (start_horizon_hour - forecast_horizon_hours) / (
@@ -171,13 +177,13 @@ def get_weights_for_forecast_horizon(forecast_horizon_hours: int, weights) -> Li
             return (f * end_weight + (1 - f) * start_weight).tolist()
         elif forecast_horizon_hours <= start_horizon_hour and (i == 0):
             logger.debug(
-                f"Using end weight {end_weight} for forecast horizon {forecast_horizon_hours} {end_horizon_hour=}")
+                f"Using end weight {end_weight} for forecast horizon {forecast_horizon_hours} {end_horizon_hour=}"
+            )
             return end_weight
         elif forecast_horizon_hours >= end_horizon_hour and (i == len(weights) - 1):
             logger.debug(
-
-                f"Using start weight {start_weight} for forecast horizon {forecast_horizon_hours} {start_horizon_hour=}")
+                f"Using start weight {start_weight} for forecast horizon {forecast_horizon_hours} {start_horizon_hour=}"
+            )
             return start_weight
-
 
     logger.debug(f"Did not find weights for forecast horizon {forecast_horizon_hours}")

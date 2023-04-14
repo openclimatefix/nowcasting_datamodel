@@ -20,7 +20,6 @@ from nowcasting_datamodel.read.blend.utils import (
 )
 from nowcasting_datamodel.read.blend.weights import (
     make_weights_df,
-    get_weights_for_forecast_horizon,
 )
 from nowcasting_datamodel.read.read import get_forecast_values_latest, get_forecast_values
 
@@ -53,7 +52,9 @@ def get_blend_forecast_values_latest(
     if model_names is None:
         model_names = ["cnn", "National_xg"]
     if len(model_names) > 1:
-        weights_df = make_weights_df(model_names, weights, start_datetime, forecast_horizon_minutes=forecast_horizon_minutes)
+        weights_df = make_weights_df(
+            model_names, weights, start_datetime, forecast_horizon_minutes=forecast_horizon_minutes
+        )
     else:
         weights_df = None
 

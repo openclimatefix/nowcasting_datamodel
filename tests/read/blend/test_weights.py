@@ -76,7 +76,9 @@ def test_make_weights_df():
 def test_make_weights_df_forecast_horizon():
     start_datetime = datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc)
 
-    weights = make_weights_df(model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=60*3)
+    weights = make_weights_df(
+        model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=60 * 3
+    )
     assert len(weights) == 16
     assert "test_1" in weights.columns
     assert "test_2" in weights.columns
@@ -96,12 +98,14 @@ def test_make_weights_df_forecast_horizon():
     assert (weights["test_1"] == 0.75).all()
     assert (weights["test_2"] == 0.25).all()
 
-    weights = make_weights_df(model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=-1)
+    weights = make_weights_df(
+        model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=-1
+    )
     assert (weights["test_1"] == 1.0).all()
     assert (weights["test_2"] == 0.0).all()
 
-    weights = make_weights_df(model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=10000)
+    weights = make_weights_df(
+        model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=10000
+    )
     assert (weights["test_1"] == 0.0).all()
     assert (weights["test_2"] == 1.0).all()
-
-
