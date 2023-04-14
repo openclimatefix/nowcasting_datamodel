@@ -267,7 +267,7 @@ def make_fake_gsp_yields(
         )
 
 
-def make_fake_me_latest(session: Session):
+def make_fake_me_latest(session: Session, model_name: str = "fake_model"):
     """Make fake ME latest objects"""
     # create
     metric = MetricSQL(name="Half Hourly ME", description="test")
@@ -294,7 +294,7 @@ def make_fake_me_latest(session: Session):
                 datetime_interval=datetime_interval,
                 metric=metric,
                 location=location,
-                model_name="fake_model",
+                model_name=model_name,
             )
             metric_values.append(m)
 
