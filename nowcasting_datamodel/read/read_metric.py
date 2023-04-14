@@ -5,10 +5,11 @@
 """
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
+from nowcasting_datamodel.models import MLModelSQL
 from nowcasting_datamodel.models.metric import DatetimeIntervalSQL, MetricSQL, MetricValueSQL
 
 logger = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ def get_datetime_interval(
 
 
 def read_latest_me_national(
-    session: Session, metric_name: str = "Half Hourly ME"
+    session: Session, metric_name: str = "Half Hourly ME", model_name: Optional[str] = None
 ) -> List[MetricValueSQL]:
     """
     Get the latest me for the national forecast
@@ -103,8 +104,11 @@ def read_latest_me_national(
 
     :param session: database sessions
     :param metric_name: metric name, defaulted to "Half Hourly ME"
+    :param model_name: model name, defaulted to None
     :return: list of MetricValueSQL for ME for each 'time_of_day' and 'forecast_horizon_minutes'
     """
+
+    logger.debug(f"Reading latest {metric_name=} for {model_name=}")
 
     # start main query
     query = session.query(MetricValueSQL)
@@ -120,6 +124,10 @@ def read_latest_me_national(
         MetricValueSQL.forecast_horizon_minutes,
         MetricValueSQL.created_utc.desc(),
     )
+
+    if model_name is not None:
+        query = query.join(MLModelSQL)
+        query = query.filter(MLModelSQL.name == model_name)
 
     # get all results
     metric_values = query.all()

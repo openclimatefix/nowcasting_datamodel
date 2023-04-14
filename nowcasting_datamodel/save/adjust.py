@@ -44,11 +44,12 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
     :return:
     """
 
-    # get the target time for the first forecast
+    # get the target time and model name
     datetime_now = forecast.forecast_values[0].target_time
+    model_name = forecast.model.name
 
     # 1. read metric values
-    latest_me = read_latest_me_national(session=session)
+    latest_me = read_latest_me_national(session=session, model_name=model_name)
     assert len(latest_me) > 0
 
     # 2. filter value down to now onwards
