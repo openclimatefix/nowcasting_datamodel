@@ -146,6 +146,10 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     datetime_interval = relationship("DatetimeIntervalSQL", back_populates="metric_value")
     datetime_interval_id = Column(Integer, ForeignKey("datetime_interval.id"), index=True)
 
+    # many (metric values) to one (model)
+    model = relationship("MLModelSQL", back_populates="metric_value")
+    model_id = Column(Integer, ForeignKey("model.id"), index=True)
+
 
 
 
