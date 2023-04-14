@@ -386,11 +386,12 @@ def filter_query_on_target_time(
 def get_forecast_values(
     session: Session,
     gsp_id: Optional[int] = None,
-    gsp_ids: Optional[int] = None,
+    gsp_ids: Optional[List[int]] = None,
     start_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
     model: Optional = ForecastValueSQL,
+    model_name: Optional[str] = None,
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
@@ -454,16 +455,17 @@ def get_forecast_values(
             <= text(f"interval '{forecast_horizon_minutes} minute'")
         )
 
+    if (gsp_id is not None) or (gsp_ids is not None) or (model_name is not None):
+        query = query.join(ForecastSQL)
+
     # filter on gsp_id
     if gsp_id is not None:
         logger.warning('We should now use "gsp_ids" not "gsp_id"')
-        query = query.join(ForecastSQL)
         query = query.join(LocationSQL)
         query = query.filter(LocationSQL.gsp_id == gsp_id)
 
     if gsp_ids is not None:
         logger.debug(f"Filtering for {gsp_ids=}")
-        query = query.join(ForecastSQL)
         query = query.join(LocationSQL)
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
 
@@ -471,6 +473,10 @@ def get_forecast_values(
         query = query.options(
             contains_eager(model.forecast, ForecastSQL.location)
         ).populate_existing()
+
+    if model_name is not None:
+        query = query.join(MLModelSQL)
+        query = query.filter(MLModelSQL.name == model_name)
 
     # order by target time and created time desc
     query = query.order_by(*order_by_columns)
