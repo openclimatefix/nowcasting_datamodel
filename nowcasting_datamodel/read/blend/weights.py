@@ -160,7 +160,7 @@ def get_weights_for_forecast_horizon(forecast_horizon_hours: int, weights) -> Li
     """
     Get weights for a specific forecast horizon
 
-    :param forecast_horizon_hours: 
+    :param forecast_horizon_hours:
     :param weights: list of weights
     :return: for the one forecast horizon, the return weights for the different models
     """
