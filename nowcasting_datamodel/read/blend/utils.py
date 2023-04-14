@@ -1,3 +1,4 @@
+"""Utils for blending forecasts together"""
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import List

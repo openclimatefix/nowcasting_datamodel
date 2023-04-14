@@ -1,3 +1,4 @@
+"""Functions to make weights for blending"""
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
@@ -131,6 +132,11 @@ def make_weights_df(
 
 
 def extract_weight_variables(weight):
+    """
+    Extra weight variables from dictionary
+    :param weight: dictionary of weights
+    :return:
+    """
     if "start_horizon_hour" not in weight:
         start_horizon_hour = 0
     else:
@@ -151,6 +157,13 @@ def extract_weight_variables(weight):
 
 
 def get_weights_for_forecast_horizon(forecast_horizon_hours: int, weights) -> List[float]:
+    """
+    Get weights for a specific forecast horizon
+
+    :param forecast_horizon_hours: 
+    :param weights: list of weights
+    :return: for the one forecast horizon, the return weights for the different models
+    """
     logger.debug(f"Getting weights for forecast horizon {forecast_horizon_hours} from {weights}")
     if weights is None:
         weights = default_weights
