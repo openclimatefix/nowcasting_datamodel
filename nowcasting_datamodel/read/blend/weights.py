@@ -134,6 +134,7 @@ def make_weights_df(
 def extract_weight_variables(weight):
     """
     Extra weight variables from dictionary
+
     :param weight: dictionary of weights
     :return:
     """
