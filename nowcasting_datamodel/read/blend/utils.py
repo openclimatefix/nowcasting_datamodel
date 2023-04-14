@@ -1,7 +1,7 @@
 """Utils for blending forecasts together"""
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 
@@ -10,7 +10,7 @@ from nowcasting_datamodel.models import ForecastValue
 logger = logging.getLogger(__name__)
 
 
-def check_forecast_created_utc(forecast_values_all_model) -> List[str, List[ForecastValue]]:
+def check_forecast_created_utc(forecast_values_all_model) -> List[Union[str, List[ForecastValue]]]:
     """
     Check if forecasts are valid.
 
