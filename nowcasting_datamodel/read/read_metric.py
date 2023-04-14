@@ -126,8 +126,7 @@ def read_latest_me_national(
     )
 
     if model_name is not None:
-        query = query.join(MLModelSQL)
-        query = query.filter(MLModelSQL.name == model_name)
+        query = query.filter(MetricValueSQL.model_name == model_name)
 
     # get all results
     metric_values = query.all()
