@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from nowcasting_datamodel.fake import (
     make_fake_forecasts,
 )
-from nowcasting_datamodel.models.forecast import ForecastValueSevenDaysSQL
+from nowcasting_datamodel.models.forecast import ForecastValueLatestSQL, ForecastValueSevenDaysSQL
 from nowcasting_datamodel.read.blend.blend import get_blend_forecast_values_latest
 from nowcasting_datamodel.read.read import get_model
 
