@@ -32,7 +32,7 @@ def check_forecast_created_utc(forecast_values_all_model) -> List[str, List[Fore
             ].created_utc < datetime.now(timezone.utc) - timedelta(hours=2)
 
             if one_forecast_created_within_timedelta:
-                logger.debug(f"Will be using forecast {model_name} as it is newer than 2 hours")
+                logger.debug(f"Will be using forecast {model_name} " f"as it is newer than 2 hours")
                 forecast_values_all_model_valid.append([model_name, forecast_values_one_model])
             else:
                 logger.debug(f"forecast {model_name} is older than 2 hours, so not using it")
@@ -91,7 +91,8 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
     """
     Convert the blended dataframe to a list of ForecastValue objects
 
-    :param forecast_values_blended: Needs to have the columns 'target_time' and 'expected_power_generation_megawatts
+    :param forecast_values_blended: Needs to have the columns 'target_time'
+        and 'expected_power_generation_megawatts
     :return:
     """
     # change in to list of ForecastValue objects
@@ -119,7 +120,10 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     :param forecast_values_all_model: Dataframe containing the columns 'target_time',
         'expected_power_generation_megawatts', 'adjust_mw', 'model_name'
     :param weights_df: Dataframe of weights with columns 'model_name' and 'weight'
-    :return: Dataframe with the columns 'target_time', 'expected_power_generation_megawatts', 'adjust_mw'
+    :return: Dataframe with the columns
+        'target_time',
+        'expected_power_generation_megawatts',
+        'adjust_mw'
     """
     # blend together
     # lets deal with unique target times first
