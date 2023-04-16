@@ -101,7 +101,7 @@ def make_weights_df(
             start_datetime_now + timedelta(hours=end_horizon_hour) - timedelta(minutes=30)
         )
         if end_horizon_hour == 8:
-            end_datetime += timedelta(minutes=30)
+            end_datetime += timedelta(hours=1)
 
         logger.debug(f"Making weights from {start_datetime_one_weight} to {end_datetime}")
         weights_df = pd.DataFrame(
