@@ -12,7 +12,7 @@ def test_make_weights_df_yesterday():
     weights = make_weights_df(
         model_names=["test_1", "test_2"], weights=None, start_datetime=start_datetime
     )
-    assert len(weights) == 49 + 16
+    assert len(weights) == 49 + 17
     assert "test_1" in weights.columns
     assert "test_2" in weights.columns
 
@@ -46,7 +46,7 @@ def test_make_weights_df():
     start_datetime = datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc)
 
     weights = make_weights_df(model_names=["test_1", "test_2"], weights=None)
-    assert len(weights) == 16
+    assert len(weights) == 17
     assert "test_1" in weights.columns
     assert "test_2" in weights.columns
 
@@ -79,7 +79,7 @@ def test_make_weights_df_forecast_horizon():
     weights = make_weights_df(
         model_names=["test_1", "test_2"], weights=None, forecast_horizon_minutes=60 * 3
     )
-    assert len(weights) == 16
+    assert len(weights) == 17
     assert "test_1" in weights.columns
     assert "test_2" in weights.columns
 
