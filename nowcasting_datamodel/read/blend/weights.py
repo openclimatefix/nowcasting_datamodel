@@ -1,12 +1,12 @@
 """Functions to make weights for blending"""
-import logging
+import structlog
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import numpy as np
 import pandas as pd
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 default_weights = [
     {

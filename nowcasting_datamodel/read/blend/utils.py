@@ -1,5 +1,5 @@
 """Utils for blending forecasts together"""
-import logging
+import structlog
 from datetime import datetime, timedelta, timezone
 from typing import List, Union
 
@@ -7,7 +7,7 @@ import pandas as pd
 
 from nowcasting_datamodel.models import ForecastValue
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 
 def check_forecast_created_utc(forecast_values_all_model) -> List[Union[str, List[ForecastValue]]]:
