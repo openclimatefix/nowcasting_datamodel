@@ -151,8 +151,6 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     model_id = Column(Integer, ForeignKey("model.id"), index=True)
 
 
-
-
 class MetricValue(EnhancedBaseModel):
     """Location that the forecast is for"""
 

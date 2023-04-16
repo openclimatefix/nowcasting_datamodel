@@ -5,10 +5,11 @@
 3. blends them together
 
 """
-import logging
+
 from datetime import datetime
 from typing import List, Optional
 
+import structlog
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.forecast import ForecastValue, ForecastValueSevenDaysSQL
@@ -23,7 +24,7 @@ from nowcasting_datamodel.read.blend.weights import (
 )
 from nowcasting_datamodel.read.read import get_forecast_values, get_forecast_values_latest
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 
 def get_blend_forecast_values_latest(
