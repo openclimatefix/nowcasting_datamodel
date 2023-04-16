@@ -1,10 +1,10 @@
 """Functions to make weights for blending"""
-import structlog
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import numpy as np
 import pandas as pd
+import structlog
 
 logger = structlog.stdlib.get_logger()
 

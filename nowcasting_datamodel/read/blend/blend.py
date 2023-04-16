@@ -6,10 +6,10 @@
 
 """
 
-import structlog
 from datetime import datetime
 from typing import List, Optional
 
+import structlog
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.forecast import ForecastValue, ForecastValueSevenDaysSQL
