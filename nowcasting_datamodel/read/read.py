@@ -4,10 +4,10 @@
 2. get the latest forecasts for all gsp ids
 3. get all forecast values
 """
-import structlog
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
+import structlog
 from sqlalchemy import desc, text
 from sqlalchemy.orm import contains_eager, joinedload
 from sqlalchemy.orm.session import Session
