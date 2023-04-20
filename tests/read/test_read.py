@@ -258,7 +258,9 @@ def test_get_all_gsp_ids_latest_forecast_not_national(db_session):
     f2 = make_fake_forecasts(gsp_ids=[0, 1], session=db_session)
     db_session.add_all(f2)
 
-    forecast_values_read = get_all_gsp_ids_latest_forecast(session=db_session, include_national=False)
+    forecast_values_read = get_all_gsp_ids_latest_forecast(
+        session=db_session, include_national=False
+    )
     assert len(forecast_values_read) == 1
     assert forecast_values_read[0] == f2[1]
 
