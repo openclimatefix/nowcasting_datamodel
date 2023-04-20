@@ -4,7 +4,7 @@
 2. get the latest forecasts for all gsp ids
 3. get all forecast values
 """
-import logging
+import structlog
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
@@ -28,7 +28,7 @@ from nowcasting_datamodel.models.forecast import (
     ForecastValueSQL,
 )
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger()
 
 
 def get_latest_input_data_last_updated(
@@ -224,6 +224,7 @@ def get_all_gsp_ids_latest_forecast(
     start_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
+    include_national: bool = True,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -234,11 +235,17 @@ def get_all_gsp_ids_latest_forecast(
         Filter: forecast values target time should be larger than this datetime
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
+    :param include_national: Option to include national forecast or not
 
     return: List of forecasts objects from database
     """
 
-    logger.debug("Getting latest forecast for all gsps")
+    logger.debug(f"Getting latest forecast for all gsps, {include_national=}")
+
+    if include_national:
+        gsp_ids = list(range(0, N_GSP + 1))
+    else:
+        gsp_ids = list(range(1, N_GSP + 1))
 
     return get_latest_forecast_for_gsps(
         session=session,
@@ -246,7 +253,7 @@ def get_all_gsp_ids_latest_forecast(
         start_target_time=start_target_time,
         preload_children=preload_children,
         historic=historic,
-        gsp_ids=list(range(0, N_GSP + 1)),
+        gsp_ids=gsp_ids,
     )
 
 
