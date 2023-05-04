@@ -32,7 +32,7 @@ def test_reduce_metric_values_to_correct_forecast_horizon(latest_me):
     [MetricValue.from_orm(m) for m in latest_me]
 
     df = reduce_metric_values_to_correct_forecast_horizon(
-        latest_me=latest_me, datetime_now=datetime_now
+        latest_me=latest_me, datetime_now=datetime_now, hours_ahead=8
     )
 
     assert len(df) == 17
