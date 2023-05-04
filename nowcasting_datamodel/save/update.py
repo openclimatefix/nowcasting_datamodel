@@ -80,6 +80,7 @@ def upsert(session: Session, model, rows: List[dict]):
 
     stmt = stmt.on_conflict_do_update(index_elements=primary_keys, set_=update_dict)
     session.execute(stmt, rows)
+    session.commit()
 
 
 def update_forecast_latest(
