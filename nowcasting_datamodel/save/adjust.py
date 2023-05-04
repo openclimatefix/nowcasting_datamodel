@@ -53,9 +53,19 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
     assert len(latest_me) > 0
 
     # 2. filter value down to now onwards
+    # get the number of hours to go ahead, we've added 1 to make sure we use the last one as well
+    hours_ahead = (
+        int(
+            (
+                forecast.forecast_values[0].target_time - forecast.forecast_values[-1].target_time
+            ).seconds
+            / 3600
+        )
+        + 1
+    )
     # change to dataframe
     latest_me_df = reduce_metric_values_to_correct_forecast_horizon(
-        latest_me=latest_me, datetime_now=datetime_now
+        latest_me=latest_me, datetime_now=datetime_now, hours_ahead=hours_ahead
     )
     assert len(latest_me_df) > 0
 
@@ -75,7 +85,7 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
 
 def reduce_metric_values_to_correct_forecast_horizon(
-    latest_me: List[MetricValueSQL], datetime_now: datetime, hours_ahead=8
+    latest_me: List[MetricValueSQL], datetime_now: datetime, hours_ahead=4
 ) -> pd.DataFrame:
     """
     Change all latest ME results 2D to 1D array
