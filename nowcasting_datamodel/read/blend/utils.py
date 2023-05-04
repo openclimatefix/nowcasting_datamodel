@@ -186,7 +186,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         duplicated["target_time"] = duplicated.index
         duplicated.reset_index(inplace=True, drop=True)
 
-        # divide by the sum of the weights
+        # divide by the sum of the weights, # TODO should we be worried about dividing by zero?
         duplicated["expected_power_generation_megawatts"] /= duplicated["weight"]
         duplicated["adjust_mw"] /= duplicated["weight"]
 
