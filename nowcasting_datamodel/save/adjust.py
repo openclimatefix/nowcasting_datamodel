@@ -54,7 +54,9 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
     # 2. filter value down to now onwards
     # get the number of hours to go ahead, we've added 1 to make sure we use the last one as well
-    hours_ahead = (forecast.forecast_values[0].target_time - forecast.forecast_values[-1].target_time).hour + 1
+    hours_ahead = (
+        forecast.forecast_values[0].target_time - forecast.forecast_values[-1].target_time
+    ).hour + 1
     # change to dataframe
     latest_me_df = reduce_metric_values_to_correct_forecast_horizon(
         latest_me=latest_me, datetime_now=datetime_now, hours_ahead=hours_ahead
