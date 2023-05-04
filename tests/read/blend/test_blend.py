@@ -95,9 +95,10 @@ def test_get_blend_forecast_values_latest_two_model_read_one(db_session):
 def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
+    model_3 = get_model(session=db_session, name="test_2", version="0.0.2")
 
     forecasts = {}
-    for model in [model_1, model_2]:
+    for model in [model_1, model_2, model_3]:
         f1 = make_fake_forecasts(gsp_ids=[1, 2], session=db_session)
         f1[0].historic = True
 
@@ -105,10 +106,17 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
             power = 1
             adjust = 0
             forecast_horizon_minutes = [-60, -30, 0, 30, 8 * 30, 15 * 30]
-        else:
+            created_utc = datetime(2023, 1, 1, 0, 0, 1, tzinfo=timezone.utc)
+        elif model == model_2:
             power = 2
             adjust = 100
             forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30, 16 * 30]
+            created_utc = datetime(2023, 1, 1, 0, 0, 1, tzinfo=timezone.utc)
+        else:
+            power = 3
+            adjust = 200
+            forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30, 16 * 30]
+            created_utc = datetime(2023, 1, 1, 0, 0, 2, tzinfo=timezone.utc)
 
         f1[0].forecast_values_latest = [
             ForecastValueLatestSQL(
@@ -117,13 +125,14 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 model_id=model.id,
                 adjust_mw=adjust,
+                created_utc=created_utc,
             )
             for t in forecast_horizon_minutes
         ]
 
         db_session.add_all(f1)
         forecasts[model.name] = f1
-    assert len(db_session.query(ForecastValueLatestSQL).all()) == 11
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 16
 
     forecast_values_read = get_blend_forecast_values_latest(
         session=db_session,
@@ -141,15 +150,15 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
     assert forecast_values_read[1].expected_power_generation_megawatts == 1
     assert forecast_values_read[2].expected_power_generation_megawatts == 1
     assert forecast_values_read[3].expected_power_generation_megawatts == 1
-    assert forecast_values_read[4].expected_power_generation_megawatts == 1.5
-    assert forecast_values_read[5].expected_power_generation_megawatts == 2
+    assert forecast_values_read[4].expected_power_generation_megawatts == 2
+    assert forecast_values_read[5].expected_power_generation_megawatts == 3
 
     assert forecast_values_read[0]._adjust_mw == 0
     assert forecast_values_read[1]._adjust_mw == 0
     assert forecast_values_read[2]._adjust_mw == 0
     assert forecast_values_read[3]._adjust_mw == 0
-    assert forecast_values_read[4]._adjust_mw == 50
-    assert forecast_values_read[5]._adjust_mw == 100
+    assert forecast_values_read[4]._adjust_mw == 100
+    assert forecast_values_read[5]._adjust_mw == 200
 
 
 @freeze_time("2023-01-01 00:00:01")

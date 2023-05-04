@@ -531,11 +531,17 @@ def get_forecast_values_latest(
         query = query.filter(ForecastValueLatestSQL.gsp_id == gsp_id)
 
     if model_name is not None:
+        # make sure we only get the latest
+        query = query.distinct(ForecastValueLatestSQL.target_time)
+
+        # filter on model name
         query = query.join(MLModelSQL, ForecastValueLatestSQL.model_id == MLModelSQL.id)
         query = query.filter(MLModelSQL.name == model_name)
 
     # order by target time and created time desc
-    query = query.order_by(ForecastValueLatestSQL.target_time)
+    query = query.order_by(
+        ForecastValueLatestSQL.target_time, ForecastValueLatestSQL.created_utc.desc()
+    )
 
     # get all results
     forecast_values_latest = query.all()
