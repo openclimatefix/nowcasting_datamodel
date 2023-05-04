@@ -539,7 +539,9 @@ def get_forecast_values_latest(
         query = query.filter(MLModelSQL.name == model_name)
 
     # order by target time and created time desc
-    query = query.order_by(ForecastValueLatestSQL.target_time, ForecastValueLatestSQL.created_utc.desc())
+    query = query.order_by(
+        ForecastValueLatestSQL.target_time, ForecastValueLatestSQL.created_utc.desc()
+    )
 
     # get all results
     forecast_values_latest = query.all()

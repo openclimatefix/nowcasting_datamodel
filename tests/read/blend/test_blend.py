@@ -106,7 +106,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
             power = 1
             adjust = 0
             forecast_horizon_minutes = [-60, -30, 0, 30, 8 * 30, 15 * 30]
-            created_utc = datetime(2023, 1, 1, 0,0,1, tzinfo=timezone.utc)
+            created_utc = datetime(2023, 1, 1, 0, 0, 1, tzinfo=timezone.utc)
         elif model == model_2:
             power = 2
             adjust = 100
@@ -125,7 +125,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 model_id=model.id,
                 adjust_mw=adjust,
-                created_utc=created_utc
+                created_utc=created_utc,
             )
             for t in forecast_horizon_minutes
         ]
