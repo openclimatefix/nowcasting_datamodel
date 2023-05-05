@@ -9,7 +9,7 @@ The following class are made
 from typing import Optional
 
 from pydantic import Field
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -54,6 +54,7 @@ class APIRequestSQL(CreatedMixin):
     uuid = Column(UUID, primary_key=True)
     url = Column(Integer, primary_key=True)
 
+    user_id = Column(Integer, ForeignKey("user.id"), index=True)
     user = relationship("UserSQL", back_populates="api_request")
 
 
