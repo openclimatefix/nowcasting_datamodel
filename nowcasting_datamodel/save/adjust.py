@@ -49,7 +49,9 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
     last_datetime = forecast.forecast_values[-1].target_time
     model_name = forecast.model.name
 
-    logger.debug(f"Adding adjuster to national forecast for {datetime_now} and {model_name}, {last_datetime=}")
+    logger.debug(
+        f"Adding adjuster to national forecast for {datetime_now} and {model_name}, {last_datetime=}"
+    )
 
     # 1. read metric values
     latest_me = read_latest_me_national(session=session, model_name=model_name)
