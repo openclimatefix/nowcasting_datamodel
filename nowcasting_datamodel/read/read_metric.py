@@ -4,7 +4,7 @@
 2. get datetime interval
 """
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
@@ -129,5 +129,10 @@ def read_latest_me_national(
 
     # get all results
     metric_values = query.all()
+
+    # add timezone, show be the same datetime interval for all
+    datetime_interval = metric_values[0].datetime_interval
+    datetime_interval.start_datetime_utc = datetime_interval.start_datetime_utc.replace(tzinfo=timezone.utc)
+    datetime_interval.end_datetime_utc = datetime_interval.replace(tzinfo=timezone.utc)
 
     return metric_values
