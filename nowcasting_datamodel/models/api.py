@@ -9,7 +9,13 @@ The following class are made
 from typing import Optional
 
 from pydantic import Field
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    func,
+)
+from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -25,7 +31,7 @@ class UserSQL(Base_Forecast):
 
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
     email = Column(String)
 
     api_request = relationship("APIRequestSQL", back_populates="user")
@@ -51,10 +57,10 @@ class APIRequestSQL(Base_Forecast, CreatedMixin):
 
     __tablename__ = "api_request"
 
-    uuid = Column(UUID, primary_key=True)
-    url = Column(String, primary_key=True)
+    uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
+    url = Column(String)
 
-    user_id = Column(Integer, ForeignKey("user.id"), index=True)
+    user_uuid = Column(UUID, ForeignKey("user.uuid"), index=True)
     user = relationship("UserSQL", back_populates="api_request")
 
 
