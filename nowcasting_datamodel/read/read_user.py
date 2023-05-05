@@ -1,7 +1,6 @@
 """ Read user"""
 import logging
 
-
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.api import UserSQL
