@@ -33,7 +33,7 @@ def get_user(session: Session, email: str) -> UserSQL:
 
         user = UserSQL(email=email)
 
-        session.add(users)
+        session.add(user)
         session.commit()
 
     else:
