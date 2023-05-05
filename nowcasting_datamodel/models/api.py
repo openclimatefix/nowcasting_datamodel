@@ -52,7 +52,7 @@ class APIRequestSQL(Base_Forecast, CreatedMixin):
     __tablename__ = "api_request"
 
     uuid = Column(UUID, primary_key=True)
-    url = Column(Integer, primary_key=True)
+    url = Column(String, primary_key=True)
 
     user_id = Column(Integer, ForeignKey("user.id"), index=True)
     user = relationship("UserSQL", back_populates="api_request")
