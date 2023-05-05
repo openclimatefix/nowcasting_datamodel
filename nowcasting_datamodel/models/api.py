@@ -46,7 +46,7 @@ class User(EnhancedBaseModel):
 ########
 # 2. APIRequest
 ########
-class APIRequestSQL(CreatedMixin):
+class APIRequestSQL(Base_Forecast, CreatedMixin):
     """Information about what API route was called"""
 
     __tablename__ = "api_request"
