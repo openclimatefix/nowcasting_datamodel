@@ -61,8 +61,8 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
     # 2. filter value down to now onwards
     # get the number of hours to go ahead, we've added 1 to make sure we use the last one as well
-    hours_ahead = int((datetime_now - last_datetime).seconds / 3600) + 1
-    hours_ahead += (datetime_now - last_datetime).days * 24
+    hours_ahead = int((last_datetime - datetime_now).seconds / 3600) + 1
+    hours_ahead += (last_datetime - last_datetime).days * 24
     logger.debug(f"Hours ahead is {hours_ahead}")
 
     # change to dataframe
