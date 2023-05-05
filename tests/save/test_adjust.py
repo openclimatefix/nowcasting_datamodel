@@ -1,27 +1,18 @@
-from datetime import datetime, time, timezone
+from datetime import datetime, timezone
 
 import pandas as pd
+from freezegun import freeze_time
 
-from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
-from nowcasting_datamodel.models.forecast import (
-    ForecastSQL,
-    ForecastValueLatestSQL,
-    ForecastValueSevenDaysSQL,
-    ForecastValueSQL,
-)
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
+from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models import (
     MetricValueSQL,
-    MetricSQL,
-    DatetimeIntervalSQL,
-    LocationSQL,
     MetricValue,
 )
 from nowcasting_datamodel.save.adjust import (
     reduce_metric_values_to_correct_forecast_horizon,
     add_adjust_to_forecasts,
+    get_forecast_horizon_from_forecast,
 )
-from freezegun import freeze_time
 
 
 def test_reduce_metric_values_to_correct_forecast_horizon(latest_me):
@@ -56,3 +47,10 @@ def test_add_adjust_to_forecasts(latest_me, db_session):
 
     assert forecasts[0].forecast_values[0].adjust_mw == 16 * 60 + 30
     assert forecasts[1].forecast_values[0].adjust_mw == 0.0
+
+
+def test_get_forecast_horizon_from_forecast(db_session):
+    forecasts = make_fake_forecasts(gsp_ids=range(0, 1), session=db_session)
+
+    hours = get_forecast_horizon_from_forecast(forecast=forecasts[0])
+    assert hours == 24 + 24 + 8
