@@ -12,10 +12,9 @@ from pydantic import Field
 from sqlalchemy import (
     Column,
     ForeignKey,
-    Integer,
+    String,
     func,
 )
-from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
