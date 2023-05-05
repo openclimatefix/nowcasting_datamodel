@@ -132,7 +132,9 @@ def read_latest_me_national(
 
     # add timezone, show be the same datetime interval for all
     datetime_interval = metric_values[0].datetime_interval
-    datetime_interval.start_datetime_utc = datetime_interval.start_datetime_utc.replace(tzinfo=timezone.utc)
+    datetime_interval.start_datetime_utc = datetime_interval.start_datetime_utc.replace(
+        tzinfo=timezone.utc
+    )
     datetime_interval.end_datetime_utc = datetime_interval.replace(tzinfo=timezone.utc)
 
     return metric_values
