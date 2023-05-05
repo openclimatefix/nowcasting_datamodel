@@ -1,11 +1,11 @@
 """ Methods for adding adjust values to the forecast"""
 import logging
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Union
 
 import pandas as pd
 
-from nowcasting_datamodel.models import ForecastSQL, MetricValue, MetricValueSQL
+from nowcasting_datamodel.models import Forecast, ForecastSQL, MetricValue, MetricValueSQL
 from nowcasting_datamodel.read.read_metric import read_latest_me_national
 
 logger = logging.getLogger()
@@ -61,9 +61,7 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
     # 2. filter value down to now onwards
     # get the number of hours to go ahead, we've added 1 to make sure we use the last one as well
-    hours_ahead = int((last_datetime - datetime_now).seconds / 3600) + 1
-    hours_ahead += (last_datetime - last_datetime).days * 24
-    logger.debug(f"Hours ahead is {hours_ahead}")
+    hours_ahead = get_forecast_horizon_from_forecast(forecast)
 
     # change to dataframe
     latest_me_df = reduce_metric_values_to_correct_forecast_horizon(
@@ -84,6 +82,23 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
         except Exception:
             logger.debug(f"Could not find ME value for {target_time} in {latest_me_df}")
+
+
+def get_forecast_horizon_from_forecast(forecast: Union[ForecastSQL, Forecast]):
+    """
+    Get the number of hours ahead from the forecast
+
+    :param forecast:
+    :return:
+    """
+    datetime_now = forecast.forecast_values[0].target_time
+    last_datetime = forecast.forecast_values[-1].target_time
+    hours_ahead = int((last_datetime - datetime_now).seconds / 3600) + 1
+    hours_ahead += (last_datetime - datetime_now).days * 24
+
+    logger.debug(f"Hours ahead is {hours_ahead}, {last_datetime=}, {datetime_now=} ")
+
+    return hours_ahead
 
 
 def reduce_metric_values_to_correct_forecast_horizon(
