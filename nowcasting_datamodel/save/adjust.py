@@ -46,23 +46,25 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
     # get the target time and model name
     datetime_now = forecast.forecast_values[0].target_time
+    last_datetime = forecast.forecast_values[-1].target_time
     model_name = forecast.model.name
+
+    logger.debug(
+        f"Adding adjuster to national forecast for "
+        f"{datetime_now} and {model_name}, {last_datetime=}"
+    )
 
     # 1. read metric values
     latest_me = read_latest_me_national(session=session, model_name=model_name)
     assert len(latest_me) > 0
+    logger.debug(f"Found {len(latest_me)} latest ME values")
 
     # 2. filter value down to now onwards
     # get the number of hours to go ahead, we've added 1 to make sure we use the last one as well
-    hours_ahead = (
-        int(
-            (
-                forecast.forecast_values[0].target_time - forecast.forecast_values[-1].target_time
-            ).seconds
-            / 3600
-        )
-        + 1
-    )
+    hours_ahead = int((last_datetime - datetime_now).seconds / 3600) + 1
+    hours_ahead += (last_datetime - last_datetime).days * 24
+    logger.debug(f"Hours ahead is {hours_ahead}")
+
     # change to dataframe
     latest_me_df = reduce_metric_values_to_correct_forecast_horizon(
         latest_me=latest_me, datetime_now=datetime_now, hours_ahead=hours_ahead
@@ -122,6 +124,10 @@ def reduce_metric_values_to_correct_forecast_horizon(
         'forecast_horizon'
         'value'
     """
+
+    logger.debug(
+        f"Reducing metric values to correct forecast horizon {datetime_now=} {hours_ahead=}"
+    )
 
     latest_me_df = pd.DataFrame([MetricValue.from_orm(m).dict() for m in latest_me])
 
