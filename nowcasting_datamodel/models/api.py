@@ -28,12 +28,13 @@ class UserSQL(Base_Forecast):
     id = Column(Integer, primary_key=True)
     email = Column(String)
 
+    api_request = relationship("APIRequestSQL", back_populates="user")
+
 
 class User(EnhancedBaseModel):
     """ML model that is being used"""
 
     email: Optional[str] = Field(..., description="The name of the model", index=True)
-    api_request = relationship("APIRequestSQL", back_populates="user")
 
     def to_orm(self) -> UserSQL:
         """Change model to MLModelSQL"""
