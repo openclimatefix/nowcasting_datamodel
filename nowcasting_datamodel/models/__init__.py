@@ -20,6 +20,7 @@ Later on it would be good to add a forecast latest table,
 The primary keys could be 'gsp_id' and 'target_datetime_utc'.
 """
 
+from .api import *  # noqa F403
 from .forecast import *  # noqa F403
 from .gsp import *  # noqa F403
 from .metric import *  # noqa F403
