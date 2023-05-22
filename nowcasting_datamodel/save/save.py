@@ -21,6 +21,7 @@ def save(
     session: Session,
     update_national: Optional[bool] = True,
     update_gsp: Optional[bool] = True,
+    apply_adjuster: Optional[bool] = True,
 ):
     """
     Save forecast to database
@@ -32,9 +33,11 @@ def save(
     :param session: database session
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
+    :param apply_adjuster: Optional (default true), to apply the adjuster
     """
-    logger.debug("Add Adjust to forecasts")
-    add_adjust_to_forecasts(session=session, forecasts_sql=forecasts)
+    if apply_adjuster:
+        logger.debug("Add Adjust to forecasts")
+        add_adjust_to_forecasts(session=session, forecasts_sql=forecasts)
 
     # save objects to database
     logger.debug("Saving models")

@@ -12,9 +12,12 @@ from nowcasting_datamodel.save.save import save, save_all_forecast_values_seven_
 
 
 def test_save(db_session, latest_me):
+    # Make sure save works where no forecast already exists
     forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
-
-    save(session=db_session, forecasts=forecasts)
+    save(
+        session=db_session,
+        forecasts=forecasts,
+    )
 
     # 10 forecast, + 10 historic ones
     assert len(db_session.query(ForecastSQL).all()) == 20
@@ -22,8 +25,37 @@ def test_save(db_session, latest_me):
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 10 * N_FAKE_FORECASTS
 
+    # Make sure save works where forecast exists already
     forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
     save(session=db_session, forecasts=forecasts)
+
+    # 20 forecast, + 10 historic ones
+    assert len(db_session.query(ForecastSQL).all()) == 30
+    assert len(db_session.query(ForecastValueSQL).all()) == 20 * N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 20 * N_FAKE_FORECASTS
+
+    # check that for gsp_id the results look right
+    forecast_latest_values = (
+        db_session.query(ForecastValueLatestSQL).filter(ForecastValueLatestSQL.gsp_id == 2).all()
+    )
+    assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
+
+
+def test_save_no_adjuster(db_session):
+    # Make sure save works where no forecast already exists
+    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
+    save(session=db_session, forecasts=forecasts, apply_adjuster=False)
+
+    # 10 forecast, + 10 historic ones
+    assert len(db_session.query(ForecastSQL).all()) == 20
+    assert len(db_session.query(ForecastValueSQL).all()) == 10 * N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 10 * N_FAKE_FORECASTS
+
+    # Make sure save works where forecast exists already
+    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
+    save(session=db_session, forecasts=forecasts, apply_adjuster=False)
 
     # 20 forecast, + 10 historic ones
     assert len(db_session.query(ForecastSQL).all()) == 30
