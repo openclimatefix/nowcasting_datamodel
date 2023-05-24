@@ -708,7 +708,7 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
     return locations
 
 
-def get_model(session: Session, name: str, version: Optional[str]) -> MLModelSQL:
+def get_model(session: Session, name: str, version: Optional[str] = None) -> MLModelSQL:
     """
     Get model object from name and version
 
@@ -725,14 +725,18 @@ def get_model(session: Session, name: str, version: Optional[str]) -> MLModelSQL
 
     # filter on gsp_id
     query = query.filter(MLModelSQL.name == name)
-    query = query.filter(MLModelSQL.version == version)
+    if version is not None:
+        query = query.filter(MLModelSQL.version == version)
+
+    # gets the latest version
+    query = query.order_by(MLModelSQL.version.desc())
 
     # get all results
     models = query.all()
 
     if len(models) == 0:
         logger.debug(
-            f"Model for name {name} and version {version }does not exist so going to add it"
+            f"Model for name {name} and version {version} does not exist so going to add it"
         )
 
         model = MLModelSQL(name=name, version=version)
