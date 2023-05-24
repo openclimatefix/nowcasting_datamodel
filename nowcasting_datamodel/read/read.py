@@ -729,7 +729,7 @@ def get_model(session: Session, name: str, version: Optional[str] = None) -> MLM
         query = query.filter(MLModelSQL.version == version)
 
     # gets the latest version
-    query = query.order_by(version.desc())
+    query = query.order_by(MLModelSQL.version.desc())
 
     # get all results
     models = query.all()
