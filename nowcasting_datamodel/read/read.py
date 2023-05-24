@@ -728,6 +728,9 @@ def get_model(session: Session, name: str, version: Optional[str] = None) -> MLM
     if version is not None:
         query = query.filter(MLModelSQL.version == version)
 
+    # gets the latest version
+    query = query.order_by(version.desc())
+
     # get all results
     models = query.all()
 
