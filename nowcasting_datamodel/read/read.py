@@ -225,7 +225,7 @@ def get_all_gsp_ids_latest_forecast(
     preload_children: Optional[bool] = False,
     historic: bool = False,
     include_national: bool = True,
-    model_name: Optional[bool] = None
+    model_name: Optional[bool] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -256,7 +256,7 @@ def get_all_gsp_ids_latest_forecast(
         preload_children=preload_children,
         historic=historic,
         gsp_ids=gsp_ids,
-        model_name=model_name
+        model_name=model_name,
     )
 
 
