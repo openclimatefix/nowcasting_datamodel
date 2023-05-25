@@ -321,6 +321,10 @@ def get_latest_forecast_for_gsps(
     # filter on model name
     if model_name is not None:
         if historic:
+
+            # if start target time is None, we need to join with forecast value latest
+            if start_target_time is None:
+                query = query.join(ForecastValueLatestSQL)
             query = query.join(MLModelSQL, ForecastValueLatestSQL.model_id == MLModelSQL.id)
         else:
             query = query.join(MLModelSQL)
