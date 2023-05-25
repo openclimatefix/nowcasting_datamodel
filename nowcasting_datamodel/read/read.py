@@ -399,6 +399,7 @@ def get_forecast_values(
     only_return_latest: Optional[bool] = False,
     model: Optional = ForecastValueSQL,
     model_name: Optional[str] = None,
+    created_utc_limit: Optional[datetime] = None,
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
@@ -416,6 +417,9 @@ def get_forecast_values(
         forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
         target time. Note this only works for non-historic data.
     :param model: Can be 'ForecastValueSQL' or 'ForecastValueSevenDaysSQL'
+    :param model_name: Optional to filter on model name
+    :param created_utc_limit: Optional to filter on created_utc.
+        We only get forecast that are made before this time
 
     return: List of forecasts values objects from database
 
@@ -450,6 +454,9 @@ def get_forecast_values(
         created_utc_filter = start_datetime - timedelta(days=1)
         query = query.filter(model.created_utc >= created_utc_filter)
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
+
+    if created_utc_limit is not None:
+        query = query.filter(model.created_utc <= created_utc_limit)
 
     if forecast_horizon_minutes is not None:
         # this seems to only work for postgres
