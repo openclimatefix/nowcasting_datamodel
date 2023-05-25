@@ -309,11 +309,6 @@ def get_latest_forecast_for_gsps(
     # filter on historic
     query = query.filter(ForecastSQL.historic == historic)
 
-    # filter on model name
-    if model_name is not None:
-        query = query.join(MLModelSQL)
-        query = query.filter(MLModelSQL.name == model_name)
-
     # filter on target time
     if start_target_time is not None:
         query = filter_query_on_target_time(
@@ -322,6 +317,14 @@ def get_latest_forecast_for_gsps(
             historic=historic,
             end_target_time=end_target_time,
         )
+
+    # filter on model name
+    if model_name is not None:
+        if historic:
+            query = query.join(MLModelSQL, ForecastValueLatestSQL.model_id == MLModelSQL.id)
+        else:
+            query = query.join(MLModelSQL)
+        query = query.filter(MLModelSQL.name == model_name)
 
     query = query.join(LocationSQL)
 
