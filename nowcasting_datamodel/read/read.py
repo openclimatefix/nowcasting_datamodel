@@ -225,6 +225,7 @@ def get_all_gsp_ids_latest_forecast(
     preload_children: Optional[bool] = False,
     historic: bool = False,
     include_national: bool = True,
+    model_name: Optional[bool] = None
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -236,6 +237,7 @@ def get_all_gsp_ids_latest_forecast(
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param include_national: Option to include national forecast or not
+    :param model_name: Optional to filter on model name
 
     return: List of forecasts objects from database
     """
@@ -254,6 +256,7 @@ def get_all_gsp_ids_latest_forecast(
         preload_children=preload_children,
         historic=historic,
         gsp_ids=gsp_ids,
+        model_name=model_name
     )
 
 
