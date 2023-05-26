@@ -404,6 +404,7 @@ def get_forecast_values(
     gsp_id: Optional[int] = None,
     gsp_ids: Optional[List[int]] = None,
     start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
     model: Optional = ForecastValueSQL,
@@ -419,6 +420,8 @@ def get_forecast_values(
     :param gsp_ids: optional to provide multiple gsp id, to filter query on
         If None is given then all are returned.
     :param start_datetime: optional to filterer target_time by start_datetime
+        If None is given then all are returned.
+    :param end_datetime: optional to filterer target_time by end_datetime
         If None is given then all are returned.
     :param only_return_latest: Optional to only return the latest forecast, not all of them.
         Default is False
@@ -463,6 +466,9 @@ def get_forecast_values(
         created_utc_filter = start_datetime - timedelta(days=1)
         query = query.filter(model.created_utc >= created_utc_filter)
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
+
+    if end_datetime is not None:
+        query = query.filter(model.target_time <= end_datetime)
 
     if created_utc_limit is not None:
         query = query.filter(model.created_utc <= created_utc_limit)
