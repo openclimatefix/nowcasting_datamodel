@@ -43,6 +43,34 @@ def test_get_latest_forecast_created_utc_gsp(db_session):
 
 
 @freeze_time("2023-01-01 12:00:00")
+def test_get_latest_forecast__with_end_datetime(db_session):
+    t0_datetime_utc = datetime(2023, 1, 1, 12, tzinfo=timezone.utc)
+
+    f1 = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=t0_datetime_utc)
+    f2 = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=t0_datetime_utc)
+
+    for i in range(len(f1.forecast_values)):
+        f1.forecast_values[i].created_utc = datetime(2023, 1, 1, 10, tzinfo=timezone.utc)
+
+    for i in range(len(f2.forecast_values)):
+        f2.forecast_values[i].created_utc = datetime(2023, 1, 1, 12, tzinfo=timezone.utc)
+
+    db_session.add_all([f1, f2])
+    db_session.commit()
+
+    forecast_values = get_forecast_values(
+        session=db_session,
+        forecast_horizon_minutes=120,
+        gsp_id=1,
+        only_return_latest=True,
+        end_datetime=datetime(2023, 1, 1, 13, tzinfo=timezone.utc),
+    )
+    assert len(forecast_values) == 3
+    assert forecast_values[0].created_utc == datetime(2023, 1, 1, 10, tzinfo=timezone.utc)
+    assert forecast_values[0].target_time == datetime(2023, 1, 1, 12, tzinfo=timezone.utc)
+
+
+@freeze_time("2023-01-01 12:00:00")
 def test_get_latest_forecast_created_utc_multi_gsp(db_session):
     t0_datetime_utc = datetime(2023, 1, 1, 12, tzinfo=timezone.utc)
 
