@@ -59,8 +59,11 @@ def test_get_latest_forecast__with_end_datetime(db_session):
     db_session.commit()
 
     forecast_values = get_forecast_values(
-        session=db_session, forecast_horizon_minutes=120, gsp_id=1, only_return_latest=True,
-        end_datetime=datetime(2023, 1, 1, 13, tzinfo=timezone.utc)
+        session=db_session,
+        forecast_horizon_minutes=120,
+        gsp_id=1,
+        only_return_latest=True,
+        end_datetime=datetime(2023, 1, 1, 13, tzinfo=timezone.utc),
     )
     assert len(forecast_values) == 3
     assert forecast_values[0].created_utc == datetime(2023, 1, 1, 10, tzinfo=timezone.utc)
