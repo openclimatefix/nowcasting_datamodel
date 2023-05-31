@@ -52,7 +52,10 @@ https://gist.github.com/kissgyorgy/e2365f25a213de44b9a2 helped me get going
 
 @pytest.fixture
 def db_connection():
-    url = os.getenv("DB_URL", "sqlite:///test.db")
+    url = "sqlite:///test.db"
+
+    if not "sqlite" in url:
+        raise 
 
     connection = DatabaseConnection(url=url, echo=False)
     connection.create_all()
@@ -80,7 +83,7 @@ def db_session(db_connection):
 
 @pytest.fixture
 def db_connection_pv():
-    url = os.getenv("DB_URL_PV", "sqlite:///test_pv.db")
+    url = "sqlite:///test_pv.db"
 
     connection = DatabaseConnection(url=url, base=Base_PV)
     Base_PV.metadata.create_all(connection.engine)
