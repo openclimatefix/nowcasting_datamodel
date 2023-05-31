@@ -54,9 +54,6 @@ https://gist.github.com/kissgyorgy/e2365f25a213de44b9a2 helped me get going
 def db_connection():
     url = "sqlite:///test.db"
 
-    if not "sqlite" in url:
-        raise
-
     connection = DatabaseConnection(url=url, echo=False)
     connection.create_all()
 
