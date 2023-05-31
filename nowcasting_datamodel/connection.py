@@ -34,7 +34,7 @@ class DatabaseConnection:
     def create_all(self):
         """Create all paritions and tables"""
 
-        self.base.metadata.__drop_all(self.engine)
+        self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
 
     def make_partitions(self):
