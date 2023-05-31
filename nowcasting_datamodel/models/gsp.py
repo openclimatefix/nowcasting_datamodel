@@ -16,8 +16,6 @@ from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
 from nowcasting_datamodel.utils import datetime_must_have_timezone
 
-import os
-
 logger = logging.getLogger(__name__)
 
 ########
