@@ -225,6 +225,7 @@ def get_all_gsp_ids_latest_forecast(
     preload_children: Optional[bool] = False,
     historic: bool = False,
     include_national: bool = True,
+    model_name: Optional[bool] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -236,6 +237,7 @@ def get_all_gsp_ids_latest_forecast(
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
     :param include_national: Option to include national forecast or not
+    :param model_name: Optional to filter on model name
 
     return: List of forecasts objects from database
     """
@@ -254,6 +256,7 @@ def get_all_gsp_ids_latest_forecast(
         preload_children=preload_children,
         historic=historic,
         gsp_ids=gsp_ids,
+        model_name=model_name,
     )
 
 
@@ -306,11 +309,6 @@ def get_latest_forecast_for_gsps(
     # filter on historic
     query = query.filter(ForecastSQL.historic == historic)
 
-    # filter on model name
-    if model_name is not None:
-        query = query.join(MLModelSQL)
-        query = query.filter(MLModelSQL.name == model_name)
-
     # filter on target time
     if start_target_time is not None:
         query = filter_query_on_target_time(
@@ -319,6 +317,17 @@ def get_latest_forecast_for_gsps(
             historic=historic,
             end_target_time=end_target_time,
         )
+
+    # filter on model name
+    if model_name is not None:
+        if historic:
+            # if start target time is None, we need to join with forecast value latest
+            if start_target_time is None:
+                query = query.join(ForecastValueLatestSQL)
+            query = query.join(MLModelSQL, ForecastValueLatestSQL.model_id == MLModelSQL.id)
+        else:
+            query = query.join(MLModelSQL)
+        query = query.filter(MLModelSQL.name == model_name)
 
     query = query.join(LocationSQL)
 
@@ -395,10 +404,12 @@ def get_forecast_values(
     gsp_id: Optional[int] = None,
     gsp_ids: Optional[List[int]] = None,
     start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
     model: Optional = ForecastValueSQL,
     model_name: Optional[str] = None,
+    created_utc_limit: Optional[datetime] = None,
 ) -> List[ForecastValueSQL]:
     """
     Get forecast values
@@ -410,12 +421,17 @@ def get_forecast_values(
         If None is given then all are returned.
     :param start_datetime: optional to filterer target_time by start_datetime
         If None is given then all are returned.
+    :param end_datetime: optional to filterer target_time by end_datetime
+        If None is given then all are returned.
     :param only_return_latest: Optional to only return the latest forecast, not all of them.
         Default is False
     :param forecast_horizon_minutes: Optional filter on forecast horizon. For example
         forecast_horizon_minutes=120, means load the forecast than was made 2 hours before the
         target time. Note this only works for non-historic data.
     :param model: Can be 'ForecastValueSQL' or 'ForecastValueSevenDaysSQL'
+    :param model_name: Optional to filter on model name
+    :param created_utc_limit: Optional to filter on created_utc.
+        We only get forecast that are made before this time
 
     return: List of forecasts values objects from database
 
@@ -450,6 +466,12 @@ def get_forecast_values(
         created_utc_filter = start_datetime - timedelta(days=1)
         query = query.filter(model.created_utc >= created_utc_filter)
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
+
+    if end_datetime is not None:
+        query = query.filter(model.target_time <= end_datetime)
+
+    if created_utc_limit is not None:
+        query = query.filter(model.created_utc <= created_utc_limit)
 
     if forecast_horizon_minutes is not None:
         # this seems to only work for postgres
@@ -708,7 +730,7 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
     return locations
 
 
-def get_model(session: Session, name: str, version: Optional[str]) -> MLModelSQL:
+def get_model(session: Session, name: str, version: Optional[str] = None) -> MLModelSQL:
     """
     Get model object from name and version
 
@@ -725,14 +747,18 @@ def get_model(session: Session, name: str, version: Optional[str]) -> MLModelSQL
 
     # filter on gsp_id
     query = query.filter(MLModelSQL.name == name)
-    query = query.filter(MLModelSQL.version == version)
+    if version is not None:
+        query = query.filter(MLModelSQL.version == version)
+
+    # gets the latest version
+    query = query.order_by(MLModelSQL.version.desc())
 
     # get all results
     models = query.all()
 
     if len(models) == 0:
         logger.debug(
-            f"Model for name {name} and version {version }does not exist so going to add it"
+            f"Model for name {name} and version {version} does not exist so going to add it"
         )
 
         model = MLModelSQL(name=name, version=version)
