@@ -636,7 +636,7 @@ def get_location(
     session: Session,
     gsp_id: int,
     label: Optional[str] = None,
-    installed_capacity_mw: Optional[int] = None,
+    installed_capacity_mw: Optional[float] = None,
 ) -> LocationSQL:
     """
     Get location object from gsp id
