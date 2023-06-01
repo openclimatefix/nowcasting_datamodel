@@ -34,7 +34,7 @@ class LocationSQL(Base_Forecast):
     gsp_name = Column(String, nullable=True)
     gsp_group = Column(String, nullable=True)
     region_name = Column(String, nullable=True)
-    installed_capacity_mw = Column(Integer, nullable=True)
+    installed_capacity_mw = Column(Float, nullable=True)
 
     forecast = relationship("ForecastSQL", back_populates="location")
     gsp_yields = relationship("GSPYieldSQL", back_populates="location")
@@ -49,7 +49,7 @@ class Location(EnhancedBaseModel):
     gsp_name: Optional[str] = Field(None, description="The GSP name")
     gsp_group: Optional[str] = Field(None, description="The GSP group name")
     region_name: Optional[str] = Field(None, description="The GSP region name")
-    installed_capacity_mw: Optional[int] = Field(
+    installed_capacity_mw: Optional[float] = Field(
         None, description="The installed capacity of the GSP in MW"
     )
 
