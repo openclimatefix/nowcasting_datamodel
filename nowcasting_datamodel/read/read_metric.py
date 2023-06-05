@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models.metric import DatetimeIntervalSQL, MetricSQL, MetricValueSQL
+from nowcasting_datamodel.models import DatetimeIntervalSQL, MetricSQL, MetricValueSQL, MLModelSQL
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +125,8 @@ def read_latest_me_national(
     )
 
     if model_name is not None:
-        query = query.filter(MetricValueSQL.model_name == model_name)
+        query = query.join(MLModelSQL)
+        query = query.filter(MLModelSQL.name == model_name)
 
     # get all results
     metric_values = query.all()

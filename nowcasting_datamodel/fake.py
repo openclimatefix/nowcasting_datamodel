@@ -279,6 +279,7 @@ def make_fake_me_latest(session: Session, model_name: str = "fake_model"):
     location = get_location(
         gsp_id=0, session=session, installed_capacity_mw=14000, label=national_gb_label
     )
+    model = MLModelSQL(name=model_name, version="0.1.2")
 
     session.add_all([location, datetime_interval, metric])
 
@@ -295,6 +296,7 @@ def make_fake_me_latest(session: Session, model_name: str = "fake_model"):
                 metric=metric,
                 location=location,
                 model_name=model_name,
+                model=model,
             )
             metric_values.append(m)
 
