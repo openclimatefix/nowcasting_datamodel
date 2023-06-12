@@ -80,8 +80,10 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
             forecast_value.adjust_mw = value
 
         except Exception:
-            logger.debug(f"Could not find ME value for {target_time} in {latest_me_df}, "
-                         f"therefore adding adjust_mw as 0")
+            logger.debug(
+                f"Could not find ME value for {target_time} in {latest_me_df}, "
+                f"therefore adding adjust_mw as 0"
+            )
             forecast_value.adjust_mw = 0.0
 
 

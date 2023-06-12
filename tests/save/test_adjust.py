@@ -51,7 +51,7 @@ def test_add_adjust_to_forecasts(latest_me, db_session):
 
 @freeze_time("2023-01-09 16:25")
 def test_add_adjust_to_forecasts_no_me_values(db_session):
-    """ Test to check, if there are no me values, make sure the adjust mw are 0 not NaN"""
+    """Test to check, if there are no me values, make sure the adjust mw are 0 not NaN"""
 
     datetime_now = datetime(2023, 1, 9, 16, 30, tzinfo=timezone.utc)
     forecasts = make_fake_forecasts(
