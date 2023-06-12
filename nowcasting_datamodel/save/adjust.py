@@ -3,8 +3,8 @@ import logging
 from datetime import datetime, timedelta
 from typing import List, Union
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from nowcasting_datamodel.models import Forecast, ForecastSQL, MetricValue, MetricValueSQL
 from nowcasting_datamodel.read.read_metric import read_latest_me_national
