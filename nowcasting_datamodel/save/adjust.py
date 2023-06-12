@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import List, Union
 
 import pandas as pd
+import numpy as np
 
 from nowcasting_datamodel.models import Forecast, ForecastSQL, MetricValue, MetricValueSQL
 from nowcasting_datamodel.read.read_metric import read_latest_me_national
@@ -80,6 +81,12 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
             # add value to ForecastValueSQL
             forecast_value.adjust_mw = value
+            if np.isnan(value):
+                logger.debug(
+                    f"Found ME value for {target_time} in {latest_me_df}, "
+                    f"but it was NaN, therefore adding adjust_mw as 0"
+                )
+                forecast_value.adjust_mw = 0.0
 
         except Exception:
             logger.debug(
