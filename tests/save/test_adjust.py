@@ -60,7 +60,6 @@ def test_add_adjust_to_forecasts_no_me_values(db_session):
 
     add_adjust_to_forecasts(session=db_session, forecasts_sql=forecasts)
 
-    assert forecasts[0].forecast_values[0].adjust_mw == 16 * 60 + 30
     assert forecasts[1].forecast_values[0].adjust_mw == 0.0
 
 

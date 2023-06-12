@@ -56,8 +56,10 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
 
     # 1. read metric values
     latest_me = read_latest_me_national(session=session, model_name=model_name)
-    assert len(latest_me) > 0
-    logger.debug(f"Found {len(latest_me)} latest ME values")
+    if len(latest_me) == 0:
+        logger.warning(f"Found no ME values found for {model_name=}")
+    else:
+        logger.debug(f"Found {len(latest_me)} latest ME values")
 
     # 2. filter value down to now onwards
     # get the number of hours to go ahead, we've added 1 to make sure we use the last one as well
@@ -148,6 +150,9 @@ def reduce_metric_values_to_correct_forecast_horizon(
     )
 
     latest_me_df = pd.DataFrame([MetricValue.from_orm(m).dict() for m in latest_me])
+    if len(latest_me_df) == 0:
+        # no latest ME values, so just making an empty dataframe
+        latest_me_df = pd.DataFrame(columns=['forecast_horizon_minutes','time_of_day','value'])
 
     # Let now big a dataframe of datetimes from now onwards. Lets say the time is 04.30, then
     # time forecast_horizon value
@@ -161,7 +166,6 @@ def reduce_metric_values_to_correct_forecast_horizon(
             start=datetime_now, end=datetime_now + timedelta(hours=hours_ahead), freq="30T"
         ),
     )
-    print(results_df)
     results_df["datetime"] = results_df.index
     results_df["time_of_day"] = results_df.index.time
     results_df["forecast_horizon_minutes"] = range(0, 30 * len(results_df), 30)
