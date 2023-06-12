@@ -49,6 +49,22 @@ def test_add_adjust_to_forecasts(latest_me, db_session):
     assert forecasts[1].forecast_values[0].adjust_mw == 0.0
 
 
+@freeze_time("2023-01-09 16:25")
+def test_add_adjust_to_forecasts_no_me_values(db_session):
+    """ Test to check, if there are no me values, make sure the adjust mw are 0 not NaN"""
+    assert len(db_session.query(MetricValueSQL).all()) > 0
+
+    datetime_now = datetime(2023, 1, 9, 16, 30, tzinfo=timezone.utc)
+    forecasts = make_fake_forecasts(
+        gsp_ids=list(range(0, 2)), session=db_session, t0_datetime_utc=datetime_now
+    )
+
+    add_adjust_to_forecasts(session=db_session, forecasts_sql=forecasts)
+
+    assert forecasts[0].forecast_values[0].adjust_mw == 16 * 60 + 30
+    assert forecasts[1].forecast_values[0].adjust_mw == 0.0
+
+
 def test_get_forecast_horizon_from_forecast(db_session):
     forecasts = make_fake_forecasts(gsp_ids=range(0, 1), session=db_session)
 
