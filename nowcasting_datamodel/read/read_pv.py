@@ -152,7 +152,9 @@ def get_pv_yield(
     end_utc: Optional[datetime] = None,
     correct_data: Optional[bool] = None,
     providers: Optional[List[str]] = None,
+    distinct: Optional[bool] = False,
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
+
     """
     Get the last pv yield data
 
@@ -162,11 +164,16 @@ def get_pv_yield(
     :param start_utc: search filters >= on 'datetime_utc'. Can be None
     :param correct_data: Filters on incorrect_data in pv_systems
     :param providers: optional list of provider names
+    :param distinct: if True, only return distinct pv yields
     :return: either list of pv yields, or pv systems
     """
 
     # start main query
     query = session.query(PVYieldSQL)
+
+    if distinct:
+        query = query.distinct(PVYieldSQL.pv_system_id, PVYieldSQL.datetime_utc)
+
     query = query.join(PVSystemSQL)
     query = query.options(joinedload(PVYieldSQL.pv_system))
 
@@ -193,6 +200,7 @@ def get_pv_yield(
     query = query.order_by(
         PVSystemSQL.id,
         PVYieldSQL.datetime_utc,
+        PVYieldSQL.created_utc.desc(),
     )
 
     # get all results

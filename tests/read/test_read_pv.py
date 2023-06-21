@@ -157,6 +157,7 @@ def test_read_pv_yield_end_utc(db_session_pv, pv_yields_and_systems):
         session=db_session_pv,
         pv_systems_ids=[1, 2],
         end_utc=datetime(2022, 1, 2),
+        distinct=True
     )
     assert len(pv_yields) == 2
 
