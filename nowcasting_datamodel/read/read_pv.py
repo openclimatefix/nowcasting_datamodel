@@ -154,7 +154,6 @@ def get_pv_yield(
     providers: Optional[List[str]] = None,
     distinct: Optional[bool] = False,
 ) -> Union[List[PVYieldSQL], List[PVSystemSQL]]:
-
     """
     Get the last pv yield data
 
