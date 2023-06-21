@@ -171,7 +171,7 @@ def get_pv_yield(
     query = session.query(PVYieldSQL)
 
     if distinct:
-        query = query.distinct(PVYieldSQL.pv_system_id, PVYieldSQL.datetime_utc)
+        query = query.distinct(PVSystemSQL.id, PVYieldSQL.datetime_utc)
 
     query = query.join(PVSystemSQL)
     query = query.options(joinedload(PVYieldSQL.pv_system))
