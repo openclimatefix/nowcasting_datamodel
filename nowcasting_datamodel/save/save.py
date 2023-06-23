@@ -1,5 +1,6 @@
 """ Save forecasts to the database """
 import logging
+import os
 from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
@@ -14,6 +15,8 @@ from nowcasting_datamodel.save.update import (
 )
 
 logger = logging.getLogger(__name__)
+
+use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
 
 
 def save(
@@ -35,6 +38,12 @@ def save(
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     :param apply_adjuster: Optional (default true), to apply the adjuster
     """
+
+    if apply_adjuster & (not use_adjuster_env_var):
+        logger.warning("USE_ADJUSTER is set to False, but apply_adjuster is set to True. "
+                       "Therefore the adjuster will not be applied to the forecasts.")
+        apply_adjuster = False
+
     if apply_adjuster:
         logger.debug("Add Adjust to forecasts")
         add_adjust_to_forecasts(session=session, forecasts_sql=forecasts)
