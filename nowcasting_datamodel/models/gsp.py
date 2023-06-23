@@ -99,9 +99,12 @@ class GSPYield(EnhancedBaseModel):
         "in-day", description="When the GSP data is pulled, can be 'in-day' or 'day-after'"
     )
     capacity_mwp: float = Field(..., description="The estimate current capacity")
-    pvlive_updated_utc: float = Field(..., description="When PVlive made this value")
+    pvlive_updated_utc: datetime = Field(..., description="When PVlive made this value")
 
     _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
+        datetime_must_have_timezone
+    )
+    _normalize_pvlive_updated_utc = validator("pvlive_updated_utc", allow_reuse=True)(
         datetime_must_have_timezone
     )
 
