@@ -80,6 +80,8 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
     datetime_utc = Column(DateTime, index=True)
     solar_generation_kw = Column(Float)
     regime = Column(String, nullable=True)
+    capacity_mwp = Column(Float)
+    pvlive_updated_utc = Column(DateTime)
 
     # many (gsp_yields) to one (location)
     location = relationship("LocationSQL", back_populates="gsp_yields")
@@ -96,6 +98,8 @@ class GSPYield(EnhancedBaseModel):
     regime: str = Field(
         "in-day", description="When the GSP data is pulled, can be 'in-day' or 'day-after'"
     )
+    capacity_mwp: float = Field(..., description="The estimate current capacity")
+    pvlive_updated_utc: float = Field(..., description="When PVlive made this value")
 
     _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
         datetime_must_have_timezone
@@ -129,6 +133,8 @@ class GSPYield(EnhancedBaseModel):
             datetime_utc=self.datetime_utc,
             solar_generation_kw=self.solar_generation_kw,
             regime=self.regime,
+            capacity_mwp=self.capacity_mwp,
+            pvlive_updated_utc=self.pvlive_updated_utc,
         )
 
 
