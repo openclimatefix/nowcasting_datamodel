@@ -42,8 +42,10 @@ def save(
     """
 
     if apply_adjuster & (not use_adjuster_env_var):
-        logger.warning("USE_ADJUSTER is set to False, but apply_adjuster is set to True. "
-                       "Therefore the adjuster will not be applied to the forecasts.")
+        logger.warning(
+            "USE_ADJUSTER is set to False, but apply_adjuster is set to True. "
+            "Therefore the adjuster will not be applied to the forecasts."
+        )
         apply_adjuster = False
 
     if apply_adjuster:
