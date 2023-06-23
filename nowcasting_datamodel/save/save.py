@@ -32,6 +32,8 @@ def save(
     1. Add sqlalchemy onjects to database
     2. Saves to 'latest' table aswell
 
+    Note that apply_adjuster=True can be overwritten by "USE_ADJUSTER" env var
+
     :param forecasts: list of sql forecasts
     :param session: database session
     :param update_national: Optional (default true), to update the national forecast
