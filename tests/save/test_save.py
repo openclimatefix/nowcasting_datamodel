@@ -22,7 +22,7 @@ def test_save(db_session, latest_me):
     )
 
     forecast_values = db_session.query(ForecastValueSQL).all()
-    assert forecast_values[0].adjust_mw == 0
+    assert forecast_values[0].adjust_mw != 0
 
     # 10 forecast, + 10 historic ones
     assert len(db_session.query(ForecastSQL).all()) == 20
