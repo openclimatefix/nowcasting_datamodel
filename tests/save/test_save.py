@@ -100,6 +100,7 @@ def test_save_all_forecast_values_seven_days(db_session):
 
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 3 * 112
 
+
 @pytest.fixture()
 def dont_use_adjuster():
     os.environ["USE_ADJUSTER"] = "0"
@@ -113,7 +114,7 @@ def test_save_dont_use_adjuster(db_session, latest_me):
     save(
         session=db_session,
         forecasts=forecasts,
-        apply_adjuster=True # this gets override by the env variable
+        apply_adjuster=True,  # this gets override by the env variable
     )
 
     forecast_values = db_session.query(ForecastValueSQL).all()
