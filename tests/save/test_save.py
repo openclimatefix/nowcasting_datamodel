@@ -1,4 +1,7 @@
 from datetime import datetime, timezone
+import os
+import numpy as np
+import pytest
 
 from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
 from nowcasting_datamodel.models.forecast import (
@@ -18,6 +21,9 @@ def test_save(db_session, latest_me):
         session=db_session,
         forecasts=forecasts,
     )
+
+    forecast_values = db_session.query(ForecastValueSQL).all()
+    assert np.max([fv.adjust_mw for fv in forecast_values]) != 0.0
 
     # 10 forecast, + 10 historic ones
     assert len(db_session.query(ForecastSQL).all()) == 20
@@ -94,3 +100,23 @@ def test_save_all_forecast_values_seven_days(db_session):
     save_all_forecast_values_seven_days(session=db_session, forecasts=forecasts)
 
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 3 * 112
+
+
+@pytest.fixture()
+def dont_use_adjuster():
+    os.environ["USE_ADJUSTER"] = "0"
+    yield
+    os.environ["USE_ADJUSTER"] = "1"
+
+
+def test_save_dont_use_adjuster(db_session, latest_me, dont_use_adjuster):
+    # Make sure save works where no forecast already exists
+    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
+    save(
+        session=db_session,
+        forecasts=forecasts,
+        apply_adjuster=True,  # this gets override by the env variable
+    )
+
+    forecast_values = db_session.query(ForecastValueSQL).all()
+    assert np.max([fv.adjust_mw for fv in forecast_values]) == 0.0
