@@ -16,8 +16,6 @@ from nowcasting_datamodel.save.update import (
 
 logger = logging.getLogger(__name__)
 
-use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
-
 
 def save(
     forecasts: List[ForecastSQL],
@@ -41,6 +39,7 @@ def save(
     :param apply_adjuster: Optional (default true), to apply the adjuster
     """
 
+    use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
     if apply_adjuster & (not use_adjuster_env_var):
         logger.warning(
             "USE_ADJUSTER is set to False, but apply_adjuster is set to True. "
