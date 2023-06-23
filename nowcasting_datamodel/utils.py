@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 def datetime_must_have_timezone(cls, v: datetime):
     """Enforce that this variable must have a timezone"""
+    if v is None:
+        return v
     if v.tzinfo is None:
         logger.debug(f"{v} must have a timezone, for cls {cls}." f"So we are going to add UTC ")
         v = v.replace(tzinfo=timezone.utc)
