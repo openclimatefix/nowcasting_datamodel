@@ -46,6 +46,7 @@ def test_save(db_session, latest_me):
         db_session.query(ForecastValueLatestSQL).filter(ForecastValueLatestSQL.gsp_id == 2).all()
     )
     assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
+    assert forecast_latest_values[0].properties is not None
 
 
 def test_save_no_adjuster(db_session):

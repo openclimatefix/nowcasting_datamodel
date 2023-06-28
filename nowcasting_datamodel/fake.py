@@ -54,6 +54,7 @@ def make_fake_forecast_value(
         target_time=target_time,
         expected_power_generation_megawatts=power,
         adjust_mw=0.0,
+        properties={'10': power*0.9, '90':power*1.1},
     )
 
 

@@ -286,6 +286,9 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     model_id = Column(Integer, index=True, primary_key=True, default=-1)
     is_primary = Column(Boolean, default=True)
     adjust_mw = Column(Float, default=0.0)
+    # this can be used to store any additional information about the forecast, like p_levels.
+    # Want to keep it as json so that we can store different properties for different forecasts
+    properties = Column(MutableDict.as_mutable(JSON), nullable=True)
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
