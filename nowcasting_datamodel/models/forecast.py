@@ -17,6 +17,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    JSON,
     Index,
     Integer,
     event,
@@ -26,6 +27,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
+from sqlalchemy.ext.mutable import MutableDict
 
 from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.gsp import Location
@@ -112,6 +114,9 @@ class ForecastValueSQLMixin(CreatedMixin):
     target_time = Column(DateTime(timezone=True), nullable=False, primary_key=True)
     expected_power_generation_megawatts = Column(Float(precision=6))
     adjust_mw = Column(Float, default=0.0)
+    # this can be used to store any additional information about the forecast, like p_levels.
+    # Want to keep it as json so that we can store different properties for different forecasts
+    properties = Column(MutableDict.as_mutable(JSON), nullable=True)
 
     @declared_attr
     def forecast_id(self):
