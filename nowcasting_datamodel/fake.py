@@ -62,8 +62,8 @@ def make_fake_forecast(
     gsp_id: int,
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
-    forecast_values: Optional = None,
-    forecast_values_latest: Optional = None,
+    forecast_values: Optional[List[ForecastValueSQL]] = None,
+    forecast_values_latest: Optional[List[ForecastValueSQL]] = None,
     add_latest: Optional[bool] = False,
     historic: Optional[bool] = False,
 ) -> ForecastSQL:
@@ -127,7 +127,7 @@ def make_fake_forecasts(
     gsp_ids: List[int],
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
-    forecast_values: Optional = None,
+    forecast_values: Optional[List[ForecastValueSQL]] = None,
     add_latest: Optional[bool] = False,
     historic: Optional[bool] = False,
 ) -> List[ForecastSQL]:
