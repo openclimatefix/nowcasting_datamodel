@@ -343,10 +343,14 @@ class ForecastValue(EnhancedBaseModel):
 
         # this is because from orm doesnt copy over '_' variables.
         # But we don't want to expose this in the API
+        default_value = 0.0
         if hasattr(obj, "adjust_mw"):
-            m._adjust_mw = obj.adjust_mw
+            adjust_mw = obj.adjust_mw
+            if not adjust_mw:
+                adjust_mw = default_value
+            m._adjust_mw = adjust_mw
         else:
-            m._adjust_mw = 0.0
+            m._adjust_mw = default_value
 
         return m
 
