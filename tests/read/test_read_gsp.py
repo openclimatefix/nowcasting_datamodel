@@ -225,7 +225,10 @@ def test_get_gsp_yield_sum(db_session):
     _ = setup_gsp_yields(db_session)
 
     gsp_yields = get_gsp_yield_sum(
-        session=db_session, gsp_ids=[1, 2], start_datetime_utc=datetime(2022, 1, 1), end_datetime_utc=datetime(2022, 1, 2)
+        session=db_session,
+        gsp_ids=[1, 2],
+        start_datetime_utc=datetime(2022, 1, 1),
+        end_datetime_utc=datetime(2022, 1, 2),
     )
 
     # read database
