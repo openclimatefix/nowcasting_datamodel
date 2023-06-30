@@ -194,7 +194,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
         # divide by the sum of the weights, # TODO should we be worried about dividing by zero?
         for col in ["expected_power_generation_megawatts", "adjust_mw"]:
-            duplicated[col] /= duplicated['weight']
+            duplicated[col] /= duplicated["weight"]
 
         logger.debug(duplicated)
     # join unique and duplicates together
