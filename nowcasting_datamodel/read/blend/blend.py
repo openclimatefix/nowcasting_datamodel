@@ -9,6 +9,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
+import pandas as pd
 import structlog
 from sqlalchemy.orm.session import Session
 
@@ -23,8 +24,6 @@ from nowcasting_datamodel.read.blend.weights import (
     make_weights_df,
 )
 from nowcasting_datamodel.read.read import get_forecast_values, get_forecast_values_latest
-
-import pandas as pd
 
 logger = structlog.stdlib.get_logger()
 
@@ -64,7 +63,9 @@ def get_blend_forecast_values_latest(
         weights_df = None
 
     if properties_model is not None:
-        assert properties_model in model_names, f"properties_model must be in model_names {model_names}"
+        assert (
+            properties_model in model_names
+        ), f"properties_model must be in model_names {model_names}"
 
     # get forecast for the different models
     forecast_values_all_model = []
@@ -106,9 +107,11 @@ def get_blend_forecast_values_latest(
     forecast_values_blended = blend_forecasts_together(forecast_values_all_model, weights_df)
 
     # add properties
-    forecast_values_df = add_properties_to_forecast_values(blended_df=forecast_values_blended,
-                                                           properties_model=properties_model,
-                                                           all_model_df=forecast_values_all_model)
+    forecast_values_df = add_properties_to_forecast_values(
+        blended_df=forecast_values_blended,
+        properties_model=properties_model,
+        all_model_df=forecast_values_all_model,
+    )
 
     # convert back to list of forecast values
     forecast_values = convert_df_to_list_forecast_values(forecast_values_df)
@@ -116,9 +119,11 @@ def get_blend_forecast_values_latest(
     return forecast_values
 
 
-def add_properties_to_forecast_values(blended_df:pd.DataFrame,
-                                      all_model_df: Dict[str, pd.DataFrame],
-                                      properties_model: Optional[str] = None):
+def add_properties_to_forecast_values(
+    blended_df: pd.DataFrame,
+    all_model_df: Dict[str, pd.DataFrame],
+    properties_model: Optional[str] = None,
+):
     """
     Add properties to blended forecast values, we just take it from one model
 
@@ -128,18 +133,20 @@ def add_properties_to_forecast_values(blended_df:pd.DataFrame,
     :return:
     """
 
-    logger.debug(f"Adding properties to blended forecast values for properties_model {properties_model}")
+    logger.debug(
+        f"Adding properties to blended forecast values for properties_model {properties_model}"
+    )
 
     if properties_model is None:
-        blended_df['properties'] = None
+        blended_df["properties"] = None
         return blended_df
 
-    properties_df = all_model_df[all_model_df['model_name'] == properties_model]
-    properties_df = properties_df[['target_time', 'properties']]
+    properties_df = all_model_df[all_model_df["model_name"] == properties_model]
+    properties_df = properties_df[["target_time", "properties"]]
 
     # add properties to blended forecast values
-    blended_df.drop(columns=['properties'], inplace=True)
-    blended_df = blended_df.merge(properties_df, on=['target_time'], how='left')
+    blended_df.drop(columns=["properties"], inplace=True)
+    blended_df = blended_df.merge(properties_df, on=["target_time"], how="left")
 
     assert "properties" in blended_df.columns
 

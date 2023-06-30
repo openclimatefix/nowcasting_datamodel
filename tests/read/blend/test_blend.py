@@ -42,7 +42,7 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
         gsp_id=f1[0].location.gsp_id,
         start_datetime=datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc),
         model_names=["test_1"],
-        properties_model="test_1"
+        properties_model="test_1",
     )
 
     assert len(forecast_values_read) == 2
