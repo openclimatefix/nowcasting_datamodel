@@ -257,8 +257,7 @@ def get_gsp_yield_sum(
     query = query.where(LocationSQL.gsp_id.in_(gsp_ids))
 
     # filter on regime
-    if regime is not None:
-        query = query.where(GSPYieldSQL.regime == regime)
+    query = query.where(GSPYieldSQL.regime == regime)
 
     # filter on datetime
     query = query.where(GSPYieldSQL.datetime_utc >= start_datetime_utc)
