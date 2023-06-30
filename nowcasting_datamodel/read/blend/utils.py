@@ -1,6 +1,6 @@
 """Utils for blending forecasts together"""
 from datetime import datetime, timedelta, timezone
-from typing import List, Union
+from typing import Optional, List, Union
 
 import pandas as pd
 import structlog
@@ -66,7 +66,6 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
                 value.expected_power_generation_megawatts,
                 value.adjust_mw,
                 value.created_utc,
-                value.properties,
                 model_name,
             ]
             for value in forecast_values_one_model
@@ -78,7 +77,6 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
                 "expected_power_generation_megawatts",
                 "adjust_mw",
                 "created_utc",
-                "properties",
                 "model_name",
             ],
         )
@@ -88,31 +86,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
     forecast_values_all_model = pd.concat(forecast_values_all_model_df, axis=0)
     forecast_values_all_model.reset_index(inplace=True)
 
-    # expand "properties" to several columns
-    forecast_values_all_model = expand_properties_column(forecast_values_all_model)
-
     return forecast_values_all_model
-
-
-def expand_properties_column(data_df):
-    """
-    Expand the properties column into several columns
-
-    :param data_df: dataframe with the column "properties" with each row being a dict
-    :return: dataframe with the properties columns expanded into several columns
-    """
-
-    # expand dict
-    data_properties_df = data_df["properties"].apply(pd.Series)
-
-    # rename columns
-    data_properties_df = data_properties_df.rename(
-        columns={f"properties_{c}" for c in data_properties_df.columns}
-    )
-
-    # join back to original dataframe
-    data_df = pd.concat([data_df.drop("properties"), data_properties_df], axis=1)
-    return data_df
 
 
 def convert_df_to_list_forecast_values(forecast_values_blended):
@@ -123,7 +97,6 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
         and 'expected_power_generation_megawatts
     :return:
     """
-    # change in to list of ForecastValue objects
     forecast_values = []
     logger.debug(forecast_values_blended)
     for i, row in forecast_values_blended.iterrows():
@@ -147,7 +120,6 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
     :param forecast_values_all_model: Dataframe containing the columns 'target_time',
         'expected_power_generation_megawatts', 'adjust_mw', 'model_name'
-        Optional columns are 'properties_*'. Note forecast with different properties can not be merged right now.
     :param weights_df: Dataframe of weights with columns 'model_name' and 'weight'
     :return: Dataframe with the columns
         'target_time',
@@ -160,11 +132,6 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     # get all unique target times
     all_target_times = forecast_values_all_model["target_time"].unique()
     logger.debug(f"Found in total {len(all_target_times)} target times")
-
-    # get properties columns
-    properties_columns = [
-        c for c in forecast_values_all_model.columns if c.startswith("properties_")
-    ]
 
     # get the duplicated target times
     duplicated_target_times = forecast_values_all_model[
@@ -192,12 +159,6 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     # only do this if there are duplicated
     if len(duplicated) > 0:
         logger.debug(f"Now blending the duplicated target times using {weights_df}")
-
-        # currently cant blend different properties so just take the first no null ones
-        duplicated_properties = duplicated.dropna(subset=properties_columns, how="all")
-        assert duplicated_properties["target_time"].unqiue() != len(
-            duplicated_properties["target_time"]
-        ), "Currently cant blend properties values from two different forecasts"
 
         pd.DataFrame()
         # unstack the weights
@@ -231,9 +192,6 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         # divide by the sum of the weights, # TODO should we be worried about dividing by zero?
         for col in ["expected_power_generation_megawatts", "adjust_mw"]:
             duplicated[col] /= duplicated[col]
-
-        # merge in the properties
-        # TODO
 
         logger.debug(duplicated)
     # join unique and duplicates together
