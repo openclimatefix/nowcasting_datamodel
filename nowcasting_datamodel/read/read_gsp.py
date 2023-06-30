@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, contains_eager, joinedload
 
-from nowcasting_datamodel.models import GSPYieldSQL, LocationSQL, GSPYield
+from nowcasting_datamodel.models import GSPYield, GSPYieldSQL, LocationSQL
 
 logger = logging.getLogger(__name__)
 
@@ -242,7 +242,7 @@ def get_gsp_yield_sum(
 
     if regime is None:
         logger.debug("No regime given, defaulting to 'in-day'")
-        regime = 'in-day'
+        regime = "in-day"
 
     # start main query
     query = session.query(
