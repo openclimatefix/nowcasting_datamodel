@@ -1,6 +1,6 @@
 """Utils for blending forecasts together"""
 from datetime import datetime, timedelta, timezone
-from typing import Optional, List, Union
+from typing import List, Union
 
 import pandas as pd
 import structlog
