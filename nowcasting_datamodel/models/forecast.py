@@ -12,12 +12,12 @@ from typing import List
 
 from pydantic import Field, validator
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
     Float,
     ForeignKey,
-    JSON,
     Index,
     Integer,
     event,
@@ -25,9 +25,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
-from sqlalchemy.ext.mutable import MutableDict
 
 from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.gsp import Location

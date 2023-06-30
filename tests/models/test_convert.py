@@ -28,7 +28,12 @@ def test_convert_list_forecast_value_seven_days_sql_to_list_forecast(db_session)
 def test_convert_df_to_national_forecast(db_session):
     # set up
     forecast_values_df = pd.DataFrame(
-        columns=["target_datetime_utc", "forecast_mw", "forecast_mw_plevel_10", "forecast_mw_plevel_90"],
+        columns=[
+            "target_datetime_utc",
+            "forecast_mw",
+            "forecast_mw_plevel_10",
+            "forecast_mw_plevel_90",
+        ],
         data=[[datetime(2023, 1, 1), 0.0, 0.0, 0.1], [datetime(2023, 1, 1, 1), 1.0, 0.9, 1.1]],
     )
 
@@ -40,7 +45,7 @@ def test_convert_df_to_national_forecast(db_session):
     )
 
     assert len(forecast.forecast_values) == 2
-    assert forecast.forecast_values[0].properties == {'10': 0.0, '90': 0.1}
+    assert forecast.forecast_values[0].properties == {"10": 0.0, "90": 0.1}
 
     # check it can be committed
     db_session.add(forecast)
