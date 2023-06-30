@@ -8,6 +8,7 @@ from nowcasting_datamodel.read.read_gsp import (
     get_gsp_yield,
     get_gsp_yield_by_location,
     get_latest_gsp_yield,
+    get_gsp_yield_sum,
 )
 
 logger = logging.getLogger(__name__)
@@ -218,3 +219,25 @@ def test_get_gsp_yield_by_location_extra(db_session):
     )
 
     assert len(locations_with_gsp_yields) == 0
+
+
+def test_get_gsp_yield_sum(db_session):
+    _ = setup_gsp_yields(db_session)
+
+    gsp_yields = get_gsp_yield_sum(
+        session=db_session,
+        gsp_ids=[1, 2],
+        start_datetime_utc=datetime(2022, 1, 1),
+        end_datetime_utc=datetime(2022, 1, 2),
+    )
+
+    # read database
+    assert len(gsp_yields) == 2
+
+    assert gsp_yields[0].datetime_utc == datetime(2022, 1, 1, tzinfo=timezone.utc)
+    assert gsp_yields[1].datetime_utc == datetime(2022, 1, 2, tzinfo=timezone.utc)
+
+    assert (
+        gsp_yields[0].solar_generation_kw == 4
+    )  # 2+2, see hard coded values in 'setup_gsp_yields'
+    assert gsp_yields[1].solar_generation_kw == 1  # 1, see hard coded values in 'setup_gsp_yields'
