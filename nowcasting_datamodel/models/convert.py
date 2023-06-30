@@ -101,9 +101,10 @@ def convert_df_to_national_forecast(
         forecast_value_sql.adjust_mw = 0.0
 
         if "forecast_mw_plevel_10" in forecast_values_df.columns:
-            forecast_value_sql.properties = {'10':forecast_value.forecast_mw_plevel_10,
-                                             '90':forecast_value.forecast_mw_plevel_90}
-
+            forecast_value_sql.properties = {
+                "10": forecast_value.forecast_mw_plevel_10,
+                "90": forecast_value.forecast_mw_plevel_90,
+            }
 
         forecast_values.append(forecast_value_sql)
 
