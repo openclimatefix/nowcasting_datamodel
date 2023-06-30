@@ -162,7 +162,9 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     logger.debug(f"Found in total {len(all_target_times)} target times")
 
     # get properties columns
-    properties_columns = [c for c in forecast_values_all_model.columns if c.startswith("properties_")]
+    properties_columns = [
+        c for c in forecast_values_all_model.columns if c.startswith("properties_")
+    ]
 
     # get the duplicated target times
     duplicated_target_times = forecast_values_all_model[
@@ -193,8 +195,9 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
         # currently cant blend different properties so just take the first no null ones
         duplicated_properties = duplicated.dropna(subset=properties_columns, how="all")
-        assert duplicated_properties['target_time'].unqiue() != len(duplicated_properties['target_time']), \
-            f"Currently cant blend properties values from two different forecasts"
+        assert duplicated_properties["target_time"].unqiue() != len(
+            duplicated_properties["target_time"]
+        ), "Currently cant blend properties values from two different forecasts"
 
         pd.DataFrame()
         # unstack the weights
