@@ -7,7 +7,7 @@
 """
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import structlog
 from sqlalchemy.orm.session import Session
@@ -24,6 +24,8 @@ from nowcasting_datamodel.read.blend.weights import (
 )
 from nowcasting_datamodel.read.read import get_forecast_values, get_forecast_values_latest
 
+import pandas as pd
+
 logger = structlog.stdlib.get_logger()
 
 
@@ -34,6 +36,7 @@ def get_blend_forecast_values_latest(
     model_names: Optional[List[str]] = None,
     weights: Optional[List[float]] = None,
     forecast_horizon_minutes: Optional[int] = None,
+    properties_model: Optional[str] = None,
 ) -> List[ForecastValue]:
     """
     Get forecast values
@@ -44,6 +47,7 @@ def get_blend_forecast_values_latest(
         If None is given then all are returned.
     :param model_names: list of model names to use for blending
     :param weights: list of weights to use for blending, see structure in make_weights_df
+    :param properties_model: the model to use for the properties
 
     return: List of forecasts values blended from different models
     """
@@ -58,6 +62,9 @@ def get_blend_forecast_values_latest(
         )
     else:
         weights_df = None
+
+    if properties_model is not None:
+        assert properties_model in model_names, f"properties_model must be in model_names {model_names}"
 
     # get forecast for the different models
     forecast_values_all_model = []
@@ -98,7 +105,42 @@ def get_blend_forecast_values_latest(
     # blend together
     forecast_values_blended = blend_forecasts_together(forecast_values_all_model, weights_df)
 
+    # add properties
+    forecast_values_df = add_properties_to_forecast_values(blended_df=forecast_values_blended,
+                                                           properties_model=properties_model,
+                                                           all_model_df=forecast_values_all_model)
+
     # convert back to list of forecast values
-    forecast_values = convert_df_to_list_forecast_values(forecast_values_blended)
+    forecast_values = convert_df_to_list_forecast_values(forecast_values_df)
 
     return forecast_values
+
+
+def add_properties_to_forecast_values(blended_df:pd.DataFrame,
+                                      all_model_df: Dict[str, pd.DataFrame],
+                                      properties_model: Optional[str] = None):
+    """
+    Add properties to blended forecast values, we just take it from one model
+
+    :param blended_df:
+    :param properties_model:
+    :param all_model_df:
+    :return:
+    """
+
+    logger.debug(f"Adding properties to blended forecast values for properties_model {properties_model}")
+
+    if properties_model is None:
+        blended_df['properties'] = None
+        return blended_df
+
+    properties_df = all_model_df[all_model_df['model_name'] == properties_model]
+    properties_df = properties_df[['target_time', 'properties']]
+
+    # add properties to blended forecast values
+    blended_df.drop(columns=['properties'], inplace=True)
+    blended_df = blended_df.merge(properties_df, on=['target_time'], how='left')
+
+    assert "properties" in blended_df.columns
+
+    return blended_df

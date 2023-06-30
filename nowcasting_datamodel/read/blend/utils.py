@@ -66,6 +66,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
                 value.expected_power_generation_megawatts,
                 value.adjust_mw,
                 value.created_utc,
+                value.properties,
                 model_name,
             ]
             for value in forecast_values_one_model
@@ -77,6 +78,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
                 "expected_power_generation_megawatts",
                 "adjust_mw",
                 "created_utc",
+                "properties",
                 "model_name",
             ],
         )
@@ -110,6 +112,7 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
             expected_power_generation_megawatts=expected_power_generation_megawatts,
         )
         forecast_value._adjust_mw = row.adjust_mw
+        forecast_value._properties = row.properties
         forecast_values.append(forecast_value)
     return forecast_values
 

@@ -318,6 +318,12 @@ class ForecastValue(EnhancedBaseModel):
         "The _ at the start means it is not expose in the API",
     )
 
+    _properties: dict = Field(
+        None,
+        description="Dictionary to hold properties of the forecast, like p_levels. "
+        "The _ at the start means it is not expose in the API",
+    )
+
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
 
     def to_orm(self) -> ForecastValueSQL:

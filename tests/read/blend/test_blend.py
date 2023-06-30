@@ -42,6 +42,7 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
         gsp_id=f1[0].location.gsp_id,
         start_datetime=datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc),
         model_names=["test_1"],
+        properties_model="test_1"
     )
 
     assert len(forecast_values_read) == 2
@@ -50,6 +51,7 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
         forecast_values_read[0].expected_power_generation_megawatts
         == f1[0].forecast_values_latest[0].expected_power_generation_megawatts
     )
+    assert forecast_values_read[0]._properties == {"10": 0.9, "90": 1.1}
 
 
 @freeze_time("2023-01-01 00:00:01")
