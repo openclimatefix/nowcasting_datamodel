@@ -44,7 +44,7 @@ https://stackoverflow.com/questions/61545680/postgresql-partition-and-sqlalchemy
 
 
 class PartitionByMeta(DeclarativeMeta):
-    """Parition table meta object"""
+    """Partition table meta object"""
 
     def __new__(cls, clsname, bases, attrs, *, partition_by, partition_type: str = "RANGE"):
         """Make new partition"""

@@ -85,7 +85,7 @@ def update_latest_input_data_last_updated(
     session: Session, component: str, update_datetime: Optional[datetime] = None
 ):
     """
-    Update the table InputDataLastUpdatedSQL with a new valye
+    Update the table InputDataLastUpdatedSQL with a new value
 
     :param session:
     :param component: This should be gsp, pv, nwp or satellite
