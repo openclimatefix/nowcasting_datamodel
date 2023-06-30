@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import numpy as np
-
 from nowcasting_datamodel.models.gsp import GSPYield
 
 

@@ -419,7 +419,6 @@ def test_update_latest_input_data_last_updated_freeze(db_session):
 
 @freeze_time("2022-01-01")
 def test_update_latest_input_data_last_updated_freeze_no_data(db_session):
-    yesterday = datetime.now(tz=timezone.utc) - timedelta(hours=24)
     now = datetime.now(tz=timezone.utc)
 
     update_latest_input_data_last_updated(session=db_session, component="pv")

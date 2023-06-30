@@ -233,7 +233,7 @@ def test_get_blend_forecast_values_latest_negative(db_session):
 
 
 @freeze_time("2023-01-01 00:00:01")
-def test_get_blend_forecast_values_latest_negative(db_session):
+def test_get_blend_forecast_values_latest_negative_two(db_session):
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
 

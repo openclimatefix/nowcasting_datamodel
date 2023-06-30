@@ -65,7 +65,7 @@ def test_make_fake_forecast(db_session):
     f = ForecastValueSQL(target_time="2023-01-01 12:00:00", expected_power_generation_megawatts=3)
     db_session.add(f)
     db_session.commit()
-    tables = db_session.execute(text("SELECT * FROM forecast_value_2023_01")).all()
+    _ = db_session.execute(text("SELECT * FROM forecast_value_2023_01")).all()
 
 
 def test_make_fake_forecasts(db_session):

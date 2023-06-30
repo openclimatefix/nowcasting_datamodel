@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from freezegun import freeze_time
 
-from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecast
+from nowcasting_datamodel.fake import make_fake_forecast
 from nowcasting_datamodel.read.read import get_forecast_values
 
 logger = logging.getLogger(__name__)

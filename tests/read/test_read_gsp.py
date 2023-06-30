@@ -202,7 +202,7 @@ def test_get_gsp_yield_by_location(db_session):
     assert locations_with_gsp_yields[0].gsp_id == 1
     assert len(locations_with_gsp_yields[0].gsp_yields) == 2
 
-    locations = [LocationWithGSPYields.from_orm(l) for l in locations_with_gsp_yields]
+    locations = [LocationWithGSPYields.from_orm(location) for location in locations_with_gsp_yields]
     assert len(locations[0].gsp_yields) == 2
     assert locations_with_gsp_yields[0].gsp_yields[0].datetime_utc.tzinfo == timezone.utc
 

@@ -17,7 +17,6 @@ from nowcasting_datamodel.models.forecast import (
 
 def test_adjust_forecasts(forecasts):
     forecasts[0].forecast_values[0].expected_power_generation_megawatts = 10.0
-    v = forecasts[0].forecast_values[0].expected_power_generation_megawatts
     forecasts[0].forecast_values[0].adjust_mw = 1.23
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
@@ -29,7 +28,6 @@ def test_adjust_forecasts(forecasts):
 
 def test_adjust_forecast_neg(forecasts):
     forecasts[0].forecast_values[0].expected_power_generation_megawatts = 10.0
-    v = forecasts[0].forecast_values[0].expected_power_generation_megawatts
     forecasts[0].forecast_values[0].adjust_mw = -1.23
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
@@ -46,7 +44,7 @@ def test_adjust_forecast_below_zero(forecasts):
 
     forecasts[0].adjust(limit=v * 3)
 
-    ## validate
+    # validate
     Forecast(**forecasts[0].dict())
 
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 0.0
@@ -214,7 +212,10 @@ def test_forecast_latest_distinct_model_id(db_session):
 
     # with pytest.raises(Exception):
     #     f2 = ForecastValueLatestSQL(
-    #         gsp_id=1, target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=2, model_id=1
+    #         gsp_id=1,
+    #         target_time=datetime(2023, 1, 1),
+    #         expected_power_generation_megawatts=2,
+    #         model_id=1
     #     )
     #     db_session.add(f2)
     #     db_session.commit()

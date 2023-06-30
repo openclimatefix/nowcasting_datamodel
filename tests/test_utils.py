@@ -1,8 +1,6 @@
 """ Utils functions for test """
 from datetime import datetime, timezone
 
-import pytest
-
 # Used constants
 from nowcasting_datamodel.utils import convert_to_camelcase, datetime_must_have_timezone
 
