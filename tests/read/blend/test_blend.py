@@ -25,6 +25,7 @@ def test_get_blend_forecast_values_latest_one_model(db_session):
             expected_power_generation_megawatts=1,
             target_time=datetime(2023, 1, 1, tzinfo=timezone.utc),
             model_id=model.id,
+            properties={"10": 0.9, "90": 1.1},
         ),
         ForecastValueLatestSQL(
             gsp_id=1,
