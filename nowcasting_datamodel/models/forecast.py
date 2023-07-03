@@ -318,6 +318,8 @@ class ForecastValue(EnhancedBaseModel):
         "The _ at the start means it is not expose in the API",
     )
 
+    # This its better to keep this out of the current pydantic models used by the API.
+    # A new pydantic mode can be made that includes the forecast plevels, perhaps in the API.
     _properties: dict = Field(
         None,
         description="Dictionary to hold properties of the forecast, like p_levels. "
