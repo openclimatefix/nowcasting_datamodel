@@ -6,10 +6,10 @@
 
 """
 
-from datetime import datetime
-from typing import Dict, List, Optional
-
 import json
+from datetime import datetime
+from typing import List, Optional
+
 import pandas as pd
 import structlog
 from sqlalchemy.orm.session import Session
@@ -148,7 +148,7 @@ def add_properties_to_forecast_values(
 
     # get properties
 
-    properties_df = all_model_df[all_model_df['model_name'] == properties_model]
+    properties_df = all_model_df[all_model_df["model_name"] == properties_model]
 
     # adjust "properties" to be relative to the expected_power_generation_megawatts
     # this is a bit tricky becasue the "properties" column is a list of dictionaries
@@ -156,8 +156,10 @@ def add_properties_to_forecast_values(
     # We do this so that plevels are relative to the blended values.
     properties_only_df = pd.json_normalize(properties_df["properties"])
     for c in properties_only_df.columns:
-        properties_only_df[c] -= properties_df['expected_power_generation_megawatts']
-    properties_df["properties"] = properties_only_df.apply(lambda x: json.loads(x.to_json()), axis=1)
+        properties_only_df[c] -= properties_df["expected_power_generation_megawatts"]
+    properties_df["properties"] = properties_only_df.apply(
+        lambda x: json.loads(x.to_json()), axis=1
+    )
 
     # reduce columns
     properties_df = properties_df[["target_time", "properties"]]
@@ -168,7 +170,7 @@ def add_properties_to_forecast_values(
     # add "expected_power_generation_megawatts" to the properties
     properties_only_df = pd.json_normalize(blended_df["properties"])
     for c in properties_only_df.columns:
-        properties_only_df[c] += blended_df['expected_power_generation_megawatts']
+        properties_only_df[c] += blended_df["expected_power_generation_megawatts"]
     blended_df["properties"] = properties_only_df.apply(lambda x: json.loads(x.to_json()), axis=1)
 
     assert "properties" in blended_df.columns
