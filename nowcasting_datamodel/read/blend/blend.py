@@ -9,6 +9,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
+import json
 import pandas as pd
 import structlog
 from sqlalchemy.orm.session import Session
@@ -121,15 +122,19 @@ def get_blend_forecast_values_latest(
 
 def add_properties_to_forecast_values(
     blended_df: pd.DataFrame,
-    all_model_df: Dict[str, pd.DataFrame],
+    all_model_df: pd.DataFrame,
     properties_model: Optional[str] = None,
 ):
     """
-    Add properties to blended forecast values, we just take it from one model
+    Add properties to blended forecast values, we just take it from one model.
 
-    :param blended_df:
-    :param properties_model:
-    :param all_model_df:
+    We normalize all properties by the "expected_power_generation_megawatts" value,
+    and renormalize by the blended "expected_power_generation_megawatts" value.
+    This makes sure that plevels 10 and 90 surround the blended value.
+
+    :param blended_df: dataframe of blended forecast values
+    :param properties_model: which model to use for properties
+    :param all_model_df: dataframe of all forecast values for all models
     :return:
     """
 
@@ -141,12 +146,33 @@ def add_properties_to_forecast_values(
         blended_df["properties"] = None
         return blended_df
 
-    properties_df = all_model_df[all_model_df["model_name"] == properties_model]
+    # get properties
+
+    properties_df = all_model_df[all_model_df['model_name'] == properties_model]
+
+    logger.debug(blended_df)
+
+    # adjust "properties" to be relative to the expected_power_generation_megawatts
+    # this is a bit tricky becasue the "properties" column is a list of dictionaries
+    # below we add "expected_power_generation_megawatts" value back to this.
+    # We do this so that plevels are relative to the blended values.
+    properties_only_df = pd.json_normalize(properties_df["properties"])
+    for c in properties_only_df.columns:
+        properties_only_df[c] -= properties_df['expected_power_generation_megawatts']
+    properties_df["properties"] = properties_only_df.apply(lambda x: json.loads(x.to_json()), axis=1)
+
+    # reduce columns
     properties_df = properties_df[["target_time", "properties"]]
 
     # add properties to blended forecast values
     blended_df.drop(columns=["properties"], inplace=True)
     blended_df = blended_df.merge(properties_df, on=["target_time"], how="left")
+
+    # add "expected_power_generation_megawatts" to the properties
+    properties_only_df = pd.json_normalize(blended_df["properties"])
+    for c in properties_only_df.columns:
+        properties_only_df[c] += blended_df['expected_power_generation_megawatts']
+    blended_df["properties"] = properties_only_df.apply(lambda x: json.loads(x.to_json()), axis=1)
 
     assert "properties" in blended_df.columns
 
