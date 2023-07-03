@@ -67,6 +67,8 @@ def convert_df_to_national_forecast(
     :param forecast_values_df: Dataframe containing
         -- target_datetime_utc
         -- forecast_mw
+        -- (Optional) forecast_mw_plevel_10
+        -- (Optional) forecast_mw_plevel_90
     :param: session: database session
     :param: model_name: the name of the model
     :param: version: the version of the model
@@ -97,6 +99,14 @@ def convert_df_to_national_forecast(
             expected_power_generation_megawatts=forecast_value.forecast_mw,
         ).to_orm()
         forecast_value_sql.adjust_mw = 0.0
+
+        forecast_value_sql.properties = {}
+        if "forecast_mw_plevel_10" in forecast_values_df.columns:
+            forecast_value_sql.properties["10"] = forecast_value.forecast_mw_plevel_10
+
+        if "forecast_mw_plevel_90" in forecast_values_df.columns:
+            forecast_value_sql.properties["90"] = forecast_value.forecast_mw_plevel_90
+
         forecast_values.append(forecast_value_sql)
 
     # make forecast object

@@ -145,7 +145,7 @@ def change_forecast_value_to_latest(
     """
 
     forecast_value_dict = {}
-    for v in ["target_time", "expected_power_generation_megawatts", "adjust_mw"]:
+    for v in ["target_time", "expected_power_generation_megawatts", "adjust_mw", "properties"]:
         forecast_value_dict[v] = getattr(forecast_value, v)
 
     forecast_value_dict["gsp_id"] = gsp_id

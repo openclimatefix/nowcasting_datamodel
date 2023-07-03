@@ -46,7 +46,7 @@ def check_forecast_created_utc(forecast_values_all_model) -> List[Union[str, Lis
 
 def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
     """
-    Conert list of forecast values to a pandas dataframe
+    Convert list of forecast values to a pandas dataframe
 
     :param forecast_values_all_model_valid:
     :return: merged into pandas dataframe with columns
@@ -66,6 +66,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
                 value.expected_power_generation_megawatts,
                 value.adjust_mw,
                 value.created_utc,
+                value.properties,
                 model_name,
             ]
             for value in forecast_values_one_model
@@ -77,6 +78,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
                 "expected_power_generation_megawatts",
                 "adjust_mw",
                 "created_utc",
+                "properties",
                 "model_name",
             ],
         )
@@ -85,6 +87,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
     # join into one dataframe
     forecast_values_all_model = pd.concat(forecast_values_all_model_df, axis=0)
     forecast_values_all_model.reset_index(inplace=True)
+
     return forecast_values_all_model
 
 
@@ -96,7 +99,6 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
         and 'expected_power_generation_megawatts
     :return:
     """
-    # change in to list of ForecastValue objects
     forecast_values = []
     logger.debug(forecast_values_blended)
     for i, row in forecast_values_blended.iterrows():
@@ -110,6 +112,7 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
             expected_power_generation_megawatts=expected_power_generation_megawatts,
         )
         forecast_value._adjust_mw = row.adjust_mw
+        forecast_value._properties = row.properties
         forecast_values.append(forecast_value)
     return forecast_values
 
@@ -126,12 +129,18 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         'expected_power_generation_megawatts',
         'adjust_mw'
     """
+
+    # drop of the "properties" column
+    if "properties" in forecast_values_all_model.columns:
+        forecast_values_all_model = forecast_values_all_model.drop(columns=["properties"]).copy()
+
     # blend together
     # lets deal with unique target times first
     logger.debug(forecast_values_all_model["target_time"])
     # get all unique target times
     all_target_times = forecast_values_all_model["target_time"].unique()
     logger.debug(f"Found in total {len(all_target_times)} target times")
+
     # get the duplicated target times
     duplicated_target_times = forecast_values_all_model[
         forecast_values_all_model["target_time"].duplicated()
@@ -139,6 +148,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     logger.debug(f"Found {len(duplicated_target_times)} duplicated target times")
     unique_target_times = [x for x in all_target_times if x not in duplicated_target_times]
     logger.debug(f"Found in {len(unique_target_times)} unique target times")
+
     # get the index of the duplicated and unique target times
     duplicated_target_times_idx = forecast_values_all_model[
         forecast_values_all_model["target_time"].isin(duplicated_target_times)
@@ -146,11 +156,14 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     unique_target_times_idx = forecast_values_all_model[
         forecast_values_all_model["target_time"].isin(unique_target_times)
     ].index
+
     # get the unique forecast values
     forecast_values_blended = forecast_values_all_model.loc[unique_target_times_idx]
+
     # now lets deal with the weights
     duplicated = forecast_values_all_model.loc[duplicated_target_times_idx]
     duplicated = duplicated.drop_duplicates()
+
     # only do this if there are duplicated
     if len(duplicated) > 0:
         logger.debug(f"Now blending the duplicated target times using {weights_df}")
@@ -173,10 +186,8 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         )
 
         # multiply the expected power generation by the weight
-        duplicated["expected_power_generation_megawatts"] = (
-            duplicated["expected_power_generation_megawatts"] * duplicated["weight"]
-        )
-        duplicated["adjust_mw"] = duplicated["adjust_mw"] * duplicated["weight"]
+        for col in ["expected_power_generation_megawatts", "adjust_mw"]:
+            duplicated[col] = duplicated[col] * duplicated["weight"]
         duplicated.drop(columns=["created_utc"], inplace=True)
 
         # sum the weights
@@ -187,8 +198,8 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         duplicated.reset_index(inplace=True, drop=True)
 
         # divide by the sum of the weights, # TODO should we be worried about dividing by zero?
-        duplicated["expected_power_generation_megawatts"] /= duplicated["weight"]
-        duplicated["adjust_mw"] /= duplicated["weight"]
+        for col in ["expected_power_generation_megawatts", "adjust_mw"]:
+            duplicated[col] /= duplicated["weight"]
 
         logger.debug(duplicated)
     # join unique and duplicates together

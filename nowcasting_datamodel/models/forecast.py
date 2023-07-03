@@ -12,6 +12,7 @@ from typing import List
 
 from pydantic import Field, validator
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
@@ -24,6 +25,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.ddl import DDL
 
@@ -112,6 +114,9 @@ class ForecastValueSQLMixin(CreatedMixin):
     target_time = Column(DateTime(timezone=True), nullable=False, primary_key=True)
     expected_power_generation_megawatts = Column(Float(precision=6))
     adjust_mw = Column(Float, default=0.0)
+    # this can be used to store any additional information about the forecast, like p_levels.
+    # Want to keep it as json so that we can store different properties for different forecasts
+    properties = Column(MutableDict.as_mutable(JSON), nullable=True)
 
     @declared_attr
     def forecast_id(self):
@@ -281,6 +286,9 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     model_id = Column(Integer, index=True, primary_key=True, default=-1)
     is_primary = Column(Boolean, default=True)
     adjust_mw = Column(Float, default=0.0)
+    # this can be used to store any additional information about the forecast, like p_levels.
+    # Want to keep it as json so that we can store different properties for different forecasts
+    properties = Column(MutableDict.as_mutable(JSON), nullable=True)
 
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
@@ -307,6 +315,14 @@ class ForecastValue(EnhancedBaseModel):
         0.0,
         description="The amount that the forecast should be adjusted by, "
         "due to persistence errors. This way we keep the original ML prediction. "
+        "The _ at the start means it is not expose in the API",
+    )
+
+    # This its better to keep this out of the current pydantic models used by the API.
+    # A new pydantic mode can be made that includes the forecast plevels, perhaps in the API.
+    _properties: dict = Field(
+        None,
+        description="Dictionary to hold properties of the forecast, like p_levels. "
         "The _ at the start means it is not expose in the API",
     )
 
