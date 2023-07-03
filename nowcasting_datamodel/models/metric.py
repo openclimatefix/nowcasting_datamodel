@@ -41,8 +41,6 @@ class Metric(EnhancedBaseModel):
     name: str = Field(..., description="The name of the metric")
     description: str = Field(..., description="The description of the metric")
 
-    rm_mode = True
-
     def to_orm(self) -> MetricSQL:
         """Change model to LocationSQL"""
 
