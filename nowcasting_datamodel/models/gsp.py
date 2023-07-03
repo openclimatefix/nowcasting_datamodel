@@ -53,8 +53,6 @@ class Location(EnhancedBaseModel):
         None, description="The installed capacity of the GSP in MW"
     )
 
-    rm_mode = True
-
     def to_orm(self) -> LocationSQL:
         """Change model to LocationSQL"""
 
