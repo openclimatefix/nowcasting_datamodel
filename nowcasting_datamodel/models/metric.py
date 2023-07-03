@@ -170,8 +170,6 @@ class MetricValue(EnhancedBaseModel):
     )
     location: Location = Field(..., description="The location object for this metric value")
 
-    rm_mode = True
-
     def to_orm(self) -> MetricValueSQL:
         """Change model to MetricValueSQL"""
 
