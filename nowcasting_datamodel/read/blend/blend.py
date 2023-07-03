@@ -150,8 +150,6 @@ def add_properties_to_forecast_values(
 
     properties_df = all_model_df[all_model_df['model_name'] == properties_model]
 
-    logger.debug(blended_df)
-
     # adjust "properties" to be relative to the expected_power_generation_megawatts
     # this is a bit tricky becasue the "properties" column is a list of dictionaries
     # below we add "expected_power_generation_megawatts" value back to this.
@@ -165,7 +163,6 @@ def add_properties_to_forecast_values(
     properties_df = properties_df[["target_time", "properties"]]
 
     # add properties to blended forecast values
-    blended_df.drop(columns=["properties"], inplace=True)
     blended_df = blended_df.merge(properties_df, on=["target_time"], how="left")
 
     # add "expected_power_generation_megawatts" to the properties

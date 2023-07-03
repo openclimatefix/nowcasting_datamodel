@@ -129,6 +129,11 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         'expected_power_generation_megawatts',
         'adjust_mw'
     """
+
+    # drop of the "properties" column
+    if "properties" in forecast_values_all_model.columns:
+        forecast_values_all_model = forecast_values_all_model.drop(columns=["properties"]).copy()
+
     # blend together
     # lets deal with unique target times first
     logger.debug(forecast_values_all_model["target_time"])
