@@ -136,7 +136,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
                 model_id=model.id,
                 adjust_mw=adjust,
                 created_utc=created_utc,
-                properties=properties
+                properties=properties,
             )
             for t in forecast_horizon_minutes
         ]
@@ -178,7 +178,10 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
     assert forecast_values_read[3]._adjust_mw == 0
     assert forecast_values_read[4]._adjust_mw == 100
     assert forecast_values_read[5]._adjust_mw == 200
+
+
 #
+
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_negative(db_session):
