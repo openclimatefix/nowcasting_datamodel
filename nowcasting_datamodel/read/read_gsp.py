@@ -137,9 +137,7 @@ def get_gsp_yield(
 
     # don't get any nans. (Note nan+1 > nan = False)
     if filter_nans:
-        query = query.where(
-            GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw
-        )
+        query = query.where(GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw)
 
     # only select on results per gsp
     query = query.distinct(*[LocationSQL.gsp_id, GSPYieldSQL.datetime_utc])
@@ -199,9 +197,7 @@ def get_gsp_yield_by_location(
 
     # don't get any nans. (Note nan+1 > nan = False)
     if filter_nans:
-        query = query.where(
-            GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw
-        )
+        query = query.where(GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw)
 
     # only select on results per gsp
     query = query.distinct(*[LocationSQL.gsp_id, GSPYieldSQL.datetime_utc])
@@ -275,9 +271,7 @@ def get_gsp_yield_sum(
         query = query.where(GSPYieldSQL.datetime_utc <= end_datetime_utc)
 
     # filter out nans
-    query = query.where(
-        GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw
-    )
+    query = query.where(GSPYieldSQL.solar_generation_kw + 1 > GSPYieldSQL.solar_generation_kw)
 
     # group and order by datetime
     query = query.group_by(GSPYieldSQL.datetime_utc)
