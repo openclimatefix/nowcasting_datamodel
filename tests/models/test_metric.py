@@ -1,14 +1,5 @@
-from datetime import datetime
-
-import numpy as np
-
 from nowcasting_datamodel.models.metric import (
-    DatetimeInterval,
-    DatetimeIntervalSQL,
-    Metric,
-    MetricSQL,
     MetricValue,
-    MetricValueSQL,
 )
 
 

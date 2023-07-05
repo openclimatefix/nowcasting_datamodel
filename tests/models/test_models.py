@@ -1,6 +1,7 @@
 """ Test Forecast Models"""
 # Used constants
-from datetime import datetime
+from datetime import datetime, timezone
+import numpy as np
 
 import pytest
 
@@ -9,13 +10,13 @@ from nowcasting_datamodel.models.forecast import (
     Forecast,
     ForecastValue,
     ForecastValueLatestSQL,
+    ForecastValueSQL,
     ManyForecasts,
 )
 
 
 def test_adjust_forecasts(forecasts):
     forecasts[0].forecast_values[0].expected_power_generation_megawatts = 10.0
-    v = forecasts[0].forecast_values[0].expected_power_generation_megawatts
     forecasts[0].forecast_values[0].adjust_mw = 1.23
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
@@ -27,7 +28,6 @@ def test_adjust_forecasts(forecasts):
 
 def test_adjust_forecast_neg(forecasts):
     forecasts[0].forecast_values[0].expected_power_generation_megawatts = 10.0
-    v = forecasts[0].forecast_values[0].expected_power_generation_megawatts
     forecasts[0].forecast_values[0].adjust_mw = -1.23
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
@@ -44,7 +44,7 @@ def test_adjust_forecast_below_zero(forecasts):
 
     forecasts[0].adjust(limit=v * 3)
 
-    ## validate
+    # validate
     Forecast(**forecasts[0].dict())
 
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 0.0
@@ -122,6 +122,41 @@ def test_forecast_latest_to_pydantic(forecast_sql):
     assert forecast.forecast_values[0] == ForecastValue.from_orm(f1)
 
 
+def test_forecast_value_from_orm(forecast_sql):
+    forecast_sql = forecast_sql[0]
+
+    f = ForecastValueSQL(
+        target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=1
+    )
+
+    actual = ForecastValue.from_orm(f)
+    expected = ForecastValue(
+        target_time=datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc),
+        expected_power_generation_megawatts=1.0,
+        expected_power_generation_normalized=None,
+    )
+    assert actual == expected
+
+
+@pytest.mark.parametrize("null_value", [float("NaN"), np.nan, None])
+def test_forecast_value_from_orm_from_adjust_mw_nan(forecast_sql, null_value):
+    forecast_sql = forecast_sql[0]
+
+    f = ForecastValueSQL(
+        target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=1
+    )
+    f.adjust_mw = null_value
+
+    actual = ForecastValue.from_orm(f)
+    expected = ForecastValue(
+        target_time=datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc),
+        expected_power_generation_megawatts=1.0,
+        expected_power_generation_normalized=None,
+    )
+    assert actual == expected
+    assert actual._adjust_mw == 0.0
+
+
 def test_forecast_latest_distinct_target_time(db_session):
     f1 = ForecastValueLatestSQL(
         target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=1, gsp_id=1
@@ -178,7 +213,10 @@ def test_forecast_latest_distinct_model_id(db_session):
 
     # with pytest.raises(Exception):
     #     f2 = ForecastValueLatestSQL(
-    #         gsp_id=1, target_time=datetime(2023, 1, 1), expected_power_generation_megawatts=2, model_id=1
+    #         gsp_id=1,
+    #         target_time=datetime(2023, 1, 1),
+    #         expected_power_generation_megawatts=2,
+    #         model_id=1
     #     )
     #     db_session.add(f2)
     #     db_session.commit()

@@ -1,17 +1,11 @@
-import os
 from datetime import datetime
-from typing import List
 
 import pytest
 
 from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.metric import (
     DatetimeInterval,
-    DatetimeIntervalSQL,
     Metric,
-    MetricSQL,
-    MetricValue,
-    MetricValueSQL,
 )
 
 

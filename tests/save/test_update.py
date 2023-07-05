@@ -122,7 +122,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
     assert len(db_session.query(ForecastValueSQL).all()) == 2
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 2
     assert len(db_session.query(ForecastSQL).all()) == 2
-    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).all()) == 1
+    assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic).all()) == 1
 
     with freeze_time("2023-01-01 00:30") as f:
         # new forecast is made
@@ -137,7 +137,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
         f = make_fake_forecasts(gsp_ids=[1], session=db_session, forecast_values=[f3, f4])
         forecast_sql = f[0]
 
-        assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).all()) == 1
+        assert len(db_session.query(ForecastSQL).filter(ForecastSQL.historic).all()) == 1
 
         update_forecast_latest(forecast=forecast_sql, session=db_session)
 
@@ -154,9 +154,7 @@ def test_update_one_gsp_wtih_time_step(db_session):
         assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
         assert forecast_latest_values[0].forecast_id == forecast_latest_values[1].forecast_id
 
-        forecasts_historic = (
-            db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).all()
-        )
+        forecasts_historic = db_session.query(ForecastSQL).filter(ForecastSQL.historic).all()
 
         assert (
             forecasts_historic[0].forecast_creation_time.isoformat()

@@ -5,7 +5,7 @@
 3. get all forecast values
 """
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import structlog
 from sqlalchemy import desc, text
@@ -85,7 +85,7 @@ def update_latest_input_data_last_updated(
     session: Session, component: str, update_datetime: Optional[datetime] = None
 ):
     """
-    Update the table InputDataLastUpdatedSQL with a new valye
+    Update the table InputDataLastUpdatedSQL with a new value
 
     :param session:
     :param component: This should be gsp, pv, nwp or satellite
@@ -407,7 +407,7 @@ def get_forecast_values(
     end_datetime: Optional[datetime] = None,
     forecast_horizon_minutes: Optional[int] = None,
     only_return_latest: Optional[bool] = False,
-    model: Optional = ForecastValueSQL,
+    model: Optional[Union[ForecastValueSQL, ForecastValueSevenDaysSQL]] = ForecastValueSQL,
     model_name: Optional[str] = None,
     created_utc_limit: Optional[datetime] = None,
 ) -> List[ForecastValueSQL]:

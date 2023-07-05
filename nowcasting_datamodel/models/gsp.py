@@ -6,7 +6,7 @@
 """
 import logging
 from datetime import datetime
-from typing import List, Optional
+from typing import ClassVar, List, Optional
 
 from pydantic import Field, validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
@@ -52,6 +52,8 @@ class Location(EnhancedBaseModel):
     installed_capacity_mw: Optional[float] = Field(
         None, description="The installed capacity of the GSP in MW"
     )
+
+    rm_mode: ClassVar[bool] = True
 
     def to_orm(self) -> LocationSQL:
         """Change model to LocationSQL"""
