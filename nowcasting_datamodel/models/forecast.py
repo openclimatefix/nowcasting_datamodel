@@ -10,6 +10,7 @@ import logging
 from datetime import datetime
 from typing import List
 
+import numpy as np
 from pydantic import Field, validator
 from sqlalchemy import (
     JSON,
@@ -346,7 +347,7 @@ class ForecastValue(EnhancedBaseModel):
         default_value = 0.0
         if hasattr(obj, "adjust_mw"):
             adjust_mw = obj.adjust_mw
-            if not adjust_mw:
+            if not adjust_mw or np.isnan(adjust_mw):
                 adjust_mw = default_value
             m._adjust_mw = adjust_mw
         else:

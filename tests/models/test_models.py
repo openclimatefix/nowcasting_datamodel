@@ -138,13 +138,14 @@ def test_forecast_value_from_orm(forecast_sql):
     assert actual == expected
 
 
-def test_forecast_value_from_orm_from_adjust_mw_nan(forecast_sql):
+@pytest.mark.parametrize("null_value", [float("NaN"), np.nan, None])
+def test_forecast_value_from_orm_from_adjust_mw_nan(forecast_sql, null_value):
     forecast_sql = forecast_sql[0]
 
     f = ForecastValueSQL(
         target_time=datetime(2023, 1, 1, 0, 30), expected_power_generation_megawatts=1
     )
-    f._adjust_mw = np.nan
+    f.adjust_mw = null_value
 
     actual = ForecastValue.from_orm(f)
     expected = ForecastValue(
