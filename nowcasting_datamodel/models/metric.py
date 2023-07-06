@@ -169,7 +169,7 @@ class MetricValue(EnhancedBaseModel):
     datetime_interval: DatetimeInterval = Field(
         ..., description="The datetime interval this value is about"
     )
-    location: Location = Field(..., description="The location object for this metric value")
+    location: Location = Field(None, description="The location object for this metric value")
 
     rm_mode: ClassVar[bool] = True
 
