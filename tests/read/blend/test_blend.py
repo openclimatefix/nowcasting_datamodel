@@ -185,7 +185,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_latest_negative(db_session):
-    """ This test makes sure that the blend function changes negatives to zeros"""
+    """This test makes sure that the blend function changes negatives to zeros"""
 
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
@@ -196,10 +196,10 @@ def test_get_blend_forecast_values_latest_negative(db_session):
 
         if model == model_1:
             power = -1
-            adjust=1.0
+            adjust = 1.0
         else:
             power = -2
-            adjust=2.0
+            adjust = 2.0
 
         forecast_horizon_minutes = [0, 30, 8 * 30, 15 * 30]
         f1[0].forecast_values_latest = [
