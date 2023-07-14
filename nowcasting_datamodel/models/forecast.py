@@ -382,7 +382,7 @@ class ForecastValue(EnhancedBaseModel):
             if self.expected_power_generation_megawatts < 0:
                 self.expected_power_generation_megawatts = 0.0
 
-            for p_level in ['10', '90']:
+            for p_level in ["10", "90"]:
                 self._properties[p_level] -= adjust_mw
                 if self._properties[p_level] < 0:
                     self._properties[p_level] = 0.0
