@@ -385,9 +385,10 @@ class ForecastValue(EnhancedBaseModel):
             if isinstance(self._properties, dict):
                 for p_level in ["10", "90"]:
                     if p_level in self._properties.keys():
-                        self._properties[p_level] -= adjust_mw
-                        if self._properties[p_level] < 0:
-                            self._properties[p_level] = 0.0
+                        if self._properties[p_level] is not None:
+                            self._properties[p_level] -= adjust_mw
+                            if self._properties[p_level] < 0:
+                                self._properties[p_level] = 0.0
 
         return self
 
