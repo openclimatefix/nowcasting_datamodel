@@ -49,10 +49,9 @@ def test_adjust_forecast_below_zero(forecasts):
     Forecast(**forecasts[0].dict())
 
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 0.0
-    assert forecasts[0].forecast_values[0]._properties['10'] == 0.0
+    assert forecasts[0].forecast_values[0]._properties["10"] == 0.0
     assert "expected_power_generation_megawatts" in forecasts[0].forecast_values[0].dict()
     assert "_adjust_mw" not in forecasts[0].forecast_values[0].dict()
-
 
 
 def test_adjust_many_forecasts(forecasts):
