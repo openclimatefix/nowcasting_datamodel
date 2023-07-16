@@ -182,7 +182,7 @@ def test_get_blend_forecast_values_latest_two_model_read_two(db_session):
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_values_two_models_plevel_second(db_session):
-    """ This test checks that the blend is done correctly when the plevel is the second"""
+    """This test checks that the blend is done correctly when the plevel is the second"""
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
 
@@ -234,11 +234,11 @@ def test_get_blend_forecast_values_two_models_plevel_second(db_session):
         forecast_values_read[0].target_time
         == (forecasts["test_1"])[0].forecast_values_latest[0].target_time
     )
-    assert forecast_values_read[0].expected_power_generation_megawatts == 1.0 # test_1
-    assert forecast_values_read[1].expected_power_generation_megawatts == 1.0 # test_1
-    assert forecast_values_read[2].expected_power_generation_megawatts == 2 # test_2
+    assert forecast_values_read[0].expected_power_generation_megawatts == 1.0  # test_1
+    assert forecast_values_read[1].expected_power_generation_megawatts == 1.0  # test_1
+    assert forecast_values_read[2].expected_power_generation_megawatts == 2  # test_2
     assert forecast_values_read[3].expected_power_generation_megawatts == 2  # test_2
-    assert forecast_values_read[4].expected_power_generation_megawatts == 1.5 #mix
+    assert forecast_values_read[4].expected_power_generation_megawatts == 1.5  # mix
     assert forecast_values_read[5].expected_power_generation_megawatts == 1  # test_1
 
     assert forecast_values_read[0]._properties == {"10": 0.9, "90": 1.1}
@@ -254,9 +254,6 @@ def test_get_blend_forecast_values_two_models_plevel_second(db_session):
     assert forecast_values_read[3]._adjust_mw == 100
     assert forecast_values_read[4]._adjust_mw == 50
     assert forecast_values_read[5]._adjust_mw == 0
-
-
-
 
 
 @freeze_time("2023-01-01 00:00:01")
