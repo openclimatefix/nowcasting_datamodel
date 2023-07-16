@@ -149,7 +149,7 @@ def add_properties_to_forecast_values(
     # get properties
 
     properties_df = all_model_df[all_model_df["model_name"] == properties_model]
-    # properties_df.reset_index(inplace=True, drop=True)
+    properties_df.reset_index(inplace=True, drop=True)
 
     # adjust "properties" to be relative to the expected_power_generation_megawatts
     # this is a bit tricky becasue the "properties" column is a list of dictionaries
