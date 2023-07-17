@@ -2,8 +2,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Union
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import structlog
 
 from nowcasting_datamodel.models import ForecastValue
