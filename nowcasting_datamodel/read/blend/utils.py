@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Union
 
+import numpy as np
 import pandas as pd
 import structlog
 
@@ -91,7 +92,7 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
     return forecast_values_all_model
 
 
-def convert_df_to_list_forecast_values(forecast_values_blended):
+def convert_df_to_list_forecast_values(forecast_values_blended: pd.DataFrame):
     """
     Convert the blended dataframe to a list of ForecastValue objects
 
@@ -104,6 +105,8 @@ def convert_df_to_list_forecast_values(forecast_values_blended):
     for i, row in forecast_values_blended.iterrows():
         # make sure we don't have negative values
         expected_power_generation_megawatts = row.expected_power_generation_megawatts
+        if np.isnan(expected_power_generation_megawatts):
+            continue
         if expected_power_generation_megawatts < 0:
             expected_power_generation_megawatts = 0
 
