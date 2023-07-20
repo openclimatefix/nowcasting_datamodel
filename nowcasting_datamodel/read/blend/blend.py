@@ -94,7 +94,8 @@ def get_blend_forecast_values_latest(
         else:
             logger.debug(
                 f"Found {len(forecast_values_one_model)} values for {model_name} "
-                f"for gsp_id {gsp_id} and start_datetime {start_datetime}"
+                f"for gsp_id {gsp_id} and start_datetime {start_datetime}. "
+                f"First value is {forecast_values_one_model[0].target_time}"
             )
             forecast_values_all_model.append([model_name, forecast_values_one_model])
 
