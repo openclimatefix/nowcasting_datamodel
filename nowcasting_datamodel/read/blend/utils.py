@@ -156,10 +156,23 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     weights_one_df = weights_one_df.rename(columns={"level_1": "model_name"})
     weights_one_df = weights_one_df.rename(columns={"level_0": "target_time"})
 
-    forecast_values_blended = []
+    # join together the forecast values and the weights
+    forecast_values_all_model = forecast_values_all_model.merge(
+        weights_one_df, on=["target_time", "model_name"], how="left"
+    )
+
+    # take all the forecasts that have a weight of 1.0
+    forecast_values_blended = forecast_values_all_model[forecast_values_all_model["weight"] == 1.0]
+
+    # find the other target times than needed to be blended
+    target_times_to_blend = [
+        x for x in all_target_times if x not in forecast_values_blended["target_time"].tolist()
+    ]
+
+    forecast_values_blended = [forecast_values_blended]
     # loop over datetimes, we could do this without looping,
     # but I found it hard to read the code, and keep track of things
-    for target_time in all_target_times:
+    for target_time in target_times_to_blend:
         logger.debug(f"Blending forecasts for {target_time}")
 
         # get the forecast values for this target time
@@ -168,19 +181,13 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         ]
         logger.debug(f"Found {len(forecast_values_one_target_time)} forecasts for {target_time}")
 
-        # get the weights for this target time
-        weights_one_target_time = weights_one_df[weights_one_df["target_time"] == target_time]
-        logger.debug(f"Found {len(weights_one_target_time)} weights for {target_time}")
-
         # merge the forecast values and weights together
         forecast_values_one_target_time = forecast_values_one_target_time[
-            ["model_name", "expected_power_generation_megawatts", "adjust_mw"]
+            ["model_name", "expected_power_generation_megawatts", "adjust_mw", "weight"]
         ]
-        logger.debug(weights_one_target_time)
-        weights_one_target_time = weights_one_target_time[["model_name", "weight"]]
 
         forecast_values_one_target_time_blend = blend_together_one_target_time(
-            forecast_values_one_target_time, weights_one_target_time, target_time
+            forecast_values_one_target_time, target_time
         )
 
         total_weights_used = forecast_values_one_target_time_blend["weight"].iloc[0]
@@ -213,15 +220,23 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
                     logger.debug(f"Trying {weights}")
 
+                    # replace weights
+                    forecast_values_one_target_time.drop(columns=["weight"], inplace=True)
+                    forecast_values_one_target_time = forecast_values_one_target_time.merge(
+                        weights, on=["model_name"], how="left"
+                    )
+                    logger.debug(forecast_values_all_model)
+
                     # blend together
                     forecast_values_one_target_time_blend = blend_together_one_target_time(
-                        forecast_values_one_target_time, weights, target_time
+                        forecast_values_one_target_time, target_time
                     )
                     total_weights_used = forecast_values_one_target_time_blend["weight"].iloc[0]
 
                     # keep looping unless the total weights used > 0. This means we have blended the
                     # forecast together using the next weights possible
                     if total_weights_used > 0:
+                        logger.debug(f"Using weights {weights}")
                         break
 
         # append to the blended dataframe
@@ -229,32 +244,26 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
     forecast_values_blended = pd.concat(forecast_values_blended, axis=0)
 
+    # sort by target time
+    forecast_values_blended.sort_values(by=["target_time"], inplace=True)
+
     return forecast_values_blended
 
 
 def blend_together_one_target_time(
     forecast_values_one_target_time: pd.DataFrame,
-    weights_one_target_time: pd.DataFrame,
     target_time: datetime,
 ):
     """
     Blend forecasts for one target time together using the weights
 
     :param forecast_values_one_target_time: dataframe with columns 'model_name',
-        'expected_power_generation_megawatts', 'adjust_mw'. The rows are the different models
-    :param weights_one_target_time: dataframe with columns 'model_name', 'weight'.
+        'expected_power_generation_megawatts', 'adjust_mw', 'weight'.
         The rows are the different models
     :param target_time: the target time of this forecast
     :return: blended dataframe with columns 'target_time', 'expected_power_generation_megawatts',
         'adjust_mw'. The column weight shows how much total weight was used for each model
     """
-    forecast_values_one_target_time = forecast_values_one_target_time.merge(
-        weights_one_target_time,
-        how="left",
-        left_on=["model_name"],
-        right_on=["model_name"],
-    )
-    logger.debug(forecast_values_one_target_time)
 
     # calculate the blended forecast
     weight = np.sum(forecast_values_one_target_time["weight"])
