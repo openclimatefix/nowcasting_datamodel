@@ -232,7 +232,9 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
 
 def blend_together_one_target_time(
-    forecast_values_one_target_time: pd.DataFrame, weights_one_target_time: pd.DataFrame, target_time: datetime
+    forecast_values_one_target_time: pd.DataFrame,
+    weights_one_target_time: pd.DataFrame,
+    target_time: datetime,
 ):
     """
     Blend forecasts for one target time together using the weights
