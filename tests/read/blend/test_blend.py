@@ -524,6 +524,13 @@ def test_get_blend_forecast_three_models(db_session):
 
 @freeze_time("2023-01-01 00:00:01")
 def test_get_blend_forecast_three_models_with_gap(db_session):
+    """
+    The idea of this test its to make a gap in the one of the forecast,
+    In this gap we set the weights to load that model.
+
+    The behaviour we hope is then to use future weights to fill the gap.
+    :return:
+    """
     model_1 = get_model(session=db_session, name="test_1", version="0.0.1")
     model_2 = get_model(session=db_session, name="test_2", version="0.0.1")
     model_3 = get_model(session=db_session, name="test_3", version="0.0.1")
@@ -537,7 +544,7 @@ def test_get_blend_forecast_three_models_with_gap(db_session):
         if model == model_1:
             power = 1
             adjust = 0
-            forecast_horizon_minutes = [-60]
+            forecast_horizon_minutes = [-60] # gap at -30
         elif model == model_2:
             power = 2
             adjust = 50
