@@ -491,7 +491,7 @@ def test_get_blend_forecast_three_models(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 model_id=model.id,
                 adjust_mw=adjust,
-                created_utc=datetime(2023, 1, 1, tzinfo=timezone.utc)
+                created_utc=datetime(2023, 1, 1, tzinfo=timezone.utc),
             )
             for t in forecast_horizon_minutes
         ]
@@ -507,7 +507,7 @@ def test_get_blend_forecast_three_models(db_session):
         gsp_id=f1[0].location.gsp_id,
         start_datetime=datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc),
         model_names=["test_1", "test_2", "test_3"],
-        weights=weights_three_models
+        weights=weights_three_models,
     )
 
     assert len(forecast_values_read) == 5
@@ -554,7 +554,7 @@ def test_get_blend_forecast_three_models_with_gap(db_session):
                 target_time=datetime(2023, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=t),
                 model_id=model.id,
                 adjust_mw=adjust,
-                created_utc=datetime(2023, 1, 1, tzinfo=timezone.utc)
+                created_utc=datetime(2023, 1, 1, tzinfo=timezone.utc),
             )
             for t in forecast_horizon_minutes
         ]
@@ -570,7 +570,7 @@ def test_get_blend_forecast_three_models_with_gap(db_session):
         gsp_id=f1[0].location.gsp_id,
         start_datetime=datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc),
         model_names=["test_1", "test_2", "test_3"],
-        weights=weights_three_models
+        weights=weights_three_models,
     )
 
     assert len(forecast_values_read) == 5
@@ -583,5 +583,3 @@ def test_get_blend_forecast_three_models_with_gap(db_session):
     assert forecast_values_read[2].expected_power_generation_megawatts == 3.0
     assert forecast_values_read[3].expected_power_generation_megawatts == 3.0
     assert forecast_values_read[4].expected_power_generation_megawatts == 2.5
-
-
