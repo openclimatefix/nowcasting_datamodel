@@ -129,7 +129,8 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
     :param forecast_values_all_model: Dataframe containing the columns 'target_time',
         'expected_power_generation_megawatts', 'adjust_mw', 'model_name'
-    :param weights_df: Dataframe of weights with columns of the model name, and index of target times
+    :param weights_df: Dataframe of weights with columns of the model name,
+        and index of target times
     :return: Dataframe with the columns
         'target_time',
         'expected_power_generation_megawatts',
@@ -143,8 +144,8 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     # get all unique target times
     all_target_times = forecast_values_all_model["target_time"].unique()
     if len(all_target_times) == len(forecast_values_all_model):
-        # if we have the same number of unique target times as we have rows, then we only have one model,
-        # so just return that
+        # if we have the same number of unique target times as we have rows,
+        # then we only have one model, so just return that
         return forecast_values_all_model
     logger.debug(f"Found in total {len(all_target_times)} target times")
 
@@ -241,10 +242,11 @@ def blend_together_one_target_time(
 
     :param forecast_values_one_target_time: dataframe with columns 'model_name',
         'expected_power_generation_megawatts', 'adjust_mw'. The rows are the different models
-    :param weights_one_target_time: dataframe with columns 'model_name', 'weight'. The rows are the different models
+    :param weights_one_target_time: dataframe with columns 'model_name', 'weight'.
+        The rows are the different models
     :param target_time: the target time of this forecast
-    :return: blended dataframe with columns 'target_time', 'expected_power_generation_megawatts', 'adjust_mw'.
-        The column weight shows how much total weight was used for each model
+    :return: blended dataframe with columns 'target_time', 'expected_power_generation_megawatts',
+        'adjust_mw'. The column weight shows how much total weight was used for each model
     """
     forecast_values_one_target_time = forecast_values_one_target_time.merge(
         weights_one_target_time,
