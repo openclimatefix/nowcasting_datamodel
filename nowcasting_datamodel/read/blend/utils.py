@@ -89,6 +89,9 @@ def convert_list_forecast_values_to_df(forecast_values_all_model_valid):
     forecast_values_all_model = pd.concat(forecast_values_all_model_df, axis=0)
     forecast_values_all_model.reset_index(inplace=True)
 
+    # sort by target time
+    forecast_values_all_model.sort_values(by=["target_time"], inplace=True)
+
     return forecast_values_all_model
 
 
@@ -137,76 +140,142 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     if "properties" in forecast_values_all_model.columns:
         forecast_values_all_model = forecast_values_all_model.drop(columns=["properties"]).copy()
 
-    # blend together
-    # lets deal with unique target times first
-    logger.debug(forecast_values_all_model["target_time"])
     # get all unique target times
     all_target_times = forecast_values_all_model["target_time"].unique()
+    if len(all_target_times) == len(forecast_values_all_model):
+        # if we have the same number of unique target times as we have rows, then we only have one model,
+        # so just return that
+        return forecast_values_all_model
     logger.debug(f"Found in total {len(all_target_times)} target times")
 
-    # get the duplicated target times
-    duplicated_target_times = forecast_values_all_model[
-        forecast_values_all_model["target_time"].duplicated()
-    ]["target_time"].tolist()
-    logger.debug(f"Found {len(duplicated_target_times)} duplicated target times")
-    unique_target_times = [x for x in all_target_times if x not in duplicated_target_times]
-    logger.debug(f"Found in {len(unique_target_times)} unique target times")
+    # unstack weights
+    weights_one_df = weights_df.stack()
+    weights_one_df.name = "weight"
+    weights_one_df = weights_one_df.reset_index()
+    weights_one_df = weights_one_df.rename(columns={"level_1": "model_name"})
+    weights_one_df = weights_one_df.rename(columns={"level_0": "target_time"})
 
-    # get the index of the duplicated and unique target times
-    duplicated_target_times_idx = forecast_values_all_model[
-        forecast_values_all_model["target_time"].isin(duplicated_target_times)
-    ].index
-    unique_target_times_idx = forecast_values_all_model[
-        forecast_values_all_model["target_time"].isin(unique_target_times)
-    ].index
+    forecast_values_blended = []
+    # loop over datetimes, we could do this without looping,
+    # but I found it hard to read the code, and keep track of things
+    for target_time in all_target_times:
+        logger.debug(f"Blending forecasts for {target_time}")
 
-    # get the unique forecast values
-    forecast_values_blended = forecast_values_all_model.loc[unique_target_times_idx]
+        # get the forecast values for this target time
+        forecast_values_one_target_time = forecast_values_all_model[
+            forecast_values_all_model["target_time"] == target_time
+        ]
+        logger.debug(f"Found {len(forecast_values_one_target_time)} forecasts for {target_time}")
 
-    # now lets deal with the weights
-    duplicated = forecast_values_all_model.loc[duplicated_target_times_idx]
-    duplicated = duplicated.drop_duplicates()
+        # get the weights for this target time
+        weights_one_target_time = weights_one_df[weights_one_df["target_time"] == target_time]
+        logger.debug(f"Found {len(weights_one_target_time)} weights for {target_time}")
 
-    # only do this if there are duplicated
-    if len(duplicated) > 0:
-        logger.debug(f"Now blending the duplicated target times using {weights_df}")
+        # merge the forecast values and weights together
+        forecast_values_one_target_time = forecast_values_one_target_time[
+            ["model_name", "expected_power_generation_megawatts", "adjust_mw"]
+        ]
+        logger.debug(weights_one_target_time)
+        weights_one_target_time = weights_one_target_time[["model_name", "weight"]]
 
-        pd.DataFrame()
-        # unstack the weights
-        weights_one_df = weights_df.stack()
-        weights_one_df.name = "weight"
-        weights_one_df = weights_one_df.reset_index()
-        weights_one_df = weights_one_df.rename(columns={"level_1": "model_name"})
-        weights_one_df = weights_one_df.rename(columns={"level_0": "target_time"})
-
-        # join the weights to the duplicated
-        duplicated = pd.merge(
-            duplicated,
-            weights_one_df,
-            how="left",
-            left_on=["model_name", "target_time"],
-            right_on=["model_name", "target_time"],
+        forecast_values_one_target_time_blend = blend_together_one_target_time(
+            forecast_values_one_target_time, weights_one_target_time, target_time
         )
 
-        # multiply the expected power generation by the weight
-        for col in ["expected_power_generation_megawatts", "adjust_mw"]:
-            duplicated[col] = duplicated[col] * duplicated["weight"]
-        duplicated.drop(columns=["created_utc"], inplace=True)
+        total_weights_used = forecast_values_one_target_time_blend["weight"].iloc[0]
+        if total_weights_used == 0:
+            # the total weight is 0, which means the forecast is not available for the target time
+            # Therefore we find the model which model to use
 
-        # sum the weights
-        duplicated = duplicated.groupby(["target_time"]).sum()
+            logger.debug(
+                f"Trying to blend forecast for {target_time} "
+                f"but the weights for the forecasts with weights are not available, or add to 0"
+            )
 
-        # make sure target_time is a columns
-        duplicated["target_time"] = duplicated.index
-        duplicated.reset_index(inplace=True, drop=True)
+            if len(forecast_values_one_target_time) == 1:
+                logger.debug(f"Only found one forecast for {target_time} so using that")
+                forecast_values_one_target_time_blend = forecast_values_one_target_time
+                forecast_values_one_target_time_blend["target_time"] = target_time
+            else:
+                weights_target_time = weights_df[weights_df.index > target_time]
 
-        # divide by the sum of the weights, # TODO should we be worried about dividing by zero?
-        for col in ["expected_power_generation_megawatts", "adjust_mw"]:
-            duplicated[col] /= duplicated["weight"]
+                logger.debug(
+                    f"Found more than one forecast available for {target_time}"
+                    f"Going to try at the next weights "
+                )
+                for i, row in weights_target_time.iterrows():
 
-        logger.debug(duplicated)
-    # join unique and duplicates together
-    forecast_values_blended = pd.concat([forecast_values_blended, duplicated], axis=0)
-    # sort by target time
-    forecast_values_blended.sort_values(by="target_time", inplace=True)
+                    # format row into dataframe
+                    weights = pd.DataFrame(row)
+                    weights.index.name = "model_name"
+                    weights.reset_index(inplace=True)
+                    weights.columns = ["model_name", "weight"]
+
+                    logger.debug(f"Trying {weights}")
+
+                    # blend together
+                    forecast_values_one_target_time_blend = blend_together_one_target_time(
+                        forecast_values_one_target_time, weights, target_time
+                    )
+                    total_weights_used = forecast_values_one_target_time_blend["weight"].iloc[0]
+
+                    # keep looping unless the total weights used > 0. This means we have blended the
+                    # forecast together using the next weights possible
+                    if total_weights_used > 0:
+                        break
+
+        # append to the blended dataframe
+        forecast_values_blended.append(forecast_values_one_target_time_blend)
+
+    forecast_values_blended = pd.concat(forecast_values_blended, axis=0)
+
     return forecast_values_blended
+
+
+def blend_together_one_target_time(
+    forecast_values_one_target_time, weights_one_target_time, target_time
+):
+    """
+    Blend one forecast together using the weights
+
+    :param forecast_values_one_target_time: dataframe with columns 'model_name',
+        'expected_power_generation_megawatts', 'adjust_mw'. The rows are the different models
+    :param weights_one_target_time:
+    :param target_time: the target time of this forecast
+    :return: blended dataframe with columns 'target_time', 'expected_power_generation_megawatts', 'adjust_mw'.
+        The column weight shows how much total weight was used for each model
+    """
+    forecast_values_one_target_time = forecast_values_one_target_time.merge(
+        weights_one_target_time,
+        how="left",
+        left_on=["model_name"],
+        right_on=["model_name"],
+    )
+    logger.debug(forecast_values_one_target_time)
+
+    # calculate the blended forecast
+    weight = np.sum(forecast_values_one_target_time["weight"])
+    expected_power_generation_megawatts = (
+        np.sum(
+            forecast_values_one_target_time["expected_power_generation_megawatts"]
+            * forecast_values_one_target_time["weight"]
+        )
+        / weight
+    )
+    adjust_mw = (
+        np.sum(
+            forecast_values_one_target_time["adjust_mw"] * forecast_values_one_target_time["weight"]
+        )
+        / weight
+    )
+
+    # make into dataframe
+    forecast_values_one_target_time_blend = pd.DataFrame(
+        data=[[expected_power_generation_megawatts, adjust_mw, weight]],
+        columns=["expected_power_generation_megawatts", "adjust_mw", "weight"],
+    )
+    # make sure target_time is a columns
+    forecast_values_one_target_time_blend["target_time"] = target_time
+    forecast_values_one_target_time_blend.reset_index(inplace=True, drop=True)
+
+    return forecast_values_one_target_time_blend
