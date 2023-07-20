@@ -232,14 +232,14 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
 
 def blend_together_one_target_time(
-    forecast_values_one_target_time, weights_one_target_time, target_time
+    forecast_values_one_target_time: pd.DataFrame, weights_one_target_time: pd.DataFrame, target_time: datetime
 ):
     """
-    Blend one forecast together using the weights
+    Blend forecasts for one target time together using the weights
 
     :param forecast_values_one_target_time: dataframe with columns 'model_name',
         'expected_power_generation_megawatts', 'adjust_mw'. The rows are the different models
-    :param weights_one_target_time:
+    :param weights_one_target_time: dataframe with columns 'model_name', 'weight'. The rows are the different models
     :param target_time: the target time of this forecast
     :return: blended dataframe with columns 'target_time', 'expected_power_generation_megawatts', 'adjust_mw'.
         The column weight shows how much total weight was used for each model
