@@ -544,7 +544,7 @@ def test_get_blend_forecast_three_models_with_gap(db_session):
         if model == model_1:
             power = 1
             adjust = 0
-            forecast_horizon_minutes = [-60] # gap at -30
+            forecast_horizon_minutes = [-60]  # gap at -30
         elif model == model_2:
             power = 2
             adjust = 50
