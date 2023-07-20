@@ -204,7 +204,6 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
                     f"Going to try at the next weights "
                 )
                 for i, row in weights_target_time.iterrows():
-
                     # format row into dataframe
                     weights = pd.DataFrame(row)
                     weights.index.name = "model_name"
