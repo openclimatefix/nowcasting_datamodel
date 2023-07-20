@@ -129,7 +129,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
 
     :param forecast_values_all_model: Dataframe containing the columns 'target_time',
         'expected_power_generation_megawatts', 'adjust_mw', 'model_name'
-    :param weights_df: Dataframe of weights with columns 'model_name' and 'weight'
+    :param weights_df: Dataframe of weights with columns of the model name, and index of target times
     :return: Dataframe with the columns
         'target_time',
         'expected_power_generation_megawatts',
@@ -148,7 +148,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
         return forecast_values_all_model
     logger.debug(f"Found in total {len(all_target_times)} target times")
 
-    # unstack weights
+    # unstack weights, this makes a dataframe with columns "model_name", "target_time", "weight"
     weights_one_df = weights_df.stack()
     weights_one_df.name = "weight"
     weights_one_df = weights_one_df.reset_index()
