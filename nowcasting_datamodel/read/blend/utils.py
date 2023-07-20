@@ -165,7 +165,9 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     forecast_values_blended = forecast_values_all_model[forecast_values_all_model["weight"] == 1.0]
 
     # find the other target times than needed to be blended
-    target_times_to_blend = [x for x in all_target_times if x not in forecast_values_blended["target_time"].tolist()]
+    target_times_to_blend = [
+        x for x in all_target_times if x not in forecast_values_blended["target_time"].tolist()
+    ]
 
     forecast_values_blended = [forecast_values_blended]
     # loop over datetimes, we could do this without looping,
