@@ -156,6 +156,10 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     weights_one_df = weights_one_df.rename(columns={"level_1": "model_name"})
     weights_one_df = weights_one_df.rename(columns={"level_0": "target_time"})
 
+    # create a dataframe of weights that dont repeat,
+    # this is useful for search for a different weight to use
+    weights_trim_df = weights_df.drop_duplicates(subset=weights_df.columns)
+
     # join together the forecast values and the weights
     forecast_values_all_model = forecast_values_all_model.merge(
         weights_one_df, on=["target_time", "model_name"], how="left"
@@ -205,7 +209,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
                 forecast_values_one_target_time_blend = forecast_values_one_target_time
                 forecast_values_one_target_time_blend["target_time"] = target_time
             else:
-                weights_target_time = weights_df[weights_df.index > target_time]
+                weights_target_time = weights_trim_df[weights_trim_df.index > target_time]
 
                 logger.debug(
                     f"Found more than one forecast available for {target_time}"
