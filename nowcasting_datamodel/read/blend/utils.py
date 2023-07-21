@@ -156,7 +156,7 @@ def blend_forecasts_together(forecast_values_all_model, weights_df):
     weights_one_df = weights_one_df.rename(columns={"level_1": "model_name"})
     weights_one_df = weights_one_df.rename(columns={"level_0": "target_time"})
 
-    # create a dataframe of weights that dont repeat,
+    # create a dataframe of weights that don't repeat,
     # this is useful for search for a different weight to use
     weights_trim_df = weights_df.drop_duplicates(subset=weights_df.columns)
 
