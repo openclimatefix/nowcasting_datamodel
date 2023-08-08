@@ -108,7 +108,7 @@ def test_update_all_forecast_latest(db_session):
 
     # Updated forecasts should replace today forecasts, old forecasts should be deleted
     num_rows = db_session.query(ForecastValueLatestSQL.gsp_id).count()
-    assert num_rows == 10
+    assert num_rows == 10 * N_FAKE_FORECASTS
 
 
 def test_update_one_gsp_wtih_time_step(db_session):
