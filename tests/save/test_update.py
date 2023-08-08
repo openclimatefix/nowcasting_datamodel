@@ -98,7 +98,7 @@ def test_update_all_forecast_latest(db_session):
     old_forecasts = make_fake_forecasts(
         gsp_ids=list(range(0, 10)),
         t0_datetime_utc=datetime.now(timezone.utc) - timedelta(days=4),
-        session=db_session
+        session=db_session,
     )
     db_session.add_all(today_update_forecasts)
 
