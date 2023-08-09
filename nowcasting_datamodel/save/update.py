@@ -117,7 +117,6 @@ def update_forecast_latest(
             forecast_id=forecast_historic.id,
             model_id=forecast.model_id,
         )
-        logger.debug(f"{forecast_historic.model_id=}")
         forecast_values.append(forecast_value_latest.__dict__)
 
     # upsert forecast values
@@ -163,7 +162,6 @@ def update_all_forecast_latest(
     session: Session,
     update_national: Optional[bool] = True,
     update_gsp: Optional[bool] = True,
-    model_name: Optional[str] = None,
 ):
     """
     Update all latest forecasts
@@ -173,15 +171,15 @@ def update_all_forecast_latest(
     :param session: sqlalmacy session
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
-    :param model_name: Optional (default None), if not None will only update the forecasts
     """
 
     logger.debug("Getting the earliest forecast target time for the first forecast")
     forecast_values_target_times = [f.target_time for f in forecasts[0].forecast_values]
+    model_name = forecasts[0].model.name
     start_target_time = min(forecast_values_target_times) - timedelta(days=1)
     logger.debug(
         f"First forecast start target time is {min(forecast_values_target_times)} "
-        f"so will filter results on {start_target_time}"
+        f"so will filter results on {start_target_time} for {model_name}"
     )
 
     gsp_ids = get_gsp_ids(include_national=update_national, include_gsps=update_gsp)
@@ -238,7 +236,7 @@ def update_all_forecast_latest(
             forecast=forecast,
             session=session,
             forecast_historic=forecast_historic,
-            model_name=model_name,
+            model_name=forecast.model.name,
         )
         session.commit()
 
