@@ -66,6 +66,8 @@ def make_fake_forecast(
     forecast_values_latest: Optional[List[ForecastValueSQL]] = None,
     add_latest: Optional[bool] = False,
     historic: Optional[bool] = False,
+    model_name: Optional[str] = "fake_model",
+    n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
 ) -> ForecastSQL:
     """Make one fake forecast"""
 
@@ -80,7 +82,7 @@ def make_fake_forecast(
         gsp_id=gsp_id, session=session, installed_capacity_mw=installed_capacity_mw
     )
 
-    model = get_model(name="fake_model", session=session, version="0.1.2")
+    model = get_model(name=model_name, session=session, version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
 
     if t0_datetime_utc is None:
@@ -92,7 +94,7 @@ def make_fake_forecast(
     if forecast_values is None:
         forecast_values = []
         # 2 days in the past + 8 hours forward
-        for i in range(N_FAKE_FORECASTS):
+        for i in range(n_fake_forecasts):
             target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
             f = make_fake_forecast_value(
                 target_time=target_datetime_utc,
@@ -130,6 +132,8 @@ def make_fake_forecasts(
     forecast_values: Optional[List[ForecastValueSQL]] = None,
     add_latest: Optional[bool] = False,
     historic: Optional[bool] = False,
+    model_name: Optional[str] = "fake_model",
+    n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
 ) -> List[ForecastSQL]:
     """Make many fake forecast"""
     forecasts = []
@@ -142,6 +146,8 @@ def make_fake_forecasts(
                 forecast_values=forecast_values,
                 add_latest=add_latest,
                 historic=historic,
+                model_name=model_name,
+                n_fake_forecasts=n_fake_forecasts,
             )
         )
 
