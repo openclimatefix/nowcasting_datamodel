@@ -210,14 +210,12 @@ def test_update_all_forecast_latest_update_national_model(db_session):
         session=db_session,
         update_national=True,
         update_gsp=False,
-        model_name=model_1.name,
     )
     update_all_forecast_latest(
         forecasts=f1,
         session=db_session,
         update_national=True,
         update_gsp=False,
-        model_name=model_1.name,
     )
     assert len(db_session.query(ForecastSQL).all()) == 3
     forecast_values = db_session.query(ForecastValueLatestSQL).all()
@@ -230,7 +228,6 @@ def test_update_all_forecast_latest_update_national_model(db_session):
         session=db_session,
         update_national=True,
         update_gsp=False,
-        model_name=model_2.name,
     )
     assert len(db_session.query(ForecastSQL).all()) == 4
     forecast_values = db_session.query(ForecastValueLatestSQL).all()
