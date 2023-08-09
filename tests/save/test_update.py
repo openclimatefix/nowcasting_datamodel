@@ -89,14 +89,26 @@ def test_update_one_gsp(db_session):
 
 
 def test_update_all_forecast_latest(db_session):
-    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
-    db_session.add_all(f1)
+    today_forecasts = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(today_forecasts)
 
-    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
-    db_session.add_all(f2)
+    today_update_forecasts = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    db_session.add_all(today_update_forecasts)
 
-    update_all_forecast_latest(forecasts=f1, session=db_session)
-    update_all_forecast_latest(forecasts=f2, session=db_session)
+    old_forecasts = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        t0_datetime_utc=datetime.now(timezone.utc) - timedelta(days=4),
+        session=db_session,
+    )
+    db_session.add_all(today_update_forecasts)
+
+    update_all_forecast_latest(forecasts=old_forecasts, session=db_session)
+    update_all_forecast_latest(forecasts=today_forecasts, session=db_session)
+    update_all_forecast_latest(forecasts=today_update_forecasts, session=db_session)
+
+    # Updated forecasts should replace today forecasts, old forecasts should be deleted
+    num_rows = db_session.query(ForecastValueLatestSQL.gsp_id).count()
+    assert num_rows == 10 * N_FAKE_FORECASTS
 
 
 def test_update_one_gsp_wtih_time_step(db_session):

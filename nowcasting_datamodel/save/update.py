@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
-from sqlalchemy import inspect
+from sqlalchemy import delete, inspect
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
@@ -241,6 +241,13 @@ def update_all_forecast_latest(
             model_name=model_name,
         )
         session.commit()
+
+    # Delete forecasts older than 3 days from the forecast_latest table
+    stmt = delete(ForecastValueLatestSQL).where(
+        ForecastValueLatestSQL.target_time < datetime.now(timezone.utc) - timedelta(days=3)
+    )
+    session.execute(stmt)
+    session.commit()
 
 
 def get_gsp_ids(include_national: bool = True, include_gsps: bool = True) -> List[int]:
