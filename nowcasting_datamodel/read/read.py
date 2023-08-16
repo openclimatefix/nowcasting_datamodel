@@ -300,7 +300,9 @@ def get_latest_forecast_for_gsps(
 
     # join with location table and filter
     if gsp_ids is not None:
-        query = query.distinct(LocationSQL.gsp_id)
+        if not historic:
+            # for historic they are already distinct
+            query = query.distinct(LocationSQL.gsp_id)
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
         order_by_cols.append(LocationSQL.gsp_id)
 
