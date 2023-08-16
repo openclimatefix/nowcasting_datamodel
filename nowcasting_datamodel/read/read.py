@@ -300,9 +300,7 @@ def get_latest_forecast_for_gsps(
 
     # join with location table and filter
     if gsp_ids is not None:
-        if not historic:
-            # for historic they are already distinct
-            query = query.distinct(LocationSQL.gsp_id)
+        query = query.distinct(LocationSQL.gsp_id)
         query = query.filter(LocationSQL.gsp_id.in_(gsp_ids))
         order_by_cols.append(LocationSQL.gsp_id)
 
@@ -320,13 +318,7 @@ def get_latest_forecast_for_gsps(
 
     # filter on model name
     if model_name is not None:
-        if historic:
-            # if start target time is None, we need to join with forecast value latest
-            if start_target_time is None:
-                query = query.join(ForecastValueLatestSQL)
-            query = query.join(MLModelSQL, ForecastValueLatestSQL.model_id == MLModelSQL.id)
-        else:
-            query = query.join(MLModelSQL)
+        query = query.join(MLModelSQL)
         query = query.filter(MLModelSQL.name == model_name)
 
     query = query.join(LocationSQL)
