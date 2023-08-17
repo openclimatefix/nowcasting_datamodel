@@ -258,8 +258,6 @@ def test_update_all_forecast_latest_update_national_model(db_session):
     assert forecast_values[0].forecast_id == forecasts[2].id
 
 
-
-
 def test_update_all_forecast_latest_update_gsps(db_session):
     f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
     db_session.add_all(f1)
