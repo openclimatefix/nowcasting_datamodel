@@ -229,10 +229,12 @@ def test_update_all_forecast_latest_update_national_model(db_session):
         update_national=True,
         update_gsp=False,
     )
-    assert len(db_session.query(ForecastSQL).all()) == 3
+    forecasts = db_session.query(ForecastSQL).all()
+    assert len(forecasts) == 3
     forecast_values = db_session.query(ForecastValueLatestSQL).all()
     assert forecast_values[0].model_id == model_1.id
     assert forecast_values[-1].model_id == model_1.id
+    assert forecast_values[0].forecast_id == forecasts[2].id
     assert len(forecast_values) == N_FAKE_FORECASTS
 
     update_all_forecast_latest(
@@ -244,6 +246,18 @@ def test_update_all_forecast_latest_update_national_model(db_session):
     assert len(db_session.query(ForecastSQL).all()) == 4
     forecast_values = db_session.query(ForecastValueLatestSQL).all()
     assert len(forecast_values) == 2 * N_FAKE_FORECASTS
+
+    update_all_forecast_latest(
+        forecasts=f1,
+        session=db_session,
+        update_national=True,
+        update_gsp=False,
+    )
+    forecasts = db_session.query(ForecastSQL).all()
+    forecast_values = db_session.query(ForecastValueLatestSQL).all()
+    assert forecast_values[0].forecast_id == forecasts[2].id
+
+
 
 
 def test_update_all_forecast_latest_update_gsps(db_session):
