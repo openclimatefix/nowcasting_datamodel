@@ -171,6 +171,11 @@ def test_get_forecast_values_latest_gsp_id(db_session):
     assert forecast_values_read[0].target_time == f1[0].forecast_values_latest[0].target_time
     assert forecast_values_read[0] == f1[0].forecast_values_latest[0]
 
+    forecast_values_read = get_forecast_values_latest(
+        session=db_session, gsp_id=f1[0].location.gsp_id, end_datetime=datetime(2022, 12, 31)
+    )
+    assert len(forecast_values_read) == 0
+
 
 def test_get_latest_status(db_session):
     s1 = Status(message="Good", status="ok")
