@@ -222,6 +222,7 @@ def get_all_gsp_ids_latest_forecast(
     session: Session,
     start_created_utc: Optional[datetime] = None,
     start_target_time: Optional[datetime] = None,
+    end_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
     include_national: bool = True,
@@ -233,6 +234,8 @@ def get_all_gsp_ids_latest_forecast(
     :param session: database session
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
     :param start_target_time:
+        Filter: forecast values target time should be larger than this datetime
+    :param end_target_time:
         Filter: forecast values target time should be larger than this datetime
     :param preload_children: Option to preload children. This is a speed up, if we need them.
     :param historic: Option to load historic values or not
@@ -253,6 +256,7 @@ def get_all_gsp_ids_latest_forecast(
         session=session,
         start_created_utc=start_created_utc,
         start_target_time=start_target_time,
+        end_target_time=end_target_time,
         preload_children=preload_children,
         historic=historic,
         gsp_ids=gsp_ids,
@@ -519,6 +523,7 @@ def get_forecast_values_latest(
     gsp_id: int,
     model_name: Optional[str] = None,
     start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
 ) -> List[ForecastValueLatestSQL]:
     """
     Get forecast values
@@ -526,6 +531,8 @@ def get_forecast_values_latest(
     :param session: database session
     :param gsp_id: gsp id, to filter query on
     :param start_datetime: optional to filterer target_time by start_datetime
+        If None is given then all are returned.
+    :param end_datetime: optional to filterer target_time by end_datetime
         If None is given then all are returned.
 
     return: List of forecasts values latest objects from database
@@ -541,6 +548,9 @@ def get_forecast_values_latest(
         # also filter on creation time, to speed up things
         created_utc_filter = start_datetime - timedelta(days=1)
         query = query.filter(ForecastValueLatestSQL.created_utc >= created_utc_filter)
+
+    if end_datetime is not None:
+        query = query.filter(ForecastValueLatestSQL.target_time <= end_datetime)
 
     # filter on gsp_id
     if gsp_id is not None:
