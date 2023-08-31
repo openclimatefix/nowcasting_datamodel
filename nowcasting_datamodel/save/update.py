@@ -176,6 +176,7 @@ def update_all_forecast_latest(
     logger.debug("Getting the earliest forecast target time for the first forecast")
     forecast_values_target_times = [f.target_time for f in forecasts[0].forecast_values]
     model_name = forecasts[0].model.name
+    model_version = forecasts[0].model.version
     start_target_time = min(forecast_values_target_times) - timedelta(days=1)
     logger.debug(
         f"First forecast start target time is {min(forecast_values_target_times)} "
@@ -229,6 +230,9 @@ def update_all_forecast_latest(
             logger.debug(f"Could not find historic, so will be creating one (GSP id{gsp_id})")
         else:
             forecast_historic = forecast_historic[0]
+            
+            # update to latest model version
+            forecast_historic.model.version = model_version
 
             logger.debug(f"Found historic for GSP id {gsp_id}")
 
