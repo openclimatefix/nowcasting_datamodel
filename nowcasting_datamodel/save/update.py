@@ -230,7 +230,7 @@ def update_all_forecast_latest(
             logger.debug(f"Could not find historic, so will be creating one (GSP id{gsp_id})")
         else:
             forecast_historic = forecast_historic[0]
-            
+
             # update to latest model version
             forecast_historic.model.version = model_version
 
