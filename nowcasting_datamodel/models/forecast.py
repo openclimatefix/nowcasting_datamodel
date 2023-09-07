@@ -438,6 +438,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     )
 
     Index("index_forecast", CreatedMixin.created_utc.desc())
+    Index("index_forecast_historic", historic)
 
 
 class Forecast(EnhancedBaseModel):

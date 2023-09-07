@@ -13,7 +13,7 @@ from nowcasting_datamodel.utils import convert_to_camelcase
 class CreatedMixin:
     """Mixin to add created datetime to model"""
 
-    created_utc = Column(DateTime(timezone=True), default=lambda: datetime.utcnow())
+    created_utc = Column(DateTime(timezone=True), default=lambda: datetime.utcnow(), index=True)
 
 
 class EnhancedBaseModel(BaseModel):
