@@ -141,7 +141,7 @@ class ForecastValueSQL(
             "forecast_id",  # Columns which are part of the index
         ),
         Index(
-            "ix_forecast_created_utc",  # Index name
+            "ix_forecast_value_created_utc",  # Index name
             "created_utc",  # Columns which are part of the index
         ),
         Index(
@@ -294,8 +294,6 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
     forecast_id = Column(Integer, ForeignKey("forecast.id"), index=True)
     forecast_latest = relationship("ForecastSQL", back_populates="forecast_values_latest")
 
-    Index("index_forecast_value_latest", CreatedMixin.created_utc.desc())
-
 
 class ForecastValue(EnhancedBaseModel):
     """One Forecast of generation at one timestamp"""
@@ -437,7 +435,6 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
         Integer, ForeignKey("input_data_last_updated.id"), index=True
     )
 
-    Index("index_forecast", CreatedMixin.created_utc.desc())
     Index("index_forecast_historic", historic)
 
 
@@ -555,3 +552,8 @@ class ForecastValueSevenDaysSQL(ForecastValueSQLMixin, Base_Forecast):
     )
 
     forecast = relationship("ForecastSQL", back_populates="forecast_values_last_seven_days")
+
+
+Index("ix_forecast_created_utc", ForecastSQL.created_utc.desc())
+Index("ix_forecast_value_seven_days_created_utc", ForecastValueSevenDaysSQL.created_utc.desc())
+Index("ix_forecast_value_latest_created_utc", ForecastValueLatestSQL.created_utc.desc())
