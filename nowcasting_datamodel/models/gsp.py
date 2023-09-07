@@ -90,6 +90,9 @@ class GSPYieldSQL(Base_Forecast, CreatedMixin):
     Index("ix_gsp_yield_datetime_utc_desc", datetime_utc.desc())
 
 
+Index("ix_gsp_yield_created_utc", GSPYieldSQL.created_utc.desc())
+
+
 class GSPYield(EnhancedBaseModel):
     """GSP Yield data"""
 
