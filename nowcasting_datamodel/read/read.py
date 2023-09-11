@@ -227,6 +227,7 @@ def get_all_gsp_ids_latest_forecast(
     historic: bool = False,
     include_national: bool = True,
     model_name: Optional[bool] = None,
+    gsp_ids: Optional[List[int]] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -241,16 +242,18 @@ def get_all_gsp_ids_latest_forecast(
     :param historic: Option to load historic values or not
     :param include_national: Option to include national forecast or not
     :param model_name: Optional to filter on model name
+    :param gsp_ids: Optional to filter on gsp ids
 
     return: List of forecasts objects from database
     """
 
     logger.debug(f"Getting latest forecast for all gsps, {include_national=}")
 
-    if include_national:
-        gsp_ids = list(range(0, N_GSP + 1))
-    else:
-        gsp_ids = list(range(1, N_GSP + 1))
+    if gsp_ids is None:
+        if include_national:
+            gsp_ids = list(range(0, N_GSP + 1))
+        else:
+            gsp_ids = list(range(1, N_GSP + 1))
 
     return get_latest_forecast_for_gsps(
         session=session,
