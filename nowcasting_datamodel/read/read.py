@@ -223,6 +223,7 @@ def get_all_gsp_ids_latest_forecast(
     start_created_utc: Optional[datetime] = None,
     start_target_time: Optional[datetime] = None,
     end_target_time: Optional[datetime] = None,
+    end_created_utc: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
     historic: bool = False,
     include_national: bool = True,
@@ -234,6 +235,7 @@ def get_all_gsp_ids_latest_forecast(
 
     :param session: database session
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
+    :param end_created_utc: Filter: forecast creation time should be smaller than this datetime
     :param start_target_time:
         Filter: forecast values target time should be larger than this datetime
     :param end_target_time:
@@ -258,6 +260,7 @@ def get_all_gsp_ids_latest_forecast(
     return get_latest_forecast_for_gsps(
         session=session,
         start_created_utc=start_created_utc,
+        end_created_utc=end_created_utc,
         start_target_time=start_target_time,
         end_target_time=end_target_time,
         preload_children=preload_children,
@@ -270,6 +273,7 @@ def get_all_gsp_ids_latest_forecast(
 def get_latest_forecast_for_gsps(
     session: Session,
     start_created_utc: Optional[datetime] = None,
+    end_created_utc: Optional[datetime] = None,
     start_target_time: Optional[datetime] = None,
     end_target_time: Optional[datetime] = None,
     preload_children: Optional[bool] = False,
@@ -282,6 +286,7 @@ def get_latest_forecast_for_gsps(
 
     :param session: database session
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
+    :param start_created_utc: Filter: forecast creation time should be smaller than this datetime
     :param start_target_time:
         Filter: forecast values target time should be larger than this datetime
     :param end_target_time:
@@ -304,6 +309,10 @@ def get_latest_forecast_for_gsps(
     # filter on created_utc
     if start_created_utc is not None:
         query = query.filter(ForecastSQL.created_utc >= start_created_utc)
+
+    # filter on created_utc
+    if end_created_utc is not None:
+        query = query.filter(ForecastSQL.created_utc <= end_created_utc)
 
     # join with location table and filter
     if gsp_ids is not None:
