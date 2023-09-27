@@ -333,6 +333,7 @@ class ForecastValue(EnhancedBaseModel):
             target_time=self.target_time,
             expected_power_generation_megawatts=self.expected_power_generation_megawatts,
             adjust_mw=self._adjust_mw,
+            properties=self._properties,
         )
 
     @classmethod
