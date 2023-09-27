@@ -286,7 +286,7 @@ def get_latest_forecast_for_gsps(
 
     :param session: database session
     :param start_created_utc: Filter: forecast creation time should be larger than this datetime
-    :param start_created_utc: Filter: forecast creation time should be smaller than this datetime
+    :param end_created_utc: Filter: forecast creation time should be smaller than this datetime
     :param start_target_time:
         Filter: forecast values target time should be larger than this datetime
     :param end_target_time:
