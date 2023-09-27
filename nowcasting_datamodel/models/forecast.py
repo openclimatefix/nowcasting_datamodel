@@ -351,6 +351,9 @@ class ForecastValue(EnhancedBaseModel):
         else:
             m._adjust_mw = default_value
 
+        if hasattr(obj, "properties"):
+            m._properties = obj.properties
+
         return m
 
     def normalize(self, installed_capacity_mw):
