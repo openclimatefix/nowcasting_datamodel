@@ -134,6 +134,7 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
     forecast_horizon_minutes = Column(Integer, nullable=True)
     time_of_day = Column(Time, nullable=True)
     model_name = Column(String, nullable=True)
+    p_level = Column(Float, nullable=True)
 
     # many (metric values) to one (metric)
     metric = relationship("MetricSQL", back_populates="metric_value")
