@@ -107,15 +107,23 @@ def update_latest_input_data_last_updated(
     if latest_input_data_last_updated is None:
         logger.warning("Could not find any 'InputDataLastUpdatedSQL' so will create one.")
         now = datetime(1960, 1, 1, tzinfo=timezone.utc)
-        latest_input_data_last_updated = InputDataLastUpdatedSQL(
+        new_input_data_last_updated = InputDataLastUpdatedSQL(
             gsp=now, nwp=now, pv=now, satellite=now
+        )
+    else:
+        # make new object
+        new_input_data_last_updated = InputDataLastUpdatedSQL(
+            gsp=latest_input_data_last_updated.gsp,
+            nwp=latest_input_data_last_updated.nwp,
+            pv=latest_input_data_last_updated.pv,
+            satellite=latest_input_data_last_updated.satellite,
         )
 
     # set new value
-    setattr(latest_input_data_last_updated, component, update_datetime)
+    setattr(new_input_data_last_updated, component, update_datetime)
 
     # save to database
-    session.add(latest_input_data_last_updated)
+    session.add(new_input_data_last_updated)
     session.commit()
 
 
