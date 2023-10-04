@@ -444,7 +444,7 @@ def test_update_latest_input_data_last_updated_freeze(db_session):
     now = datetime.now(tz=timezone.utc)
 
     input_data_last_updated_1 = InputDataLastUpdatedSQL(
-        gsp=yesterday, nwp=yesterday, pv=yesterday, satellite=yesterday
+        gsp=yesterday, nwp=yesterday, pv=yesterday, satellite=yesterday, created_utc=yesterday
     )
     db_session.add(input_data_last_updated_1)
     db_session.commit()
