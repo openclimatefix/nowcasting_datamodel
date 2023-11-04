@@ -9,19 +9,20 @@ from nowcasting_datamodel.read.read_gsp import (
     get_gsp_yield_by_location,
     get_latest_gsp_yield,
     get_gsp_yield_sum,
+    get_latest_gsp_capacities,
 )
 
 logger = logging.getLogger(__name__)
 
 
 def setup_gsp_yields(db_session):
-    gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1)
+    gsp_yield_1 = GSPYield(datetime_utc=datetime(2022, 1, 2), solar_generation_kw=1, capacity_mwp=1)
     gsp_yield_1_sql = gsp_yield_1.to_orm()
 
-    gsp_yield_2 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
+    gsp_yield_2 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2, capacity_mwp=2)
     gsp_yield_2_sql = gsp_yield_2.to_orm()
 
-    gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2)
+    gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2,capacity_mwp=3)
     gsp_yield_3_sql = gsp_yield_3.to_orm()
 
     gsp_sql_1: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
@@ -241,3 +242,18 @@ def test_get_gsp_yield_sum(db_session):
         gsp_yields[0].solar_generation_kw == 4
     )  # 2+2, see hard coded values in 'setup_gsp_yields'
     assert gsp_yields[1].solar_generation_kw == 1  # 1, see hard coded values in 'setup_gsp_yields'
+
+
+def test_get_latest_gsp_capacities(db_session):
+    _ = setup_gsp_yields(db_session)
+
+    gsp_capacities = get_latest_gsp_capacities(session=db_session, gsp_ids=[1, 2])
+
+    assert len(gsp_capacities) == 2
+    assert gsp_capacities.index[0] == 1
+    assert gsp_capacities.index[1] == 2
+    assert gsp_capacities[1] == 2
+    assert gsp_capacities[1] == 3
+
+    gsp_capacities = get_latest_gsp_capacities(session=db_session, gsp_ids=[1])
+    assert len(gsp_capacities) == 1
