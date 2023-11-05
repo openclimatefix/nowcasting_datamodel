@@ -252,8 +252,12 @@ def test_get_latest_gsp_capacities(db_session):
     assert len(gsp_capacities) == 2
     assert gsp_capacities.index[0] == 1
     assert gsp_capacities.index[1] == 2
-    assert gsp_capacities[1] == 2
-    assert gsp_capacities[1] == 3
+    assert gsp_capacities[1] == 1
+    assert gsp_capacities[2] == 3
 
-    gsp_capacities = get_latest_gsp_capacities(session=db_session, gsp_ids=[1])
+
+def test_get_latest_gsp_capacities_one(db_session):
+    _ = setup_gsp_yields(db_session)
+
+    gsp_capacities = get_latest_gsp_capacities(session=db_session, gsp_ids=[2])
     assert len(gsp_capacities) == 1

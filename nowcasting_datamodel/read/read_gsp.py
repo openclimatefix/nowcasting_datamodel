@@ -305,10 +305,10 @@ def get_latest_gsp_capacities(session: Session, gsp_ids: List[int]) -> pd.Series
     :return: pd.Series with gsp capacities, gsp_ids as the index
     """
 
-    gsp_yields, locations = get_latest_gsp_yield(session=session, gsps=gsp_ids)
+    gsp_yields = get_latest_gsp_yield(session=session, gsps=gsp_ids)
 
     # format results
     eff_capacities = [gsp_yield.capacity_mwp for gsp_yield in gsp_yields]
-    gsp_ids_from_db = [location.gsp_id for location in locations]
+    gsp_ids_from_db = [gsp_yield.location.gsp_id for gsp_yield in gsp_yields]
 
     return pd.Series(eff_capacities, index=gsp_ids_from_db)
