@@ -312,5 +312,3 @@ def get_latest_gsp_capacities(session: Session, gsp_ids: List[int]) -> pd.Series
     gsp_ids_from_db = [location.gsp_id for location in locations]
 
     return pd.Series(eff_capacities, index=gsp_ids_from_db)
-
-

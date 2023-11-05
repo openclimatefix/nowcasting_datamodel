@@ -22,7 +22,7 @@ def setup_gsp_yields(db_session):
     gsp_yield_2 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2, capacity_mwp=2)
     gsp_yield_2_sql = gsp_yield_2.to_orm()
 
-    gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2,capacity_mwp=3)
+    gsp_yield_3 = GSPYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2, capacity_mwp=3)
     gsp_yield_3_sql = gsp_yield_3.to_orm()
 
     gsp_sql_1: LocationSQL = Location(gsp_id=1, label="GSP_1", status_interval_minutes=5).to_orm()
