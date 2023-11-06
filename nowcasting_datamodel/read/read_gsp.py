@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Optional, Union
 
+import pandas as pd
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session, contains_eager, joinedload
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def get_latest_gsp_yield(
     session: Session,
-    gsps: List[LocationSQL],
+    gsps: Union[List[LocationSQL], List[int]],
     append_to_gsps: bool = False,
     regime: str = "in-day",
     datetime_utc: Optional[datetime] = None,
@@ -30,7 +31,10 @@ def get_latest_gsp_yield(
     :return: either list of gsp yields, or pv systems
     """
 
-    gsp_ids = [gsp.gsp_id for gsp in gsps]
+    if isinstance(gsps[0], int):
+        gsp_ids = gsps
+    else:
+        gsp_ids = [gsp.gsp_id for gsp in gsps]
 
     # start main query
     query = session.query(GSPYieldSQL)
@@ -290,3 +294,21 @@ def get_gsp_yield_sum(
     ]
 
     return results
+
+
+def get_latest_gsp_capacities(session: Session, gsp_ids: List[int]) -> pd.Series:
+    """
+    Get the latest gsp capacities.
+
+    :param session: database sessions
+    :param gsp_ids: list of gsp_ids
+    :return: pd.Series with gsp capacities, gsp_ids as the index
+    """
+
+    gsp_yields = get_latest_gsp_yield(session=session, gsps=gsp_ids)
+
+    # format results
+    eff_capacities = [gsp_yield.capacity_mwp for gsp_yield in gsp_yields]
+    gsp_ids_from_db = [gsp_yield.location.gsp_id for gsp_yield in gsp_yields]
+
+    return pd.Series(eff_capacities, index=gsp_ids_from_db)
