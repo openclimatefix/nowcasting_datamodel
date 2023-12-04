@@ -64,7 +64,7 @@ def get_all_last_api_request(session: Session) -> List[APIRequestSQL]:
 
 def get_api_requests_for_one_user(session: Session, email: str) -> List[APIRequestSQL]:
     """
-    Get all last api requests for one user
+    Get all api requests for one user
 
     :param session: database session
     :param email: user email
