@@ -5,6 +5,8 @@ from nowcasting_datamodel.read.read_user import (
     get_api_requests_for_one_user,
 )
 
+from datetime import datetime, timedelta
+
 
 def test_get_user(db_session):
     db_session.add(UserSQL(email="test@test.com"))
@@ -41,3 +43,23 @@ def test_get_api_requests_for_one_user(db_session):
     requests_sql = get_api_requests_for_one_user(session=db_session, email=user.email)
     assert len(requests_sql) == 1
     assert requests_sql[0].url == "test"
+
+
+def test_get_api_requests_for_one_user_start_datetime(db_session):
+    user = get_user(session=db_session, email="test@test.com")
+    db_session.add(APIRequestSQL(user_uuid=user.uuid, url="test"))
+
+    requests_sql = get_api_requests_for_one_user(
+        session=db_session, email=user.email, start_datetime=datetime.now() + timedelta(hours=1)
+    )
+    assert len(requests_sql) == 0
+
+
+def test_get_api_requests_for_one_user_end_datetime(db_session):
+    user = get_user(session=db_session, email="test@test.com")
+    db_session.add(APIRequestSQL(user_uuid=user.uuid, url="test"))
+
+    requests_sql = get_api_requests_for_one_user(
+        session=db_session, email=user.email, end_datetime=datetime.now() - timedelta(hours=1)
+    )
+    assert len(requests_sql) == 0

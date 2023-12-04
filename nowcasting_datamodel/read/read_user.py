@@ -1,6 +1,7 @@
 """ Read user"""
 import logging
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
@@ -62,21 +63,29 @@ def get_all_last_api_request(session: Session) -> List[APIRequestSQL]:
     return last_requests_sql
 
 
-def get_api_requests_for_one_user(session: Session, email: str) -> List[APIRequestSQL]:
+def get_api_requests_for_one_user(
+    session: Session,
+    email: str,
+    start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
+) -> List[APIRequestSQL]:
     """
     Get all api requests for one user
 
     :param session: database session
     :param email: user email
-    :return:
+    :param start_datetime: only get api requests after start datetime
+    :param end_datetime: only get api requests before end datetime
     """
 
-    api_requests = (
-        session.query(APIRequestSQL)
-        .join(UserSQL)
-        .filter(UserSQL.email == email)
-        .order_by(APIRequestSQL.created_utc.desc())
-        .all()
-    )
+    query = session.query(APIRequestSQL).join(UserSQL).filter(UserSQL.email == email)
+
+    if start_datetime is not None:
+        query = query.filter(APIRequestSQL.created_utc >= start_datetime)
+
+    if end_datetime is not None:
+        query = query.filter(APIRequestSQL.created_utc <= end_datetime)
+
+    api_requests = query.order_by(APIRequestSQL.created_utc.desc()).all()
 
     return api_requests
