@@ -1,5 +1,9 @@
 from nowcasting_datamodel.models import UserSQL, APIRequestSQL
-from nowcasting_datamodel.read.read_user import get_user, get_all_last_api_request, get_api_requests_for_one_user
+from nowcasting_datamodel.read.read_user import (
+    get_user,
+    get_all_last_api_request,
+    get_api_requests_for_one_user,
+)
 
 
 def test_get_user(db_session):
@@ -37,5 +41,3 @@ def test_get_api_requests_for_one_user(db_session):
     requests_sql = get_api_requests_for_one_user(session=db_session, email=user.email)
     assert len(requests_sql) == 1
     assert requests_sql[0].url == "test"
-
-

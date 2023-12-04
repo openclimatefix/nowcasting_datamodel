@@ -72,8 +72,8 @@ def get_api_requests_for_one_user(session: Session, email: str) -> List[APIReque
     """
 
     api_requests = (
-        session.query(APIRequestSQL).
-        join(UserSQL)
+        session.query(APIRequestSQL)
+        .join(UserSQL)
         .filter(UserSQL.email == email)
         .order_by(APIRequestSQL.created_utc.desc())
         .all()
