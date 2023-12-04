@@ -7,6 +7,7 @@ from nowcasting_datamodel.read.read_user import (
 
 from datetime import datetime, timedelta
 
+
 def test_get_user(db_session):
     db_session.add(UserSQL(email="test@test.com"))
 
@@ -62,5 +63,3 @@ def test_get_api_requests_for_one_user_end_datetime(db_session):
         session=db_session, email=user.email, start_datetime=datetime.now() - timedelta(hours=1)
     )
     assert len(requests_sql) == 0
-
-
