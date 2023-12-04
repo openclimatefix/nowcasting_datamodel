@@ -63,3 +63,4 @@ def test_get_api_requests_for_one_user_end_datetime(db_session):
     )
     assert len(requests_sql) == 0
 
+

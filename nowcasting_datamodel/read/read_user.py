@@ -1,7 +1,7 @@
 """ Read user"""
 import logging
-from typing import Optional, List
 from datetime import datetime
+from typing import Optional, List
 
 from sqlalchemy.orm.session import Session
 
