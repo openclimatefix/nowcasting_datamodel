@@ -469,40 +469,40 @@ def upgrade():
     )
 
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_01 FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_01 FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_02 FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_02 FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_03 FOR VALUES FROM ('2024-03-01') TO ('2024-04-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_03 FOR VALUES FROM ('2024-03-01') TO ('2024-04-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_04 FOR VALUES FROM ('2024-04-01') TO ('2024-05-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_04 FOR VALUES FROM ('2024-04-01') TO ('2024-05-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_05 FOR VALUES FROM ('2024-05-01') TO ('2024-06-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_05 FOR VALUES FROM ('2024-05-01') TO ('2024-06-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_06 FOR VALUES FROM ('2024-06-01') TO ('2024-07-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_06 FOR VALUES FROM ('2024-06-01') TO ('2024-07-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_07 FOR VALUES FROM ('2024-07-01') TO ('2024-08-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_07 FOR VALUES FROM ('2024-07-01') TO ('2024-08-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_08 FOR VALUES FROM ('2024-08-01') TO ('2024-09-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_08 FOR VALUES FROM ('2024-08-01') TO ('2024-09-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_09 FOR VALUES FROM ('2024-09-01') TO ('2024-10-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_09 FOR VALUES FROM ('2024-09-01') TO ('2024-10-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_10 FOR VALUES FROM ('2024-10-01') TO ('2024-11-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_10 FOR VALUES FROM ('2024-10-01') TO ('2024-11-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_11 FOR VALUES FROM ('2024-11-01') TO ('2024-12-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_11 FOR VALUES FROM ('2024-11-01') TO ('2024-12-01');"  # noqa
     )
     op.execute(
-        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_12 FOR VALUES FROM ('2024-12-01') TO ('2025-01-01');"
+        "ALTER TABLE forecast_value ATTACH PARTITION forecast_value_2024_12 FOR VALUES FROM ('2024-12-01') TO ('2025-01-01');"  # noqa
     )
     # ### end Alembic commands ###
 
