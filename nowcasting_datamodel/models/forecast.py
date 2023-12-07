@@ -113,7 +113,7 @@ class ForecastValueSQLMixin(CreatedMixin):
 
     uuid = Column(UUID, primary_key=True, server_default=func.gen_random_uuid())
     target_time = Column(DateTime(timezone=True), nullable=False, primary_key=True)
-    expected_power_generation_megawatts = Column(Float(precision=6))
+    expected_power_generation_megawatts = Column(Float)
     adjust_mw = Column(Float, default=0.0)
     # this can be used to store any additional information about the forecast, like p_levels.
     # Want to keep it as json so that we can store different properties for different forecasts
