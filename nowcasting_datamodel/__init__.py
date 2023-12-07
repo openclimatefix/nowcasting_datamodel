@@ -1,4 +1,4 @@
 """ Init file """
-__version__ = "1.5.25"
+__version__ = "1.5.26"
 
 N_GSP = 317
