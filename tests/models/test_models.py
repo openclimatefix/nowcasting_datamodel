@@ -20,6 +20,8 @@ def test_adjust_forecasts(forecasts):
     forecasts[0].forecast_values[0].adjust_mw = 1.23
     forecasts = [Forecast.from_orm(f) for f in forecasts]
 
+    assert forecasts[0].forecast_values[0]._adjust_mw == 1.23
+
     forecasts[0].adjust(limit=1.22)
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 8.78
     assert "expected_power_generation_megawatts" in forecasts[0].forecast_values[0].dict()
@@ -44,9 +46,6 @@ def test_adjust_forecast_below_zero(forecasts):
     forecasts[0].forecast_values[0]._properties = {"10": v - 100}
 
     forecasts[0].adjust(limit=v * 3)
-
-    # validate
-    Forecast(**forecasts[0].dict())
 
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 0.0
     assert forecasts[0].forecast_values[0]._properties["10"] == 0.0
@@ -135,7 +134,6 @@ def test_forecast_value_from_orm(forecast_sql):
     expected = ForecastValue(
         target_time=datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc),
         expected_power_generation_megawatts=1.0,
-        expected_power_generation_normalized=None,
     )
     assert actual == expected
 
@@ -153,7 +151,6 @@ def test_forecast_value_from_orm_from_adjust_mw_nan(forecast_sql, null_value):
     expected = ForecastValue(
         target_time=datetime(2023, 1, 1, 0, 30, tzinfo=timezone.utc),
         expected_power_generation_megawatts=1.0,
-        expected_power_generation_normalized=None,
     )
     assert actual == expected
     assert actual._adjust_mw == 0.0

@@ -475,6 +475,23 @@ class Forecast(EnhancedBaseModel):
         )
 
     @classmethod
+    def from_orm(cls, forecast_sql: ForecastSQL):
+        """Method to make Forecast object from ForecastSQL,
+
+        but move 'forecast_values_latest' to 'forecast_values'
+        This is useful as we want the API to still present a Forecast object.
+        """
+        # do normal transform
+        return Forecast(
+            forecast_creation_time=forecast_sql.forecast_creation_time,
+            location=Location.from_orm(forecast_sql.location),
+            input_data_last_updated=InputDataLastUpdated.from_orm(forecast_sql.input_data_last_updated),
+            forecast_values=[ForecastValue.from_orm(forecast_value) for forecast_value in forecast_sql.forecast_values],
+            historic=forecast_sql.historic,
+            model=MLModel.model_validate(forecast_sql.model),
+        )
+
+    @classmethod
     def from_orm_latest(cls, forecast_sql: ForecastSQL):
         """Method to make Forecast object from ForecastSQL,
 

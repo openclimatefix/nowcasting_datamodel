@@ -26,3 +26,5 @@ class EnhancedBaseModel(BaseModel):
         allow_population_by_field_name = True
         orm_mode = True
         underscore_attrs_are_private = True
+        from_attributes = True
+        populate_by_name = True

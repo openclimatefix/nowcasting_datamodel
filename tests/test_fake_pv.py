@@ -8,7 +8,7 @@ from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield
 
 def test_make_fake_pv_system():
     pv_system_sql: PVSystemSQL = make_fake_pv_system()
-    pv_system = PVSystem.from_orm(pv_system_sql)
+    pv_system = PVSystem.model_validate(pv_system_sql)
     _ = PVSystem.to_orm(pv_system)
 
 

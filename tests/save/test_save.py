@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 import os
 import numpy as np
 import pytest
+from freezegun import freeze_time
 
 from nowcasting_datamodel.fake import N_FAKE_FORECASTS, make_fake_forecasts
 from nowcasting_datamodel.models.forecast import (
@@ -14,9 +15,10 @@ from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
 from nowcasting_datamodel.save.save import save, save_all_forecast_values_seven_days, save_pv_system
 
 
+@freeze_time("2024-01-01 00:00:00")
 def test_save(db_session, latest_me):
     # Make sure save works where no forecast already exists
-    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
+    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session, t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc))
     save(
         session=db_session,
         forecasts=forecasts,
@@ -56,9 +58,10 @@ def test_save(db_session, latest_me):
     assert forecast_latest_values[0].properties is not None
 
 
+@freeze_time("2024-01-01 00:00:00")
 def test_save_no_adjuster(db_session):
     # Make sure save works where no forecast already exists
-    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
+    forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session, t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc))
     save(session=db_session, forecasts=forecasts, apply_adjuster=False)
 
     # 10 forecast, + 10 historic ones
