@@ -82,7 +82,6 @@ def upsert(session: Session, model, rows: List[dict]):
     session.commit()
 
 
-
 def update_forecast_latest(
     forecast: ForecastSQL,
     session: Session,

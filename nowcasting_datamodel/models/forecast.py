@@ -319,7 +319,9 @@ class ForecastValue(EnhancedBaseModel):
     # A new pydantic mode can be made that includes the forecast plevels, perhaps in the API.
     # Dictionary to hold properties of the forecast, like p_levels.
     # The _ at the start means it is not expose in the API.
-    _properties: dict = PrivateAttr(None,)
+    _properties: dict = PrivateAttr(
+        None,
+    )
 
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
 
@@ -485,8 +487,13 @@ class Forecast(EnhancedBaseModel):
         return Forecast(
             forecast_creation_time=forecast_sql.forecast_creation_time,
             location=Location.from_orm(forecast_sql.location),
-            input_data_last_updated=InputDataLastUpdated.from_orm(forecast_sql.input_data_last_updated),
-            forecast_values=[ForecastValue.from_orm(forecast_value) for forecast_value in forecast_sql.forecast_values],
+            input_data_last_updated=InputDataLastUpdated.from_orm(
+                forecast_sql.input_data_last_updated
+            ),
+            forecast_values=[
+                ForecastValue.from_orm(forecast_value)
+                for forecast_value in forecast_sql.forecast_values
+            ],
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
         )
