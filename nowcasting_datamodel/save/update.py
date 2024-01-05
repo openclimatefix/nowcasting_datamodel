@@ -77,7 +77,6 @@ def upsert(session: Session, model, rows: List[dict]):
 
     if not update_dict:
         raise ValueError("insert_or_update resulted in an empty update_dict")
-
     stmt = stmt.on_conflict_do_update(index_elements=primary_keys, set_=update_dict)
     session.execute(stmt, rows)
     session.commit()
@@ -162,6 +161,7 @@ def update_all_forecast_latest(
     session: Session,
     update_national: Optional[bool] = True,
     update_gsp: Optional[bool] = True,
+    filter_datetime: Optional[datetime] = None,
 ):
     """
     Update all latest forecasts
@@ -171,7 +171,12 @@ def update_all_forecast_latest(
     :param session: sqlalmacy session
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
+    :param filter_datetime: Optional (default None), to remove all forecasts before this.
+        Default is now minus 3 days
     """
+
+    if filter_datetime is None:
+        filter_datetime = datetime.now(timezone.utc) - timedelta(days=3)
 
     logger.debug("Getting the earliest forecast target time for the first forecast")
     forecast_values_target_times = [f.target_time for f in forecasts[0].forecast_values]
@@ -246,7 +251,7 @@ def update_all_forecast_latest(
 
     # Delete forecasts older than 3 days from the forecast_latest table
     stmt = delete(ForecastValueLatestSQL).where(
-        ForecastValueLatestSQL.target_time < datetime.now(timezone.utc) - timedelta(days=3)
+        ForecastValueLatestSQL.target_time < filter_datetime
     )
     session.execute(stmt)
     session.commit()

@@ -76,7 +76,7 @@ class PVSystem(EnhancedBaseModel):
     correct_data: Optional[bool] = Field(
         True, description="If the data from the pv system is not broken in some way"
     )
-    ocf_id: int = Field(None, description="The PV system id that is unique to OCF")
+    ocf_id: Optional[int] = Field(None, description="The PV system id that is unique to OCF")
 
     @validator("provider")
     def validate_provider(cls, v):

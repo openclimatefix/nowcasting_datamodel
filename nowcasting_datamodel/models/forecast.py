@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import List
 
 import numpy as np
-from pydantic import Field, validator
+from pydantic import Field, PrivateAttr, validator
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -310,19 +310,17 @@ class ForecastValue(EnhancedBaseModel):
         None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
     )
 
-    _adjust_mw: float = Field(
-        0.0,
-        description="The amount that the forecast should be adjusted by, "
-        "due to persistence errors. This way we keep the original ML prediction. "
-        "The _ at the start means it is not expose in the API",
-    )
+    # The amount that the forecast should be adjusted by,
+    # due to persistence errors. This way we keep the original ML prediction.
+    # The _ at the start means it is not expose in the API
+    _adjust_mw: float = PrivateAttr(0.0)
 
     # This its better to keep this out of the current pydantic models used by the API.
     # A new pydantic mode can be made that includes the forecast plevels, perhaps in the API.
-    _properties: dict = Field(
+    # Dictionary to hold properties of the forecast, like p_levels.
+    # The _ at the start means it is not expose in the API.
+    _properties: dict = PrivateAttr(
         None,
-        description="Dictionary to hold properties of the forecast, like p_levels. "
-        "The _ at the start means it is not expose in the API",
     )
 
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
@@ -476,6 +474,28 @@ class Forecast(EnhancedBaseModel):
             input_data_last_updated=self.input_data_last_updated.to_orm(),
             forecast_values=[forecast_value.to_orm() for forecast_value in self.forecast_values],
             historic=self.historic,
+        )
+
+    @classmethod
+    def from_orm(cls, forecast_sql: ForecastSQL):
+        """Method to make Forecast object from ForecastSQL,
+
+        but move 'forecast_values_latest' to 'forecast_values'
+        This is useful as we want the API to still present a Forecast object.
+        """
+        # do normal transform
+        return Forecast(
+            forecast_creation_time=forecast_sql.forecast_creation_time,
+            location=Location.from_orm(forecast_sql.location),
+            input_data_last_updated=InputDataLastUpdated.from_orm(
+                forecast_sql.input_data_last_updated
+            ),
+            forecast_values=[
+                ForecastValue.from_orm(forecast_value)
+                for forecast_value in forecast_sql.forecast_values
+            ],
+            historic=forecast_sql.historic,
+            model=MLModel.model_validate(forecast_sql.model),
         )
 
     @classmethod

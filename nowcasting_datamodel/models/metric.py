@@ -8,7 +8,7 @@ The followin tables are made with sqlamyc and pydantic
 """
 
 from datetime import datetime, time
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from pydantic import Field, validator
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String, Time
@@ -98,7 +98,7 @@ class DatetimeInterval(EnhancedBaseModel):
         ..., description="The timestamp of the start of the interval"
     )
     end_datetime_utc: datetime = Field(..., description="The timestamp of the end of the interval")
-    elexon_settlement_period: datetime = Field(
+    elexon_settlement_period: Optional[datetime] = Field(
         None, description="The elexon settlement period. This is optional"
     )
 
@@ -156,7 +156,7 @@ class MetricValueSQL(Base_Forecast, CreatedMixin):
 class MetricValue(EnhancedBaseModel):
     """Location that the forecast is for"""
 
-    value: str = Field(..., description="The value of the metric")
+    value: float = Field(..., description="The value of the metric")
     number_of_data_points: int = Field(
         ..., description="The number of data points used to make the value"
     )

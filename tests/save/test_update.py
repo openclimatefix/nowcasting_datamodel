@@ -88,11 +88,20 @@ def test_update_one_gsp(db_session):
     assert forecast_latest_values[0].forecast_id == forecast_latest_values[1].forecast_id
 
 
+@freeze_time("2024-01-01 00:00:00")
 def test_update_all_forecast_latest(db_session):
-    today_forecasts = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    today_forecasts = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        session=db_session,
+        t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
     db_session.add_all(today_forecasts)
 
-    today_update_forecasts = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    today_update_forecasts = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        session=db_session,
+        t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
     db_session.add_all(today_update_forecasts)
 
     old_forecasts = make_fake_forecasts(
@@ -187,11 +196,20 @@ def test_update_all_forecast_latest_update_none(db_session):
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 0
 
 
+@freeze_time("2024-01-01 00:00:00")
 def test_update_all_forecast_latest_update_national(db_session):
-    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    f1 = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        session=db_session,
+        t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
     db_session.add_all(f1)
 
-    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    f2 = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        session=db_session,
+        t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
     db_session.add_all(f2)
 
     update_all_forecast_latest(
@@ -223,12 +241,14 @@ def test_update_all_forecast_latest_update_national_model(db_session):
         session=db_session,
         update_national=True,
         update_gsp=False,
+        filter_datetime=datetime(2023, 12, 1, tzinfo=timezone.utc),
     )
     update_all_forecast_latest(
         forecasts=f1,
         session=db_session,
         update_national=True,
         update_gsp=False,
+        filter_datetime=datetime(2023, 12, 1, tzinfo=timezone.utc),
     )
     forecasts = db_session.query(ForecastSQL).all()
     assert len(forecasts) == 3
@@ -243,17 +263,21 @@ def test_update_all_forecast_latest_update_national_model(db_session):
         session=db_session,
         update_national=True,
         update_gsp=False,
+        filter_datetime=datetime(2023, 12, 1, tzinfo=timezone.utc),
     )
     assert len(db_session.query(ForecastSQL).all()) == 4
     forecast_values = db_session.query(ForecastValueLatestSQL).all()
     assert len(forecast_values) == 2 * N_FAKE_FORECASTS
 
     f1[0].model = model_3
+    f1[0].model_id = model_3.id
+
     update_all_forecast_latest(
         forecasts=f1,
         session=db_session,
         update_national=True,
         update_gsp=False,
+        filter_datetime=datetime(2023, 12, 1, tzinfo=timezone.utc),
     )
     forecasts = (
         db_session.query(ForecastSQL)
@@ -266,11 +290,20 @@ def test_update_all_forecast_latest_update_national_model(db_session):
     assert forecasts[0].model.version == model_3.version
 
 
+@freeze_time("2024-01-01 00:00:00")
 def test_update_all_forecast_latest_update_gsps(db_session):
-    f1 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    f1 = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        session=db_session,
+        t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
     db_session.add_all(f1)
 
-    f2 = make_fake_forecasts(gsp_ids=list(range(0, 10)), session=db_session)
+    f2 = make_fake_forecasts(
+        gsp_ids=list(range(0, 10)),
+        session=db_session,
+        t0_datetime_utc=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
     db_session.add_all(f2)
 
     update_all_forecast_latest(
