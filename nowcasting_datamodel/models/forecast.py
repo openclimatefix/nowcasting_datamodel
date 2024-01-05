@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import List
 
 import numpy as np
-from pydantic import Field, validator
+from pydantic import Field, PrivateAttr, validator
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -310,20 +310,16 @@ class ForecastValue(EnhancedBaseModel):
         None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
     )
 
-    _adjust_mw: float = Field(
-        0.0,
-        description="The amount that the forecast should be adjusted by, "
-        "due to persistence errors. This way we keep the original ML prediction. "
-        "The _ at the start means it is not expose in the API",
-    )
+    # The amount that the forecast should be adjusted by,
+    # due to persistence errors. This way we keep the original ML prediction.
+    # The _ at the start means it is not expose in the API
+    _adjust_mw: float = PrivateAttr(0.0)
 
     # This its better to keep this out of the current pydantic models used by the API.
     # A new pydantic mode can be made that includes the forecast plevels, perhaps in the API.
-    _properties: dict = Field(
-        None,
-        description="Dictionary to hold properties of the forecast, like p_levels. "
-        "The _ at the start means it is not expose in the API",
-    )
+    # Dictionary to hold properties of the forecast, like p_levels.
+    # The _ at the start means it is not expose in the API.
+    _properties: dict = PrivateAttr(None,)
 
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
 
