@@ -1,7 +1,7 @@
 """ Methods for adding adjust values to the forecast"""
 import logging
 from datetime import datetime, timedelta
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -14,7 +14,11 @@ logger = logging.getLogger()
 MAX_ADJUST_PER = 0.2
 
 
-def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session, max_adjust_percentage: Optional[float] = MAX_ADJUST_PER):
+def add_adjust_to_forecasts(
+    forecasts_sql: List[ForecastSQL],
+    session,
+    max_adjust_percentage: Optional[float] = MAX_ADJUST_PER,
+):
     """
     Adjust National Forecast by ME over the last week
 
@@ -32,10 +36,14 @@ def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session, max_adjus
     if len(forecast_national) != 1:
         logger.debug("Could not find single national forecast, tehre fore not adding adjust")
 
-    add_adjust_to_national_forecast(forecast=forecast_national[0], session=session, max_adjust_percentage=max_adjust_percentage)
+    add_adjust_to_national_forecast(
+        forecast=forecast_national[0], session=session, max_adjust_percentage=max_adjust_percentage
+    )
 
 
-def add_adjust_to_national_forecast(forecast: ForecastSQL, session, max_adjust_percentage: Optional[float] = MAX_ADJUST_PER):
+def add_adjust_to_national_forecast(
+    forecast: ForecastSQL, session, max_adjust_percentage: Optional[float] = MAX_ADJUST_PER
+):
     """
     Add adjust to national forecast.
 
@@ -91,7 +99,9 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session, max_adjust_p
             # also, if the forecast value is 0, then adjust value should also be 0
             if max_adjust_percentage is not None:
                 if forecast_value.expected_power_generation_megawatts != 0:
-                    max_adjust = max_adjust_percentage * forecast_value.expected_power_generation_megawatts
+                    max_adjust = (
+                        max_adjust_percentage * forecast_value.expected_power_generation_megawatts
+                    )
                     if value > max_adjust:
                         value = max_adjust
                     elif value < -max_adjust:
