@@ -55,17 +55,23 @@ def test_add_adjust_to_national_forecast(latest_me, db_session):
     )[0]
 
     # don't adjust
-    add_adjust_to_national_forecast(session=db_session, forecast=forecast, max_adjust_percentage=None)
+    add_adjust_to_national_forecast(
+        session=db_session, forecast=forecast, max_adjust_percentage=None
+    )
     assert forecast.forecast_values[0].adjust_mw == 16 * 60 + 30
 
     # check if zero, then adjust value is zero
     forecast.forecast_values[0].expected_power_generation_megawatts = 0.0
-    add_adjust_to_national_forecast(session=db_session, forecast=forecast, max_adjust_percentage=0.2)
+    add_adjust_to_national_forecast(
+        session=db_session, forecast=forecast, max_adjust_percentage=0.2
+    )
     assert forecast.forecast_values[0].adjust_mw == 0.0
 
     # check value is at 20%
     forecast.forecast_values[0].expected_power_generation_megawatts = 1.0
-    add_adjust_to_national_forecast(session=db_session, forecast=forecast, max_adjust_percentage=0.2)
+    add_adjust_to_national_forecast(
+        session=db_session, forecast=forecast, max_adjust_percentage=0.2
+    )
     assert forecast.forecast_values[0].adjust_mw == 0.2
 
 
