@@ -1,7 +1,7 @@
 """ Methods for adding adjust values to the forecast"""
 import logging
 from datetime import datetime, timedelta
-from typing import List, Union
+from typing import List, Union, Optional
 
 import numpy as np
 import pandas as pd
@@ -11,8 +11,10 @@ from nowcasting_datamodel.read.read_metric import read_latest_me_national
 
 logger = logging.getLogger()
 
+MAX_ADJUST_PER = 0.2
 
-def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session):
+
+def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session, max_adjust_percentage: Optional[float] = MAX_ADJUST_PER):
     """
     Adjust National Forecast by ME over the last week
 
@@ -20,6 +22,7 @@ def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session):
 
     :param forecasts_sql: list of forecasts
     :param session: database sessions
+    :param max_adjust_percentage: maximum percentage of forecast value that can be adjusted. If this is None, then no limit is used
     """
     logger.debug("Adding Adjusts to National forecast")
 
@@ -29,19 +32,22 @@ def add_adjust_to_forecasts(forecasts_sql: List[ForecastSQL], session):
     if len(forecast_national) != 1:
         logger.debug("Could not find single national forecast, tehre fore not adding adjust")
 
-    add_adjust_to_national_forecast(forecast=forecast_national[0], session=session)
+    add_adjust_to_national_forecast(forecast=forecast_national[0], session=session, max_adjust_percentage=max_adjust_percentage)
 
 
-def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
+def add_adjust_to_national_forecast(forecast: ForecastSQL, session, max_adjust_percentage: Optional[float] = MAX_ADJUST_PER):
     """
     Add adjust to national forecast.
 
     1. Get latest me results for time_of_day and forecast horizont
     2. Reduce latest me results relevant for now
-    3. Add Me to adjust_mw property in ForecastValueSQL
+    3. Reduce adjust value by at most X% of forecast_value.expected_power_generation_megawatts,
+    4. Add Me to adjust_mw property in ForecastValueSQL
 
     :param forecast: national forecast
     :param session:
+    :param max_adjust_percentage: maximum percentage of forecast value that can be adjusted. If this is None, then no limit is used
+
     :return:
     """
 
@@ -78,6 +84,20 @@ def add_adjust_to_national_forecast(forecast: ForecastSQL, session):
             # get value from df
             value = latest_me_df[latest_me_df["datetime"] == forecast_value.target_time]
             value = value.iloc[0].value
+
+            # reduce adjust value by at most 20% of forecast_value.expected_power_generation_megawatts,
+            # if the forecast_value is not 0
+            # note that adjust value can be negative, so we need to be careful
+            # also, if the forecast value is 0, then adjust value should also be 0
+            if max_adjust_percentage is not None:
+                if forecast_value.expected_power_generation_megawatts != 0:
+                    max_adjust = max_adjust_percentage * forecast_value.expected_power_generation_megawatts
+                    if value > max_adjust:
+                        value = max_adjust
+                    elif value < -max_adjust:
+                        value = -max_adjust
+                else:
+                    value = 0.0
 
             # add value to ForecastValueSQL
             forecast_value.adjust_mw = value
