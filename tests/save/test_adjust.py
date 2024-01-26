@@ -6,21 +6,17 @@ from freezegun import freeze_time
 from nowcasting_datamodel.fake import make_fake_forecasts
 from nowcasting_datamodel.models import (
     MetricValueSQL,
-    MetricValue,
 )
 from nowcasting_datamodel.save.adjust import (
     reduce_metric_values_to_correct_forecast_horizon,
     add_adjust_to_forecasts,
+    add_adjust_to_national_forecast,
     get_forecast_horizon_from_forecast,
 )
 
 
 def test_reduce_metric_values_to_correct_forecast_horizon(latest_me):
     datetime_now = datetime(2022, 1, 9, 16, 30)
-
-    print(latest_me[0])
-
-    [MetricValue.from_orm(m) for m in latest_me]
 
     df = reduce_metric_values_to_correct_forecast_horizon(
         latest_me=latest_me, datetime_now=datetime_now, hours_ahead=8
@@ -43,10 +39,34 @@ def test_add_adjust_to_forecasts(latest_me, db_session):
         gsp_ids=list(range(0, 2)), session=db_session, t0_datetime_utc=datetime_now
     )
 
-    add_adjust_to_forecasts(session=db_session, forecasts_sql=forecasts)
+    add_adjust_to_forecasts(session=db_session, forecasts_sql=forecasts, max_adjust_percentage=None)
 
     assert forecasts[0].forecast_values[0].adjust_mw == 16 * 60 + 30
     assert forecasts[1].forecast_values[0].adjust_mw == 0.0
+
+
+@freeze_time("2023-01-09 16:25")
+def test_add_adjust_to_national_forecast(latest_me, db_session):
+    assert len(db_session.query(MetricValueSQL).all()) > 0
+
+    datetime_now = datetime(2023, 1, 9, 16, 30, tzinfo=timezone.utc)
+    forecast = make_fake_forecasts(
+        gsp_ids=list(range(0, 1)), session=db_session, t0_datetime_utc=datetime_now
+    )[0]
+
+    # don't adjust
+    add_adjust_to_national_forecast(session=db_session, forecast=forecast, max_adjust_percentage=None)
+    assert forecast.forecast_values[0].adjust_mw == 16 * 60 + 30
+
+    # check if zero, then adjust value is zero
+    forecast.forecast_values[0].expected_power_generation_megawatts = 0.0
+    add_adjust_to_national_forecast(session=db_session, forecast=forecast, max_adjust_percentage=0.2)
+    assert forecast.forecast_values[0].adjust_mw == 0.0
+
+    # check value is at 20%
+    forecast.forecast_values[0].expected_power_generation_megawatts = 1.0
+    add_adjust_to_national_forecast(session=db_session, forecast=forecast, max_adjust_percentage=0.2)
+    assert forecast.forecast_values[0].adjust_mw == 0.2
 
 
 @freeze_time("2023-01-09 16:25")
