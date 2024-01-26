@@ -10,7 +10,10 @@ from nowcasting_datamodel.models.convert import (
 )
 from nowcasting_datamodel.save.save import save_all_forecast_values_seven_days
 
+from freezegun import freeze_time
 
+
+@freeze_time("2023-01-09 16:25")
 def test_convert_list_forecast_value_seven_days_sql_to_list_forecast(db_session):
     # set up
     forecasts = make_fake_forecasts(gsp_ids=range(0, 10), session=db_session)
