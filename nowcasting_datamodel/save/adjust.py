@@ -26,7 +26,8 @@ def add_adjust_to_forecasts(
 
     :param forecasts_sql: list of forecasts
     :param session: database sessions
-    :param max_adjust_percentage: maximum percentage of forecast value that can be adjusted. If this is None, then no limit is used
+    :param max_adjust_percentage: maximum percentage of forecast value that can be adjusted.
+        If this is None, then no limit is used
     """
     logger.debug("Adding Adjusts to National forecast")
 
@@ -54,7 +55,8 @@ def add_adjust_to_national_forecast(
 
     :param forecast: national forecast
     :param session:
-    :param max_adjust_percentage: maximum percentage of forecast value that can be adjusted. If this is None, then no limit is used
+    :param max_adjust_percentage: maximum percentage of forecast value that can be adjusted.
+        If this is None, then no limit is used
 
     :return:
     """
@@ -93,7 +95,7 @@ def add_adjust_to_national_forecast(
             value = latest_me_df[latest_me_df["datetime"] == forecast_value.target_time]
             value = value.iloc[0].value
 
-            # reduce adjust value by at most 20% of forecast_value.expected_power_generation_megawatts,
+            # reduce adjust value by at most 20% of expected_power_generation_megawatts,
             # if the forecast_value is not 0
             # note that adjust value can be negative, so we need to be careful
             # also, if the forecast value is 0, then adjust value should also be 0
