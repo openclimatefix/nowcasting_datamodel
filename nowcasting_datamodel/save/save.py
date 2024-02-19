@@ -1,4 +1,5 @@
 """ Save forecasts to the database """
+
 import logging
 import os
 from typing import List, Optional

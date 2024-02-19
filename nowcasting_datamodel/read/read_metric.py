@@ -3,6 +3,7 @@
 1. Get the one metric
 2. get datetime interval
 """
+
 import logging
 from datetime import datetime, timezone
 from typing import List, Optional

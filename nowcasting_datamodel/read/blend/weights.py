@@ -1,4 +1,5 @@
 """Functions to make weights for blending"""
+
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 

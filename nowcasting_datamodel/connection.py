@@ -1,4 +1,5 @@
 """ Database Connection class"""
+
 import logging
 
 from sqlalchemy import create_engine

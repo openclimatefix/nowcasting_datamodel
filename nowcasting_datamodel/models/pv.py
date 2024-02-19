@@ -4,6 +4,7 @@
 8. PV yield for storing PV data (pv.py)
 
 """
+
 import logging
 from datetime import datetime
 from typing import Optional

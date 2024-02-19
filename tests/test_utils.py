@@ -1,4 +1,5 @@
 """ Utils functions for test """
+
 from datetime import datetime, timezone
 
 # Used constants

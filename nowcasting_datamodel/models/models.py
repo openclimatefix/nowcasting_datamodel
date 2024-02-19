@@ -8,6 +8,7 @@ The following class are made
 6. Forecasts, a forecast that is made for one gsp, for several time steps into the future
 
 """
+
 import logging
 from datetime import datetime
 from typing import Optional

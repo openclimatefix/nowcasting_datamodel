@@ -1,4 +1,5 @@
 """ App for running database migrations """
+
 import logging
 import os
 import time
