@@ -165,7 +165,7 @@ class MetricValue(EnhancedBaseModel):
         description="The forecast horizon in minutes. "
         "60 minutes means the forecast made 60 mintues before the target time",
     )
-    time_of_day: time = Field(None, description="the time of tday for this metric")
+    time_of_day: Optional[time] = Field(None, description="the time of tday for this metric")
     metric: Metric = Field(..., description="The metric this value is about")
     datetime_interval: DatetimeInterval = Field(
         ..., description="The datetime interval this value is about"
