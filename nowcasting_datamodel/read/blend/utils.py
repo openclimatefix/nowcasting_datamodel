@@ -1,4 +1,5 @@
 """Utils for blending forecasts together"""
+
 from datetime import datetime, timedelta, timezone
 from typing import List, Union
 

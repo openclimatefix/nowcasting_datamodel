@@ -1,4 +1,5 @@
 """ Functions used to make fake forecasts"""
+
 from datetime import datetime, time, timedelta, timezone
 from typing import List, Optional
 

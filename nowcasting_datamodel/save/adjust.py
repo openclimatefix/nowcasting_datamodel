@@ -1,4 +1,5 @@
 """ Methods for adding adjust values to the forecast"""
+
 import logging
 from datetime import datetime, timedelta
 from typing import List, Optional, Union

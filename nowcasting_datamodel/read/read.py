@@ -4,6 +4,7 @@
 2. get the latest forecasts for all gsp ids
 3. get all forecast values
 """
+
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Union
 

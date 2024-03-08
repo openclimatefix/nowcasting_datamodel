@@ -4,6 +4,7 @@
 8. GSP yield for storing GSP yield data
 
 """
+
 import logging
 from datetime import datetime
 from typing import ClassVar, List, Optional

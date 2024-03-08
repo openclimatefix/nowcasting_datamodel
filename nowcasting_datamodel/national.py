@@ -1,4 +1,5 @@
 """ Make national forecasts """
+
 import logging
 from typing import List
 
@@ -57,9 +58,9 @@ def make_national_forecast(
         forecast_values_flat.append(one_gsp)
 
     forecast_values_df = pd.concat(forecast_values_flat)
-    forecast_values_df[
-        "count"
-    ] = 1  # this will be used later to check that there are 338 forecasts for each target_time
+    forecast_values_df["count"] = (
+        1  # this will be used later to check that there are 338 forecasts for each target_time
+    )
 
     # group by target time
     forecast_values_df = forecast_values_df.groupby(["target_time"]).sum()

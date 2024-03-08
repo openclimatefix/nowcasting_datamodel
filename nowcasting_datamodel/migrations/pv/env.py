@@ -1,4 +1,5 @@
 """ run migrations on PV Database """
+
 import os
 from logging.config import fileConfig
 
