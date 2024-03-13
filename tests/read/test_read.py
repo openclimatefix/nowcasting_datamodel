@@ -261,7 +261,6 @@ def test_get_forecast_values_start_and_creation(db_session):
     assert len(forecast_values_read) == 76  # only getting forecast ahead
 
 
-
 def test_get_all_gsp_ids_latest_forecast(db_session):
     f1 = make_fake_forecasts(gsp_ids=[0, 1], session=db_session)
     db_session.add_all(f1)
