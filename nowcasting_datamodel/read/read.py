@@ -482,7 +482,11 @@ def get_forecast_values(
         query = query.filter(model.target_time >= start_datetime)
 
         # also filter on creation time, to speed up things
-        created_utc_filter = start_datetime - timedelta(days=1)
+        if created_utc_limit is None:
+            created_utc_filter = start_datetime - timedelta(days=1)
+        else:
+            created_utc_filter = min([created_utc_limit, start_datetime]) - timedelta(days=1)
+
         query = query.filter(model.created_utc >= created_utc_filter)
         query = query.filter(ForecastSQL.created_utc >= created_utc_filter)
 
