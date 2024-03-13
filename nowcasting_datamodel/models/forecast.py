@@ -8,7 +8,7 @@ The following class are made
 
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from pydantic import Field, PrivateAttr, validator
@@ -306,7 +306,7 @@ class ForecastValue(EnhancedBaseModel):
         ..., ge=0, description="The forecasted value in MW"
     )
 
-    expected_power_generation_normalized: float = Field(
+    expected_power_generation_normalized: Optional[float] = Field(
         None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
     )
 
