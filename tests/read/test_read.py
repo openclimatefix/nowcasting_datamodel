@@ -239,6 +239,28 @@ def test_get_forecast_values_gsp_id_latest(db_session):
     assert forecast_values_read[0].target_time == forecast_2.forecast_values[96].target_time
 
 
+@freeze_time("2024-01-01")
+def test_get_forecast_values_start_and_creation(db_session):
+    forecast_1 = make_fake_forecast(
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2024, 1, 2, tzinfo=timezone.utc)
+    )
+    forecast_2 = make_fake_forecast(
+        gsp_id=1, session=db_session, t0_datetime_utc=datetime(2024, 1, 3, tzinfo=timezone.utc)
+    )
+    db_session.add_all([forecast_1, forecast_2])
+
+    forecast_values_read = get_forecast_values(
+        session=db_session,
+        gsp_id=1,
+        start_datetime=datetime(2024, 1, 2, 1, tzinfo=timezone.utc),
+        created_utc_limit=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    )
+
+    _ = ForecastValue.from_orm(forecast_values_read[0])
+
+    assert len(forecast_values_read) == 76  # only getting forecast ahead
+
+
 def test_get_all_gsp_ids_latest_forecast(db_session):
     f1 = make_fake_forecasts(gsp_ids=[0, 1], session=db_session)
     db_session.add_all(f1)
