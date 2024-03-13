@@ -374,6 +374,30 @@ def test_get_all_gsp_ids_latest_forecast_filter_end_created_utc(db_session):
     assert len(forecast_read) == 0
 
 
+@freeze_time("2023-01-01")
+def test_get_all_gsp_ids_latest_forecast_filter_created_utc_limit(db_session):
+    f1 = make_fake_forecasts(
+        gsp_ids=[1, 2], session=db_session, t0_datetime_utc=datetime(2023, 1, 1)
+    )
+    db_session.add_all(f1)
+    db_session.add_all(f1[0].forecast_values)
+    db_session.commit()
+    assert len(f1[0].forecast_values) == N_FAKE_FORECASTS
+
+    created_utc_limit = datetime.now() - timedelta(days=1)
+    assert len(f1[0].forecast_values) == N_FAKE_FORECASTS
+    forecast_read = get_all_gsp_ids_latest_forecast(
+        session=db_session, created_utc_limit=created_utc_limit
+    )
+    assert len(forecast_read) == 2
+
+    created_utc_limit = datetime.now() + timedelta(days=1)
+    forecast_read = get_all_gsp_ids_latest_forecast(
+        session=db_session, created_utc_limit=created_utc_limit
+    )
+    assert len(forecast_read) == 0
+
+
 def test_get_all_gsp_ids_latest_forecast_filter_historic(db_session):
     """Test get all historic forecast from all gsp but filter on starttime"""
 

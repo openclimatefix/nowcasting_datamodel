@@ -238,6 +238,7 @@ def get_all_gsp_ids_latest_forecast(
     include_national: bool = True,
     model_name: Optional[bool] = None,
     gsp_ids: Optional[List[int]] = None,
+    created_utc_limit: Optional[datetime] = None,
 ) -> List[ForecastSQL]:
     """
     Read forecasts
@@ -254,6 +255,8 @@ def get_all_gsp_ids_latest_forecast(
     :param include_national: Option to include national forecast or not
     :param model_name: Optional to filter on model name
     :param gsp_ids: Optional to filter on gsp ids
+    :param created_utc_limit: Optional to filter on created_utc.
+    We only get forecast that are made before this time
 
     return: List of forecasts objects from database
     """
@@ -276,6 +279,7 @@ def get_all_gsp_ids_latest_forecast(
         historic=historic,
         gsp_ids=gsp_ids,
         model_name=model_name,
+        created_utc_limit=created_utc_limit
     )
 
 
@@ -289,6 +293,7 @@ def get_latest_forecast_for_gsps(
     historic: bool = False,
     gsp_ids: List[int] = None,
     model_name: Optional[int] = None,
+    created_utc_limit: Optional[datetime] = None,
 ):
     """
     Read forecasts
@@ -304,6 +309,8 @@ def get_latest_forecast_for_gsps(
     :param historic: Option to load historic values or not
     :param gsp_ids: Option to filter on gsps. If None, then only the lastest forecast is loaded.
     :param model_name: Option to filter on model name
+    :param created_utc_limit: Optional to filter on created_utc.
+    We only get forecast that are made before this time
 
     :return: List of forecasts objects from database
 
@@ -318,6 +325,9 @@ def get_latest_forecast_for_gsps(
     # filter on created_utc
     if start_created_utc is not None:
         query = query.filter(ForecastSQL.created_utc >= start_created_utc)
+
+    if created_utc_limit is not None:
+        query = query.filter(ForecastSQL.created_utc <= created_utc_limit)
 
     # filter on created_utc
     if end_created_utc is not None:
