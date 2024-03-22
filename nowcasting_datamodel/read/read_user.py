@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
+from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.api import APIRequestSQL, UserSQL
@@ -57,6 +58,8 @@ def get_all_last_api_request(session: Session) -> List[APIRequestSQL]:
         session.query(APIRequestSQL)
         .distinct(APIRequestSQL.user_uuid)
         .join(UserSQL)
+        .options(contains_eager(APIRequestSQL.user))
+        .populate_existing()
         .order_by(APIRequestSQL.user_uuid, APIRequestSQL.created_utc.desc())
         .all()
     )
