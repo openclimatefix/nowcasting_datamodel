@@ -184,15 +184,18 @@ def get_partitions(start_year: int, start_month: int, end_year: int, end_month: 
     return partitions
 
 
-def create_forecastvalueyearmonth_class(year, month): 
+def create_forecastvalueyearmonth_class(year, month):
     """Dynamically create a ForecastValueYearMonthClass dynamically for input year and month"""
-    
+
     ForecastValueYearMonthClass = type(
-        f"ForecastValueY{year}M{month}", 
-        (ForecastValueSQLMixin, Base_Forecast,),
-        dict( 
-            __tablename__ = f"forecast_value_{year}_{month}",
-            __table_args__ = (
+        f"ForecastValueY{year}M{month}",
+        (
+            ForecastValueSQLMixin,
+            Base_Forecast,
+        ),
+        dict(
+            __tablename__=f"forecast_value_{year}_{month}",
+            __table_args__=(
                 Index(
                     f"forecast_value_{year}_{month}_created_utc_idx",  # Index name
                     "created_utc",  # Columns which are part of the index
@@ -205,9 +208,9 @@ def create_forecastvalueyearmonth_class(year, month):
                     f"forecast_value_{year}_{month}_forecast_id_idx",  # Index name
                     "forecast_id",  # Columns which are part of the index
                 ),
-            )
-        )
-    ) 
+            ),
+        ),
+    )
     return ForecastValueYearMonthClass
 
 
