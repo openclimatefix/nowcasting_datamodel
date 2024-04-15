@@ -184,6 +184,36 @@ def get_partitions(start_year: int, start_month: int, end_year: int, end_month: 
     return partitions
 
 
+def create_forecastvalueyearmonth_class(year, month):
+    """Dynamically create a ForecastValueYearMonthClass dynamically for input year and month"""
+
+    ForecastValueYearMonthClass = type(
+        f"ForecastValueY{year}M{month}",
+        (
+            ForecastValueSQLMixin,
+            Base_Forecast,
+        ),
+        dict(
+            __tablename__=f"forecast_value_{year}_{month}",
+            __table_args__=(
+                Index(
+                    f"forecast_value_{year}_{month}_created_utc_idx",  # Index name
+                    "created_utc",  # Columns which are part of the index
+                ),
+                Index(
+                    f"forecast_value_{year}_{month}_target_time_idx",  # Index name
+                    "target_time",  # Columns which are part of the index
+                ),
+                Index(
+                    f"forecast_value_{year}_{month}_forecast_id_idx",  # Index name
+                    "forecast_id",  # Columns which are part of the index
+                ),
+            ),
+        ),
+    )
+    return ForecastValueYearMonthClass
+
+
 def make_partitions(start_year: int, start_month: int, end_year: int):
     """
     Make partitions
@@ -209,23 +239,8 @@ def make_partitions(start_year: int, start_month: int, end_year: int):
             if month_end < 10:
                 month_end = f"0{month_end}"
 
-            class ForecastValueYearMonth(ForecastValueSQLMixin, Base_Forecast):
-                __tablename__ = f"forecast_value_{year}_{month}"
-
-                __table_args__ = (
-                    Index(
-                        f"forecast_value_{year}_{month}_created_utc_idx",  # Index name
-                        "created_utc",  # Columns which are part of the index
-                    ),
-                    Index(
-                        f"forecast_value_{year}_{month}_target_time_idx",  # Index name
-                        "target_time",  # Columns which are part of the index
-                    ),
-                    Index(
-                        f"forecast_value_{year}_{month}_forecast_id_idx",  # Index name
-                        "forecast_id",  # Columns which are part of the index
-                    ),
-                )
+            # Dynamically create class
+            ForecastValueYearMonth = create_forecastvalueyearmonth_class(year, month)
 
             ForecastValueYearMonth.__table__.add_is_dependent_on(ForecastValueSQL.__table__)
 
