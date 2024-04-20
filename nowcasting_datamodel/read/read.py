@@ -539,9 +539,9 @@ def get_forecast_values(
     # add utc timezone
     for forecast in forecasts:
         forecast.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
-        if hasattr(forecast, 'model_info'):
+        if hasattr(forecast, "model_info"):
             forecast.model_info = forecast.model_info or {}
-    
+
     return forecasts
 
 
@@ -601,9 +601,9 @@ def get_forecast_values_latest(
 
     for forecast_value in forecast_values_latest:
         forecast_value.created_utc = forecast_value.created_utc.replace(tzinfo=timezone.utc)
-        if hasattr(forecast_value, 'model_info'):
+        if hasattr(forecast_value, "model_info"):
             forecast_value.model_info = forecast_value.model_info or {}
-    
+
     return forecast_values_latest
 
 
