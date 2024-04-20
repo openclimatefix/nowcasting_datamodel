@@ -152,6 +152,9 @@ class ForecastValueSQL(
 
     forecast = relationship("ForecastSQL", back_populates="forecast_values")
 
+    # Store the model and weight information as a JSON/dict field
+    model_info = Column(MutableDict.as_mutable(JSON), nullable=True)
+
 
 def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
     """Make partitions"""
@@ -339,6 +342,9 @@ class ForecastValue(EnhancedBaseModel):
     )
 
     _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
+
+    # Store the model and weight information as a JSON/dict field
+    _model_info: Optional[dict] = PrivateAttr(None)
 
     def to_orm(self) -> ForecastValueSQL:
         """Change model to ForecastValueSQL"""
