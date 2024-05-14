@@ -1,6 +1,6 @@
 pydantic==2.5.3
 pandas
-sqlalchemy
+sqlalchemy>=2.0
 psycopg2-binary
 numpy
 alembic
