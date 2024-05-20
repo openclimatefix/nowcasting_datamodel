@@ -87,6 +87,10 @@ def test_update_one_gsp(db_session):
     assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
     assert forecast_latest_values[0].forecast_id == forecast_latest_values[1].forecast_id
 
+    # check that the input_data_last_updated is the latest one
+    forecast = db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).first()
+    assert forecast.input_data_last_updated == forecast_sql.input_data_last_updated
+
 
 @freeze_time("2024-01-01 00:00:00")
 def test_update_all_forecast_latest(db_session):
