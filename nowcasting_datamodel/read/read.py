@@ -759,47 +759,6 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
     return locations
 
 
-def get_model(session: Session, name: str, version: Optional[str] = None) -> MLModelSQL:
-    """
-    Get model object from name and version
-
-    :param session: database session
-    :param name: name of the model
-    :param version: version of the model
-
-    return: Model object
-
-    """
-
-    # start main query
-    query = session.query(MLModelSQL)
-
-    # filter on gsp_id
-    query = query.filter(MLModelSQL.name == name)
-    if version is not None:
-        query = query.filter(MLModelSQL.version == version)
-
-    # gets the latest version
-    query = query.order_by(MLModelSQL.version.desc())
-
-    # get all results
-    models = query.all()
-
-    if len(models) == 0:
-        logger.debug(
-            f"Model for name {name} and version {version} does not exist so going to add it"
-        )
-
-        model = MLModelSQL(name=name, version=version)
-        session.add(model)
-        session.commit()
-
-    else:
-        model = models[0]
-
-    return model
-
-
 def get_pv_system(
     session: Session, pv_system_id: int, provider: Optional[str] = "pvoutput.org"
 ) -> PVSystemSQL:

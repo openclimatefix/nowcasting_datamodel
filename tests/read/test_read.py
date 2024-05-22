@@ -14,7 +14,6 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
     LocationSQL,
-    MLModel,
     PVSystem,
     Status,
     national_gb_label,
@@ -36,7 +35,6 @@ from nowcasting_datamodel.read.read import (
     get_latest_national_forecast,
     get_latest_status,
     get_location,
-    get_model,
     get_pv_system,
     update_latest_input_data_last_updated,
 )
@@ -68,16 +66,6 @@ def test_get_national_location(db_session):
 
     with pytest.raises(Exception):
         _ = get_location(session=db_session, gsp_id=0, label="test_label")
-
-
-def test_get_model(db_session):
-    model_read_1 = get_model(session=db_session, name="test_name", version="9.9.9")
-    model_read_2 = get_model(session=db_session, name="test_name", version="9.9.9")
-
-    assert model_read_1.name == model_read_2.name
-    assert model_read_1.version == model_read_2.version
-
-    _ = MLModel.from_orm(model_read_2)
 
 
 def test_get_forecast(db_session, forecasts):

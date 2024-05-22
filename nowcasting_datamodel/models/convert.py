@@ -16,8 +16,8 @@ from nowcasting_datamodel.models import (
 from nowcasting_datamodel.read.read import (
     get_latest_input_data_last_updated,
     get_location,
-    get_model,
 )
+from nowcasting_datamodel.read.read_models import get_model
 
 logger = logging.getLogger()
 
