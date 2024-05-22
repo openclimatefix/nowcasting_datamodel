@@ -3,8 +3,12 @@
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy.orm import Session
+
+from nowcasting_datamodel.models import MLModelSQL
 from nowcasting_datamodel.models.forecast import ForecastSQL
 from nowcasting_datamodel.models.models import MLModelSQL
+from nowcasting_datamodel.read.read import logger
 
 
 def get_models(
@@ -37,3 +41,44 @@ def get_models(
     models = query.all()
 
     return models
+
+
+def get_model(session: Session, name: str, version: Optional[str] = None) -> MLModelSQL:
+    """
+    Get model object from name and version
+
+    :param session: database session
+    :param name: name of the model
+    :param version: version of the model
+
+    return: Model object
+
+    """
+
+    # start main query
+    query = session.query(MLModelSQL)
+
+    # filter on gsp_id
+    query = query.filter(MLModelSQL.name == name)
+    if version is not None:
+        query = query.filter(MLModelSQL.version == version)
+
+    # gets the latest version
+    query = query.order_by(MLModelSQL.version.desc())
+
+    # get all results
+    models = query.all()
+
+    if len(models) == 0:
+        logger.debug(
+            f"Model for name {name} and version {version} does not exist so going to add it"
+        )
+
+        model = MLModelSQL(name=name, version=version)
+        session.add(model)
+        session.commit()
+
+    else:
+        model = models[0]
+
+    return model

@@ -17,7 +17,8 @@ from nowcasting_datamodel.models import (
 )
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL
-from nowcasting_datamodel.read.read import get_location, get_model
+from nowcasting_datamodel.read.read import get_location
+from nowcasting_datamodel.read.read_models import get_model
 from nowcasting_datamodel.read.read_metric import get_datetime_interval
 from nowcasting_datamodel.save.update import change_forecast_value_to_latest
 

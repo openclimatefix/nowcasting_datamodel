@@ -8,7 +8,7 @@ from nowcasting_datamodel.fake import (
     make_fake_forecast_value,
     make_fake_forecasts,
 )
-from nowcasting_datamodel.read.read import get_model
+from nowcasting_datamodel.read.read_models import get_model
 from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,

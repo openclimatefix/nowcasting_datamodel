@@ -2,8 +2,8 @@ from nowcasting_datamodel.fake import make_fake_forecast
 
 from datetime import datetime, timedelta, timezone
 
-from nowcasting_datamodel.read.read_models import get_models
-from nowcasting_datamodel.read.read import get_model
+from nowcasting_datamodel.models import MLModel
+from nowcasting_datamodel.read.read_models import get_models, get_model
 
 
 def test_get_models(db_session):
@@ -44,3 +44,13 @@ def testget_models_after_created(db_session):
         forecast_created_utc=datetime.now(tz=timezone.utc) + timedelta(days=1),
     )
     assert len(models) == 0
+
+
+def test_get_model(db_session):
+    model_read_1 = get_model(session=db_session, name="test_name", version="9.9.9")
+    model_read_2 = get_model(session=db_session, name="test_name", version="9.9.9")
+
+    assert model_read_1.name == model_read_2.name
+    assert model_read_1.version == model_read_2.version
+
+    _ = MLModel.from_orm(model_read_2)
