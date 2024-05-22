@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from nowcasting_datamodel.models import MLModelSQL
 from nowcasting_datamodel.models.forecast import ForecastSQL
-from nowcasting_datamodel.models.models import MLModelSQL
 from nowcasting_datamodel.read.read import logger
 
 
