@@ -1,9 +1,10 @@
 """ Read functions for models"""
 
-from typing import Optional
 from datetime import datetime
-from nowcasting_datamodel.models.models import MLModelSQL
+from typing import Optional
+
 from nowcasting_datamodel.models.forecast import ForecastSQL
+from nowcasting_datamodel.models.models import MLModelSQL
 
 
 def get_models(
