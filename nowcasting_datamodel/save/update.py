@@ -120,7 +120,7 @@ def update_forecast_latest(
         forecast_values.append(forecast_value_latest.__dict__)
 
     # update input_data_last_updated
-    forecast_historic.input_data_last_updated = forecast.input_data_last_updated
+    forecast_historic.input_data_last_updated_id = forecast.input_data_last_updated_id
 
     # upsert forecast values
     upsert(session=session, model=ForecastValueLatestSQL, rows=forecast_values)
