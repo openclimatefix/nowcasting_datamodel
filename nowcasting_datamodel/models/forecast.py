@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import List, Optional
 
 import numpy as np
-from pydantic import Field, PrivateAttr, validator
+from pydantic import Field, PrivateAttr, field_validator
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -338,8 +338,10 @@ class ForecastValue(EnhancedBaseModel):
         None,
     )
 
-    _normalize_target_time = validator("target_time", allow_reuse=True)(datetime_must_have_timezone)
-
+    @field_validator("target_time", mode="before")
+    def normalize_target_time(cls, v):
+        return datetime_must_have_timezone(cls, v)
+    
     def to_orm(self) -> ForecastValueSQL:
         """Change model to ForecastValueSQL"""
         return ForecastValueSQL(
@@ -476,9 +478,9 @@ class Forecast(EnhancedBaseModel):
         description="Information about the input data that was used to create the forecast",
     )
 
-    _normalize_forecast_creation_time = validator("forecast_creation_time", allow_reuse=True)(
-        datetime_must_have_timezone
-    )
+    @field_validator("forecast_creation_time", mode="before")
+    def normalize_forecast_creation_time(cls, v):
+        return datetime_must_have_timezone(cls, v)
 
     def to_orm(self) -> ForecastSQL:
         """Change model to ForecastSQL"""
