@@ -112,7 +112,7 @@ class GSPYield(EnhancedBaseModel):
     @field_validator("datetime_utc", mode="before")
     def normalize_datetime_utc(cls, v):
         return datetime_must_have_timezone(cls, v)
-    
+
     @field_validator("pvlive_updated_utc", mode="before")
     def normalize_pvlive_updated_utc(cls, v):
         return datetime_must_have_timezone(cls, v)

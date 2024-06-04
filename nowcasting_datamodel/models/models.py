@@ -97,19 +97,19 @@ class InputDataLastUpdated(EnhancedBaseModel):
     @field_validator("gsp", mode="before")
     def normalize_gsp(cls, v):
         return datetime_must_have_timezone(cls, v)
-    
+
     @field_validator("nwp", mode="before")
     def normalize_nwp(cls, v):
         return datetime_must_have_timezone(cls, v)
-    
+
     @field_validator("pv", mode="before")
     def normalize_pv(cls, v):
         return datetime_must_have_timezone(cls, v)
-    
+
     @field_validator("satellite", mode="before")
     def normalize_satellite(cls, v):
         return datetime_must_have_timezone(cls, v)
-    
+
     def to_orm(self) -> InputDataLastUpdatedSQL:
         """Change model to InputDataLastUpdatedSQL"""
         return InputDataLastUpdatedSQL(
