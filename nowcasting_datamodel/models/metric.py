@@ -104,10 +104,12 @@ class DatetimeInterval(EnhancedBaseModel):
 
     @field_validator("start_datetime_utc", mode="before")
     def normalize_start_datetime_utc(cls, v):
+        """Normalize start_datetime_utc field"""
         return datetime_must_have_timezone(cls, v)
 
     @field_validator("end_datetime_utc", mode="before")
     def normalize_end_datetime_utc(cls, v):
+        """Normalize end_datetime_utc field"""
         return datetime_must_have_timezone(cls, v)
 
     def to_orm(self) -> DatetimeIntervalSQL:

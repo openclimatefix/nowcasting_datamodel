@@ -340,6 +340,7 @@ class ForecastValue(EnhancedBaseModel):
 
     @field_validator("target_time", mode="before")
     def normalize_target_time(cls, v):
+        """Normalize target_time field"""
         return datetime_must_have_timezone(cls, v)
 
     def to_orm(self) -> ForecastValueSQL:
@@ -480,6 +481,7 @@ class Forecast(EnhancedBaseModel):
 
     @field_validator("forecast_creation_time", mode="before")
     def normalize_forecast_creation_time(cls, v):
+        """Normalize forecast_creation_time field"""
         return datetime_must_have_timezone(cls, v)
 
     def to_orm(self) -> ForecastSQL:
