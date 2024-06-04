@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from typing import ClassVar, List, Optional
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -104,20 +104,22 @@ class GSPYield(EnhancedBaseModel):
     )
     capacity_mwp: Optional[float] = Field(None, description="The estimate current capacity")
     pvlive_updated_utc: Optional[datetime] = Field(None, description="When PVlive made this value")
-
-    _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
-        datetime_must_have_timezone
-    )
-    _normalize_pvlive_updated_utc = validator("pvlive_updated_utc", allow_reuse=True)(
-        datetime_must_have_timezone
-    )
-
     gsp: Optional[Location] = Field(
         None,
         description="The GSP associated with this model",
     )
 
-    @validator("solar_generation_kw")
+    @field_validator("datetime_utc", mode="before")
+    def normalize_datetime_utc(cls, v):
+        """Normalize datetime_utc field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("pvlive_updated_utc", mode="before")
+    def normalize_pvlive_updated_utc(cls, v):
+        """Normalize pvlive_updated_utc field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):
         """Validate the solar_generation_kw field"""
         if v < 0:
@@ -125,7 +127,7 @@ class GSPYield(EnhancedBaseModel):
             v = 0
         return v
 
-    @validator("regime")
+    @field_validator("regime")
     def validate_regime(cls, v):
         """Validate the solar_generation_kw field"""
         if v not in ["day-after", "in-day"]:

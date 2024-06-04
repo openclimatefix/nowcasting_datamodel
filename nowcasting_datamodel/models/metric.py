@@ -10,7 +10,7 @@ The followin tables are made with sqlamyc and pydantic
 from datetime import datetime, time
 from typing import ClassVar, Optional
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String, Time
 from sqlalchemy.orm import relationship
 
@@ -102,12 +102,15 @@ class DatetimeInterval(EnhancedBaseModel):
         None, description="The elexon settlement period. This is optional"
     )
 
-    _normalize_start_datetime_utc = validator("start_datetime_utc", allow_reuse=True)(
-        datetime_must_have_timezone
-    )
-    _normalize_end_datetime_utc = validator("end_datetime_utc", allow_reuse=True)(
-        datetime_must_have_timezone
-    )
+    @field_validator("start_datetime_utc", mode="before")
+    def normalize_start_datetime_utc(cls, v):
+        """Normalize start_datetime_utc field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("end_datetime_utc", mode="before")
+    def normalize_end_datetime_utc(cls, v):
+        """Normalize end_datetime_utc field"""
+        return datetime_must_have_timezone(cls, v)
 
     def to_orm(self) -> DatetimeIntervalSQL:
         """Change model to GSPYieldSQL"""

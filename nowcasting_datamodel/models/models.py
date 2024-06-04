@@ -13,7 +13,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from sqlalchemy import Column, DateTime, Index, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -94,10 +94,25 @@ class InputDataLastUpdated(EnhancedBaseModel):
         ..., description="The time when the input satellite data was last updated"
     )
 
-    _normalize_gsp = validator("gsp", allow_reuse=True)(datetime_must_have_timezone)
-    _normalize_nwp = validator("nwp", allow_reuse=True)(datetime_must_have_timezone)
-    _normalize_pv = validator("pv", allow_reuse=True)(datetime_must_have_timezone)
-    _normalize_satellite = validator("satellite", allow_reuse=True)(datetime_must_have_timezone)
+    @field_validator("gsp", mode="before")
+    def normalize_gsp(cls, v):
+        """Normalize gsp field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("nwp", mode="before")
+    def normalize_nwp(cls, v):
+        """Normalize nwp field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("pv", mode="before")
+    def normalize_pv(cls, v):
+        """Normalize pv field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("satellite", mode="before")
+    def normalize_satellite(cls, v):
+        """Normalize satellite field"""
+        return datetime_must_have_timezone(cls, v)
 
     def to_orm(self) -> InputDataLastUpdatedSQL:
         """Change model to InputDataLastUpdatedSQL"""
@@ -134,7 +149,7 @@ class Status(EnhancedBaseModel):
         """Change model to SQL"""
         return StatusSQL(status=self.status, message=self.message)
 
-    @validator("status")
+    @field_validator("status")
     def validate_solar_generation_kw(cls, v):
         """Validate the solar_generation_kw field"""
         if v not in ["ok", "warning", "error"]:

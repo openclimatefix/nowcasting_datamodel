@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -79,7 +79,7 @@ class PVSystem(EnhancedBaseModel):
     )
     ocf_id: Optional[int] = Field(None, description="The PV system id that is unique to OCF")
 
-    @validator("provider")
+    @field_validator("provider")
     def validate_provider(cls, v):
         """Validate the provider"""
         if v not in providers:
@@ -129,17 +129,17 @@ class PVYield(EnhancedBaseModel):
 
     datetime_utc: datetime = Field(..., description="The timestamp of the pv system")
     solar_generation_kw: float = Field(..., description="The provider of the PV system")
-
-    _normalize_target_time = validator("datetime_utc", allow_reuse=True)(
-        datetime_must_have_timezone
-    )
-
     pv_system: Optional[PVSystem] = Field(
         None,
         description="The PV system associated with this model",
     )
 
-    @validator("solar_generation_kw")
+    @field_validator("datetime_utc", mode="before")
+    def normalize_datetime_utc(cls, v):
+        """Normalize datetime_utc field"""
+        return datetime_must_have_timezone(cls, v)
+
+    @field_validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):
         """Validate the solar_generation_kw field"""
         if v < 0:
