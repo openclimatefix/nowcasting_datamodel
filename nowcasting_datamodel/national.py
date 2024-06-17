@@ -45,7 +45,10 @@ def make_national_forecast(
         gsp_id = forecast.location.gsp_id
 
         one_gsp = pd.DataFrame(
-            [ForecastValue.from_orm(value).dict() for value in forecast.forecast_values]
+            [
+                ForecastValue.model_validate(value, from_attributes=True).model_dump() 
+                for value in forecast.forecast_values
+            ]
         )
         adjusts_mw = [f.adjust_mw for f in forecast.forecast_values]
         one_gsp["gps_id"] = gsp_id
@@ -98,6 +101,6 @@ def make_national_forecast(
     )
 
     # validate
-    _ = Forecast.from_orm(national_forecast)
+    _ = Forecast.model_validate(national_forecast, from_attributes=True)
 
     return national_forecast
