@@ -37,7 +37,9 @@ def convert_list_forecast_value_seven_days_sql_to_list_forecast(
     for forecast_value_sql in forecast_values_sql:
         gsp_id = forecast_value_sql.forecast.location.gsp_id
 
-        forecast_value: ForecastValue = ForecastValue.from_orm(forecast_value_sql)
+        forecast_value: ForecastValue = ForecastValue.model_validate(
+            forecast_value_sql, from_attributes=True
+            )
 
         if gsp_id in forecasts_by_gsp.keys():
             forecasts_by_gsp[gsp_id].forecast_values.append(forecast_value)
@@ -50,7 +52,7 @@ def convert_list_forecast_value_seven_days_sql_to_list_forecast(
                 forecast_values=[forecast_value_sql],
                 historic=forecast_value_sql.forecast.historic,
             )
-            forecast = Forecast.from_orm(forecast)
+            forecast = Forecast.model_validate(forecast, from_attributes=True)
             forecasts_by_gsp[gsp_id] = forecast
 
     forecasts = [forecast for forecast in forecasts_by_gsp.values()]
