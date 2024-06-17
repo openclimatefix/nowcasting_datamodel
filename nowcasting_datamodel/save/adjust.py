@@ -189,7 +189,7 @@ def reduce_metric_values_to_correct_forecast_horizon(
         f"Reducing metric values to correct forecast horizon {datetime_now=} {hours_ahead=}"
     )
 
-    latest_me_df = pd.DataFrame([MetricValue.from_orm(m).dict() for m in latest_me])
+    latest_me_df = pd.DataFrame([MetricValue.model_validate(m, from_attributes=True).model_dump() for m in latest_me])
     if len(latest_me_df) == 0:
         # no latest ME values, so just making an empty dataframe
         latest_me_df = pd.DataFrame(columns=["forecast_horizon_minutes", "time_of_day", "value"])

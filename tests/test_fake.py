@@ -36,13 +36,13 @@ def test_make_fake_intensity():
 
 def test_make_fake_location():
     location_sql: LocationSQL = make_fake_location(1)
-    location = Location.from_orm(location_sql)
+    location = Location.model_validate(location_sql, from_attributes=True)
     _ = Location.to_orm(location)
 
 
 def test_make_fake_input_data_last_updated():
     input_sql: InputDataLastUpdatedSQL = make_fake_input_data_last_updated()
-    input = InputDataLastUpdated.from_orm(input_sql)
+    input = InputDataLastUpdated.model_validate(input_sql, from_attributes=True)
     _ = InputDataLastUpdated.to_orm(input)
 
 

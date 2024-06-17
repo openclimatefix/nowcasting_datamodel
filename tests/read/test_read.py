@@ -402,7 +402,7 @@ def test_get_national_latest_forecast(db_session):
 
 
 def test_get_pv_system(db_session_pv):
-    pv_system = PVSystem.from_orm(make_fake_pv_system())
+    pv_system = PVSystem.model_validate(make_fake_pv_system(), from_attributes=True)
     save_pv_system(session=db_session_pv, pv_system=pv_system)
 
     pv_system_get = get_pv_system(
@@ -410,7 +410,7 @@ def test_get_pv_system(db_session_pv):
     )
     # this get defaulted to True when adding to the database
     pv_system.correct_data = True
-    assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
+    assert PVSystem.model_validate(pv_system, from_attributes=True) == PVSystem.model_validate(pv_system_get, from_attributes=True)
 
 
 def test_get_latest_input_data_last_updated_multiple_entries(db_session):

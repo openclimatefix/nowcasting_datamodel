@@ -98,7 +98,7 @@ def test_status_validation():
 def test_status_orm():
     status = Status(message="testing", status="warning")
     ormed_status = status.to_orm()
-    status_orm = Status.from_orm(ormed_status)
+    status_orm = Status.model_validate(ormed_status, from_attributes=True)
 
     assert status_orm.message == status.message
     assert status_orm.status == status.status
