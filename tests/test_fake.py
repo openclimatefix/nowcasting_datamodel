@@ -50,15 +50,15 @@ def test_make_fake_forecast_value():
     target = datetime(2023, 1, 1, tzinfo=timezone.utc)
 
     forecast_value_sql: ForecastValueSQL = make_fake_forecast_value(target_time=target)
-    forecast_value = ForecastValue.from_orm(forecast_value_sql)
+    forecast_value = ForecastValue.model_validate(forecast_value_sql, from_attributes=True)
     _ = ForecastValue.to_orm(forecast_value)
 
 
 def test_make_fake_forecast(db_session):
     forecast_sql: ForecastSQL = make_fake_forecast(gsp_id=1, session=db_session)
-    forecast = Forecast.from_orm(forecast_sql)
+    forecast = Forecast.model_validate(forecast_sql, from_attributes=True)
     forecast_sql = Forecast.to_orm(forecast)
-    _ = Forecast.from_orm(forecast_sql)
+    _ = Forecast.model_validate(forecast_sql, from_attributes=True)
 
     from sqlalchemy import text
 
@@ -78,7 +78,7 @@ def test_make_fake_forecasts(db_session):
 
 def test_make_national_fake_forecast(db_session):
     forecast_sql: ForecastSQL = make_fake_national_forecast(session=db_session)
-    forecast = Forecast.from_orm(forecast_sql)
+    forecast = Forecast.model_validate(forecast_sql, from_attributes=True)
     _ = Forecast.to_orm(forecast)
 
 
