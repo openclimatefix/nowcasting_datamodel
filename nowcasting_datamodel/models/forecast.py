@@ -574,7 +574,25 @@ class Forecast(EnhancedBaseModel):
         ]
 
         return forecast
+    
+    @classmethod
+    def model_validate_latest(cls, forecast_sql: ForecastSQL, from_attributes: bool | None = None):
+        """Method to make Forecast object from ForecastSQL,
 
+        but move 'forecast_values_latest' to 'forecast_values'
+        This is useful as we want the API to still present a Forecast object.
+        """
+        # do normal transform
+        forecast = cls.model_validate(forecast_sql, from_attributes=from_attributes)
+
+        # move 'forecast_values_latest' to 'forecast_values'
+        forecast.forecast_values = [
+            ForecastValue.model_validate(forecast_value, from_attributes=from_attributes)
+            for forecast_value in forecast_sql.forecast_values_latest
+        ]
+
+        return forecast
+    
     def normalize(self, adjust: bool = False):
         """Normalize forecasts by installed capacity mw"""
 
