@@ -39,7 +39,7 @@ def convert_list_forecast_value_seven_days_sql_to_list_forecast(
 
         forecast_value: ForecastValue = ForecastValue.model_validate(
             forecast_value_sql, from_attributes=True
-            )
+        )
 
         if gsp_id in forecasts_by_gsp.keys():
             forecasts_by_gsp[gsp_id].forecast_values.append(forecast_value)

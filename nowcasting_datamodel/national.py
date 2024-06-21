@@ -46,7 +46,7 @@ def make_national_forecast(
 
         one_gsp = pd.DataFrame(
             [
-                ForecastValue.model_validate(value, from_attributes=True).model_dump() 
+                ForecastValue.model_validate(value, from_attributes=True).model_dump()
                 for value in forecast.forecast_values
             ]
         )

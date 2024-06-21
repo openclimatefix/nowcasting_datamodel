@@ -371,7 +371,7 @@ class ForecastValue(EnhancedBaseModel):
             m._properties = obj.properties
 
         return m
-    
+
     @classmethod
     def model_validate(cls, obj: ForecastValueSQL, from_attributes: bool | None = None):
         """Make sure _adjust_mw is transfered also"""
@@ -524,8 +524,7 @@ class Forecast(EnhancedBaseModel):
             forecast_creation_time=forecast_sql.forecast_creation_time,
             location=Location.model_validate(forecast_sql.location, from_attributes=True),
             input_data_last_updated=InputDataLastUpdated.model_validate(
-                forecast_sql.input_data_last_updated,
-                from_attributes=True
+                forecast_sql.input_data_last_updated, from_attributes=True
             ),
             forecast_values=[
                 ForecastValue.model_validate(forecast_value, from_attributes=True)
@@ -542,12 +541,10 @@ class Forecast(EnhancedBaseModel):
         return Forecast(
             forecast_creation_time=forecast_sql.forecast_creation_time,
             location=Location.model_validate(
-                forecast_sql.location, 
-                from_attributes=from_attributes
+                forecast_sql.location, from_attributes=from_attributes
             ),
             input_data_last_updated=InputDataLastUpdated.model_validate(
-                forecast_sql.input_data_last_updated,
-                from_attributes=from_attributes
+                forecast_sql.input_data_last_updated, from_attributes=from_attributes
             ),
             forecast_values=[
                 ForecastValue.model_validate(forecast_value, from_attributes=from_attributes)
@@ -556,7 +553,7 @@ class Forecast(EnhancedBaseModel):
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
         )
-    
+
     @classmethod
     def from_orm_latest(cls, forecast_sql: ForecastSQL):
         """Method to make Forecast object from ForecastSQL,
@@ -574,7 +571,7 @@ class Forecast(EnhancedBaseModel):
         ]
 
         return forecast
-    
+
     @classmethod
     def model_validate_latest(cls, forecast_sql: ForecastSQL, from_attributes: bool | None = None):
         """Method to make Forecast object from ForecastSQL,
@@ -592,7 +589,7 @@ class Forecast(EnhancedBaseModel):
         ]
 
         return forecast
-    
+
     def normalize(self, adjust: bool = False):
         """Normalize forecasts by installed capacity mw"""
 
