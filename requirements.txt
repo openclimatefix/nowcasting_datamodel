@@ -7,3 +7,4 @@ alembic
 click
 freezegun
 structlog
+numpy==1.26.4
