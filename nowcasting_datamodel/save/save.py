@@ -24,6 +24,7 @@ def save(
     update_national: Optional[bool] = True,
     update_gsp: Optional[bool] = True,
     apply_adjuster: Optional[bool] = True,
+    save_to_last_seven_days: Optional[bool] = True,
 ):
     """
     Save forecast to database
@@ -38,6 +39,7 @@ def save(
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     :param apply_adjuster: Optional (default true), to apply the adjuster
+    :param save_to_last_seven_days: Optional (default true), to save to the last seven days table
     """
 
     use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
@@ -63,9 +65,10 @@ def save(
     )
     session.commit()
 
-    logger.debug("Saving to last seven days table")
-    save_all_forecast_values_seven_days(session=session, forecasts=forecasts)
-    session.commit()
+    if save_to_last_seven_days:
+        logger.debug("Saving to last seven days table")
+        save_all_forecast_values_seven_days(session=session, forecasts=forecasts)
+        session.commit()
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
