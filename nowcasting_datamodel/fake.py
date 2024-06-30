@@ -90,7 +90,7 @@ def make_fake_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    random_factor = float(0.9 + 0.1 * np.random.random())
+    random_factor = 0.9 + 0.1 * np.random.random()
 
     # create
     if forecast_values is None:
@@ -173,7 +173,7 @@ def make_fake_national_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    random_factor = float(0.9 + 0.1 * np.random.random())
+    random_factor = 0.9 + 0.1 * np.random.random()
 
     # create
     forecast_values = []
@@ -219,7 +219,7 @@ def make_fake_gsp_yields_for_one_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    random_factor = float(0.9 + 0.1 * np.random.random())
+    random_factor = 0.9 + 0.1 * np.random.random()
 
     # make 2 days of fake data
     for i in range(48 * 2):
