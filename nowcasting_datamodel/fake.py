@@ -50,7 +50,7 @@ def make_fake_forecast_value(
     """Make fake forecast value"""
 
     intensity = make_fake_intensity(target_time)
-    power = float(forecast_maximum * intensity * random_factor)
+    power = forecast_maximum * intensity * random_factor
 
     return ForecastValueSQL(
         target_time=target_time,
