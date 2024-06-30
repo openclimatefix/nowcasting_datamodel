@@ -50,7 +50,7 @@ def make_fake_forecast_value(
     """Make fake forecast value"""
 
     intensity = make_fake_intensity(target_time)
-    power = forecast_maximum * intensity * random_factor
+    power = float(forecast_maximum * intensity * random_factor)
 
     return ForecastValueSQL(
         target_time=target_time,
@@ -90,7 +90,7 @@ def make_fake_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    random_factor = 0.9 + 0.1 * np.random.random()
+    random_factor = float(0.9 + 0.1 * np.random.random())
 
     # create
     if forecast_values is None:
@@ -173,7 +173,7 @@ def make_fake_national_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    random_factor = 0.9 + 0.1 * np.random.random()
+    random_factor = float(0.9 + 0.1 * np.random.random())
 
     # create
     forecast_values = []
@@ -219,14 +219,14 @@ def make_fake_gsp_yields_for_one_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    random_factor = 0.9 + 0.1 * np.random.random()
+    random_factor = float(0.9 + 0.1 * np.random.random())
 
     # make 2 days of fake data
     for i in range(48 * 2):
         datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
 
         intensity = make_fake_intensity(datetime_utc)
-        power = installed_capacity_mw * intensity * random_factor
+        power = float(installed_capacity_mw * intensity * random_factor)
 
         gsp_yield = GSPYieldSQL(
             datetime_utc=datetime_utc,
@@ -245,7 +245,7 @@ def make_fake_gsp_yields_for_one_location(
         session.add(gsp_yield)
 
 
-def make_fake_intensity(datetime_utc: datetime):
+def make_fake_intensity(datetime_utc: datetime) -> float:
     """
     Make a fake intesnity value based on the time of the day
 
@@ -258,7 +258,7 @@ def make_fake_intensity(datetime_utc: datetime):
         intensity = np.cos(2 * np.pi * fraction_of_day) ** 2
     else:
         intensity = 0.0
-    return intensity
+    return float(intensity)
 
 
 def make_fake_gsp_yields(

@@ -2,9 +2,8 @@ pydantic==2.5.3
 pandas
 sqlalchemy>=2.0
 psycopg2-binary
-numpy
 alembic
 click
 freezegun
 structlog
-numpy==1.26.4
+numpy==2.0.0

@@ -113,7 +113,7 @@ def add_adjust_to_national_forecast(
                     value = 0.0
 
             # add value to ForecastValueSQL
-            forecast_value.adjust_mw = value
+            forecast_value.adjust_mw = float(value)
             if np.isnan(value):
                 logger.debug(
                     f"Found ME value for {target_time} in {latest_me_df}, "
