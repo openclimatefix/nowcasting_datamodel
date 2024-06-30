@@ -226,7 +226,7 @@ def make_fake_gsp_yields_for_one_location(
         datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
 
         intensity = make_fake_intensity(datetime_utc)
-        power = float(installed_capacity_mw * intensity * random_factor)
+        power = installed_capacity_mw * intensity * random_factor
 
         gsp_yield = GSPYieldSQL(
             datetime_utc=datetime_utc,
