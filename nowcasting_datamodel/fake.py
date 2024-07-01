@@ -245,7 +245,7 @@ def make_fake_gsp_yields_for_one_location(
         session.add(gsp_yield)
 
 
-def make_fake_intensity(datetime_utc: datetime):
+def make_fake_intensity(datetime_utc: datetime) -> float:
     """
     Make a fake intesnity value based on the time of the day
 
@@ -258,7 +258,7 @@ def make_fake_intensity(datetime_utc: datetime):
         intensity = np.cos(2 * np.pi * fraction_of_day) ** 2
     else:
         intensity = 0.0
-    return intensity
+    return float(intensity)
 
 
 def make_fake_gsp_yields(
