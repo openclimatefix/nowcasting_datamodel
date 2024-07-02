@@ -53,4 +53,4 @@ def test_get_model(db_session):
     assert model_read_1.name == model_read_2.name
     assert model_read_1.version == model_read_2.version
 
-    _ = MLModel.from_orm(model_read_2)
+    _ = MLModel.model_validate(model_read_2, from_attributes=True)
