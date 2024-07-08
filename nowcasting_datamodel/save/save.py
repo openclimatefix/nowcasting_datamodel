@@ -7,7 +7,7 @@ from typing import List, Optional
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL
-from nowcasting_datamodel.models.forecast import ForecastSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSevenDaysSQL, MLModel
 from nowcasting_datamodel.save.adjust import add_adjust_to_forecasts
 from nowcasting_datamodel.save.update import (
     add_forecast_last_7_days_and_remove_old_data,
@@ -111,12 +111,15 @@ def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
     return pv_system
 
 
-def save_all_forecast_values_seven_days(session: Session, forecasts: List[ForecastSQL]):
+def save_all_forecast_values_seven_days(
+    session: Session, forecasts: List[ForecastSQL], save_distinct: bool = True
+):
     """
     Save all the forecast values in the last seven days table
 
     :param session: database sessions
     :param forecasts: list of forecasts
+    :param save_distinct: Optional (default True), to only save distinct values
     """
 
     # get all values together
@@ -127,7 +130,72 @@ def save_all_forecast_values_seven_days(session: Session, forecasts: List[Foreca
                 change_forecast_value_to_forecast_last_7_days(forecast_value)
             )
 
+    # only include values that are different
+    if save_distinct:
+        forecast_values_last_7_days_distinct = extract_distinct_new_forecast_values(
+            forecast_values_last_7_days, session
+        )
+    else:
+        forecast_values_last_7_days_distinct = forecast_values_last_7_days
+
     # add them to the database
     add_forecast_last_7_days_and_remove_old_data(
-        session=session, forecast_values=forecast_values_last_7_days
+        session=session, forecast_values=forecast_values_last_7_days_distinct
     )
+
+
+def extract_distinct_new_forecast_values(forecast_values_last_7_days, session):
+    """
+    Keep only new forecast values, that are different from current ones in the database
+
+    The forecst values are matched on
+    - location
+    - target_time
+    - model name
+
+    :param forecast_values_last_7_days: list of forecast value last seve days
+    :param session: database session
+    :return: list of new forecast values, different from current ones in the database
+    """
+    forecast_values_last_7_days_distinct = []
+
+    logger.debug(f"Extracting distinct new forecast values from {len(forecast_values_last_7_days)} forecast values")
+
+    # make order by and disntict columns
+    distinct_columns = [
+        ForecastValueSevenDaysSQL.location_id,
+        ForecastValueSevenDaysSQL.target_time,
+        ForecastValueSevenDaysSQL.model_id,
+    ]
+    order_by_columns = distinct_columns + [ForecastValueSevenDaysSQL.created_utc.desc()]
+
+    for forecast_value in forecast_values_last_7_days:
+
+        query = session.query(ForecastValueSevenDaysSQL)
+        query = query.distinct(*distinct_columns)
+        query = query.join(ForecastSQL)
+        query = query.join(MLModel)
+
+        # filters
+        query = query.filter(ForecastValueSevenDaysSQL.target_time == forecast_value.target_time)
+        query = query.filter(ForecastSQL.location_id == forecast_value.forecast.location_id)
+        query = query.filter(MLModel.name == forecast_value.forecast.model.name)
+
+        # order
+        query = query.order_by(*order_by_columns)
+
+        # get value
+        last_forecast_value = query.first()
+
+        if last_forecast_value is not None:
+            if (
+                last_forecast_value.expected_power_generation_megawatts
+                != forecast_value.expected_power_generation_megawatts
+            ):
+                forecast_values_last_7_days_distinct.append(forecast_value)
+        else:
+            forecast_values_last_7_days_distinct.append(forecast_value)
+
+    logger.debug(f"Extracted {len(forecast_values_last_7_days_distinct)} distinct new forecast values")
+
+    return forecast_values_last_7_days_distinct
