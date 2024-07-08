@@ -48,7 +48,7 @@ def test_save(db_session, latest_me):
     forecast_values_latest = db_session.query(ForecastValueLatestSQL).all()
     assert len(forecast_values_latest) == 10 * N_FAKE_FORECASTS
     forecast_values_seven_days = db_session.query(ForecastValueSevenDaysSQL).all()
-    assert len(forecast_values_seven_days) == 20 * N_FAKE_FORECASTS
+    assert len(forecast_values_seven_days) == 10 * (N_FAKE_FORECASTS + 49)
 
     assert forecast_values[0].properties is not None
     assert forecast_values_latest[0].properties is not None
@@ -86,7 +86,7 @@ def test_save_no_adjuster(db_session):
     assert len(db_session.query(ForecastSQL).all()) == 30
     assert len(db_session.query(ForecastValueSQL).all()) == 20 * N_FAKE_FORECASTS
     assert len(db_session.query(ForecastValueLatestSQL).all()) == 10 * N_FAKE_FORECASTS
-    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 20 * N_FAKE_FORECASTS
+    assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 10 * (N_FAKE_FORECASTS + 49)
 
     # check that for gsp_id the results look right
     forecast_latest_values = (
