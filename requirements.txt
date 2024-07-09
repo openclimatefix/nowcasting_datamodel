@@ -7,4 +7,3 @@ click
 freezegun
 structlog
 numpy==2.0.0
-
