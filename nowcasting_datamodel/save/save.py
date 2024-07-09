@@ -25,6 +25,7 @@ def save(
     update_gsp: Optional[bool] = True,
     apply_adjuster: Optional[bool] = True,
     save_to_last_seven_days: Optional[bool] = True,
+    save_distinct_last_seven_days: bool = True,
 ):
     """
     Save forecast to database
@@ -40,6 +41,8 @@ def save(
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     :param apply_adjuster: Optional (default true), to apply the adjuster
     :param save_to_last_seven_days: Optional (default true), to save to the last seven days table
+    :param save_distinct_last_seven_days: Optional (default True), to only save distinct
+        forecast values in the forecast_value_last_seven_days table
     """
 
     use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
@@ -67,7 +70,9 @@ def save(
 
     if save_to_last_seven_days:
         logger.debug("Saving to last seven days table")
-        save_all_forecast_values_seven_days(session=session, forecasts=forecasts)
+        save_all_forecast_values_seven_days(
+            session=session, forecasts=forecasts, save_distinct=save_distinct_last_seven_days
+        )
         session.commit()
 
 
