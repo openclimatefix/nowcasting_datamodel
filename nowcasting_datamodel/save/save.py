@@ -119,7 +119,8 @@ def save_all_forecast_values_seven_days(
 
     :param session: database sessions
     :param forecasts: list of forecasts
-    :param save_distinct: Optional (default True), to only save distinct values
+    :param save_distinct: Optional (default True), to only save distinct forecast values
+        If the last saved forecast value is the same as the current one, it will not be saved
     """
 
     # get all values together
