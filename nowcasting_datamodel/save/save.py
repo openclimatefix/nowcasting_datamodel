@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
-from nowcasting_datamodel.models import PVSystem, PVSystemSQL, MLModelSQL
+from nowcasting_datamodel.models import MLModelSQL, PVSystem, PVSystemSQL
 from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSevenDaysSQL
 from nowcasting_datamodel.save.adjust import add_adjust_to_forecasts
 from nowcasting_datamodel.save.update import (
