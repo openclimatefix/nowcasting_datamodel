@@ -116,6 +116,10 @@ def test_save_all_forecast_values_seven_days(db_session):
     now = datetime.now(tz=timezone.utc)
     forecasts = make_fake_forecasts(gsp_ids=range(0, 3), session=db_session, t0_datetime_utc=now)
 
+    # need to commit the forecasts to the database
+    db_session.add_all(forecasts)
+    db_session.commit()
+
     save_all_forecast_values_seven_days(session=db_session, forecasts=forecasts)
 
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 3 * 112

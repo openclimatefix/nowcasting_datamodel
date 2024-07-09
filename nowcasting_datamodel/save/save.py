@@ -25,7 +25,7 @@ def save(
     update_gsp: Optional[bool] = True,
     apply_adjuster: Optional[bool] = True,
     save_to_last_seven_days: Optional[bool] = True,
-    save_distinct_last_seven_days: bool = True,
+    remove_non_distinct_last_seven_days: bool = True,
 ):
     """
     Save forecast to database
@@ -41,7 +41,7 @@ def save(
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     :param apply_adjuster: Optional (default true), to apply the adjuster
     :param save_to_last_seven_days: Optional (default true), to save to the last seven days table
-    :param save_distinct_last_seven_days: Optional (default True), to only save distinct
+    :param remove_non_distinct_last_seven_days: Optional (default True), to only keep distinct
         forecast values in the forecast_value_last_seven_days table
     """
 
@@ -71,7 +71,9 @@ def save(
     if save_to_last_seven_days:
         logger.debug("Saving to last seven days table")
         save_all_forecast_values_seven_days(
-            session=session, forecasts=forecasts, save_distinct=save_distinct_last_seven_days
+            session=session,
+            forecasts=forecasts,
+            remove_non_distinct=remove_non_distinct_last_seven_days,
         )
         session.commit()
 
@@ -117,14 +119,14 @@ def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
 
 
 def save_all_forecast_values_seven_days(
-    session: Session, forecasts: List[ForecastSQL], save_distinct: bool = True
+    session: Session, forecasts: List[ForecastSQL], remove_non_distinct: bool = True
 ):
     """
     Save all the forecast values in the last seven days table
 
     :param session: database sessions
     :param forecasts: list of forecasts
-    :param save_distinct: Optional (default True), to only save distinct forecast values
+    :param remove_non_distinct: Optional (default True), to only keep distinct forecast values
         If the last saved forecast value is the same as the current one, it will not be saved
     """
 
@@ -135,24 +137,13 @@ def save_all_forecast_values_seven_days(
             forecast_value_last_7_days = change_forecast_value_to_forecast_last_7_days(
                 forecast_value
             )
-
-            if save_distinct:
-                # only keep it if its unique
-                # this does take extra time, but it keeps the database smaller
-                forecast_is_new = is_new_forecast_values_distinct(
-                    forecast_value=forecast_value_last_7_days,
-                    session=session,
-                    location_id=forecast.location_id,
-                    model_name=forecast.model.name,
-                )
-                if forecast_is_new:
-                    forecast_values_last_7_days.append(forecast_value_last_7_days)
-            else:
-                forecast_values_last_7_days.append(forecast_value_last_7_days)
+            forecast_values_last_7_days.append(forecast_value_last_7_days)
 
     # add them to the database
     add_forecast_last_7_days_and_remove_old_data(
-        session=session, forecast_values=forecast_values_last_7_days
+        session=session,
+        forecast_values=forecast_values_last_7_days,
+        remove_non_distinct=remove_non_distinct,
     )
 
 
