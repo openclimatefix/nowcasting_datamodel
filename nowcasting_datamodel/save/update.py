@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel import N_GSP
-from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
+from nowcasting_datamodel.models import ForecastValueSevenDaysSQL, LocationSQL, MLModelSQL
 from nowcasting_datamodel.models.forecast import (
     ForecastSQL,
     ForecastValueLatestSQL,
@@ -296,14 +296,84 @@ def change_forecast_value_to_forecast_last_7_days(
     return forecast_new
 
 
+def remove_non_distinct_forecast_values(
+    session: Session, start_datetime: datetime, end_datetime: datetime
+):
+    """
+    Remove any non-distinct forecast values
+
+    We remove any non-distinct values from ForecastValueSevenDaysSQL. The values are distinct on
+    - target_time
+    - location_id
+    - model_name
+    - expected_power_generation_megawatts
+
+    We keep the first value, and remove and values from later on.
+
+    :param session: database session
+    :param start_datetime: start datetime
+    :param end_datetime: end_dateimte
+    """
+
+    logger.debug(f"Removing non distinct forecast values for {start_datetime} to {end_datetime}")
+
+    # 1. sub query, these are the values we want to keep
+    sub_query = session.query(ForecastValueSevenDaysSQL.uuid)
+
+    # distinct
+    sub_query = sub_query.distinct(
+        ForecastValueSevenDaysSQL.target_time,
+        ForecastSQL.location_id,
+        MLModelSQL.name,
+        ForecastValueSevenDaysSQL.expected_power_generation_megawatts,
+    )
+
+    # join
+    sub_query = sub_query.join(ForecastSQL)
+    sub_query = sub_query.join(LocationSQL)
+    sub_query = sub_query.join(MLModelSQL)
+
+    # filter on time
+    sub_query = sub_query.filter(ForecastValueSevenDaysSQL.target_time >= start_datetime)
+    sub_query = sub_query.filter(ForecastValueSevenDaysSQL.target_time < end_datetime)
+
+    # order by
+    sub_query = sub_query.order_by(
+        ForecastValueSevenDaysSQL.target_time,
+        ForecastSQL.location_id,
+        MLModelSQL.name,
+        ForecastValueSevenDaysSQL.expected_power_generation_megawatts,
+        ForecastValueSevenDaysSQL.created_utc,  # get the first one
+    )
+
+    sub_query = sub_query.subquery()
+
+    # 2. main query
+    query = session.query(ForecastValueSevenDaysSQL)
+
+    # filter on tiem
+    query = query.filter(ForecastValueSevenDaysSQL.target_time >= start_datetime)
+    query = query.filter(ForecastValueSevenDaysSQL.target_time < end_datetime)
+
+    # select uuid not in subquery
+    query = query.filter(ForecastValueSevenDaysSQL.uuid.notin_(sub_query))
+
+    # delete all results
+    query.delete()
+
+
 def add_forecast_last_7_days_and_remove_old_data(
-    forecast_values: List[ForecastValueSevenDaysSQL], session: Session
+    forecast_values: List[ForecastValueSevenDaysSQL],
+    session: Session,
+    remove_non_distinct: bool = False,
 ):
     """
     Add forecast values and delete old values
 
     :param forecast_values:
     :param session:
+    :param remove_non_distinct: Optional (default False), to only keep distinct forecast values
+        If the last saved forecast value is the same as the current one, it will not be saved
     :return:
     """
 
@@ -313,7 +383,16 @@ def add_forecast_last_7_days_and_remove_old_data(
     # remove old data
     now_minus_7_days = datetime.now(tz=timezone.utc) - timedelta(days=7)
 
+    # remove any duplicate forecast values
+    if remove_non_distinct:
+        for i in range(0, 24 * 10):
+            start_datetime = now_minus_7_days + timedelta(hours=i)
+            end_datetime = start_datetime + timedelta(hours=1)
+            remove_non_distinct_forecast_values(session, start_datetime, end_datetime)
+
     logger.debug(f"Removing data before {now_minus_7_days}")
     query = session.query(ForecastValueSevenDaysSQL)
     query = query.where(ForecastValueSevenDaysSQL.target_time < now_minus_7_days)
     query.delete()
+
+    session.commit()
