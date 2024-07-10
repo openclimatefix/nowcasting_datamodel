@@ -382,6 +382,7 @@ def add_forecast_last_7_days_and_remove_old_data(
 
     # remove old data
     now_minus_7_days = datetime.now(tz=timezone.utc) - timedelta(days=7)
+    now_minus_7_days = now_minus_7_days.replace(minute=0, second=0, microsecond=0)
 
     # remove any duplicate forecast values
     if remove_non_distinct:
