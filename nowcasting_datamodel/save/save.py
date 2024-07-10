@@ -45,7 +45,7 @@ def save(
         forecast values in the forecast_value_last_seven_days table
         Please note that this does remove some data, which might be needed when calculating metrics.
         Another solution to this is to make a forecast <--> forecast_value a many-to-many relationship.
-        This means one forecast will still have the full range of forecast values assign with it. 
+        This means one forecast will still have the full range of forecast values assign with it.
     """
 
     use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
