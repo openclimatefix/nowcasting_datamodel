@@ -365,14 +365,14 @@ def remove_non_distinct_forecast_values(
 def add_forecast_last_7_days_and_remove_old_data(
     forecast_values: List[ForecastValueSevenDaysSQL],
     session: Session,
-    remove_non_distinct: bool = True,
+    remove_non_distinct: bool = False,
 ):
     """
     Add forecast values and delete old values
 
     :param forecast_values:
     :param session:
-    :param remove_non_distinct: Optional (default True), to only keep distinct forecast values
+    :param remove_non_distinct: Optional (default False), to only keep distinct forecast values
         If the last saved forecast value is the same as the current one, it will not be saved
     :return:
     """

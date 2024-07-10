@@ -41,7 +41,7 @@ def save(
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     :param apply_adjuster: Optional (default true), to apply the adjuster
     :param save_to_last_seven_days: Optional (default true), to save to the last seven days table
-    :param remove_non_distinct_last_seven_days: Optional (default True), to only keep distinct
+    :param remove_non_distinct_last_seven_days: Optional (default False), to only keep distinct
         forecast values in the forecast_value_last_seven_days table
         Please note that this does remove some data, which might be needed when calculating
         metrics. Another solution to this is to make a forecast <--> forecast_value a
@@ -123,14 +123,14 @@ def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
 
 
 def save_all_forecast_values_seven_days(
-    session: Session, forecasts: List[ForecastSQL], remove_non_distinct: bool = True
+    session: Session, forecasts: List[ForecastSQL], remove_non_distinct: bool = False
 ):
     """
     Save all the forecast values in the last seven days table
 
     :param session: database sessions
     :param forecasts: list of forecasts
-    :param remove_non_distinct: Optional (default True), to only keep distinct forecast values
+    :param remove_non_distinct: Optional (default False), to only keep distinct forecast values
         If the last saved forecast value is the same as the current one, it will not be saved
     """
 
