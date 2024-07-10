@@ -326,7 +326,9 @@ def test_change_forecast_value_to_forecast_last_7_days(db_session):
         forecast=forecast_value
     )
     add_forecast_last_7_days_and_remove_old_data(
-        forecast_values=[forecast_value_last_seven_days], session=db_session
+        forecast_values=[forecast_value_last_seven_days],
+        session=db_session,
+        remove_non_distinct=False,
     )
 
     assert len(db_session.query(ForecastValueSevenDaysSQL).all()) == 1
