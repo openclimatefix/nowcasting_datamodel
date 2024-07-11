@@ -24,6 +24,8 @@ def save(
     update_national: Optional[bool] = True,
     update_gsp: Optional[bool] = True,
     apply_adjuster: Optional[bool] = True,
+    save_to_last_seven_days: Optional[bool] = True,
+    remove_non_distinct_last_seven_days: bool = False,
 ):
     """
     Save forecast to database
@@ -38,6 +40,13 @@ def save(
     :param update_national: Optional (default true), to update the national forecast
     :param update_gsp: Optional (default true), to update all the GSP forecasts
     :param apply_adjuster: Optional (default true), to apply the adjuster
+    :param save_to_last_seven_days: Optional (default true), to save to the last seven days table
+    :param remove_non_distinct_last_seven_days: Optional (default False), to only keep distinct
+        forecast values in the forecast_value_last_seven_days table
+        Please note that this does remove some data, which might be needed when calculating
+        metrics. Another solution to this is to make a forecast <--> forecast_value a
+        many-to-many relationship. This means one forecast will still have the full
+        range of forecast values assign with it.
     """
 
     use_adjuster_env_var = bool(os.getenv("USE_ADJUSTER", "True").lower() in ["true", "1"])
@@ -63,9 +72,14 @@ def save(
     )
     session.commit()
 
-    logger.debug("Saving to last seven days table")
-    save_all_forecast_values_seven_days(session=session, forecasts=forecasts)
-    session.commit()
+    if save_to_last_seven_days:
+        logger.debug("Saving to last seven days table")
+        save_all_forecast_values_seven_days(
+            session=session,
+            forecasts=forecasts,
+            remove_non_distinct=remove_non_distinct_last_seven_days,
+        )
+        session.commit()
 
 
 def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
@@ -108,23 +122,30 @@ def save_pv_system(session: Session, pv_system: PVSystem) -> PVSystemSQL:
     return pv_system
 
 
-def save_all_forecast_values_seven_days(session: Session, forecasts: List[ForecastSQL]):
+def save_all_forecast_values_seven_days(
+    session: Session, forecasts: List[ForecastSQL], remove_non_distinct: bool = False
+):
     """
     Save all the forecast values in the last seven days table
 
     :param session: database sessions
     :param forecasts: list of forecasts
+    :param remove_non_distinct: Optional (default False), to only keep distinct forecast values
+        If the last saved forecast value is the same as the current one, it will not be saved
     """
 
     # get all values together
     forecast_values_last_7_days = []
     for forecast in forecasts:
         for forecast_value in forecast.forecast_values:
-            forecast_values_last_7_days.append(
-                change_forecast_value_to_forecast_last_7_days(forecast_value)
+            forecast_value_last_7_days = change_forecast_value_to_forecast_last_7_days(
+                forecast_value
             )
+            forecast_values_last_7_days.append(forecast_value_last_7_days)
 
     # add them to the database
     add_forecast_last_7_days_and_remove_old_data(
-        session=session, forecast_values=forecast_values_last_7_days
+        session=session,
+        forecast_values=forecast_values_last_7_days,
+        remove_non_distinct=remove_non_distinct,
     )
