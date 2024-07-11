@@ -354,7 +354,28 @@ class ForecastValue(EnhancedBaseModel):
     @classmethod
     def from_orm(cls, obj: ForecastValueSQL):
         """Make sure _adjust_mw is transfered also"""
-        m = super().from_orm(obj=obj)
+        m = super().model_validate(obj=obj, from_attributes=True)
+
+        # this is because from orm doesnt copy over '_' variables.
+        # But we don't want to expose this in the API
+        default_value = 0.0
+        if hasattr(obj, "adjust_mw"):
+            adjust_mw = obj.adjust_mw
+            if not adjust_mw or np.isnan(adjust_mw):
+                adjust_mw = default_value
+            m._adjust_mw = adjust_mw
+        else:
+            m._adjust_mw = default_value
+
+        if hasattr(obj, "properties"):
+            m._properties = obj.properties
+
+        return m
+
+    @classmethod
+    def model_validate(cls, obj: ForecastValueSQL, from_attributes: bool | None = None):
+        """Make sure _adjust_mw is transfered also"""
+        m = super().model_validate(obj=obj, from_attributes=from_attributes)
 
         # this is because from orm doesnt copy over '_' variables.
         # But we don't want to expose this in the API
@@ -497,20 +518,36 @@ class Forecast(EnhancedBaseModel):
 
     @classmethod
     def from_orm(cls, forecast_sql: ForecastSQL):
-        """Method to make Forecast object from ForecastSQL,
-
-        but move 'forecast_values_latest' to 'forecast_values'
-        This is useful as we want the API to still present a Forecast object.
-        """
+        """Method to make Forecast object from ForecastSQL"""
         # do normal transform
         return Forecast(
             forecast_creation_time=forecast_sql.forecast_creation_time,
-            location=Location.from_orm(forecast_sql.location),
-            input_data_last_updated=InputDataLastUpdated.from_orm(
-                forecast_sql.input_data_last_updated
+            location=Location.model_validate(forecast_sql.location, from_attributes=True),
+            input_data_last_updated=InputDataLastUpdated.model_validate(
+                forecast_sql.input_data_last_updated, from_attributes=True
             ),
             forecast_values=[
-                ForecastValue.from_orm(forecast_value)
+                ForecastValue.model_validate(forecast_value, from_attributes=True)
+                for forecast_value in forecast_sql.forecast_values
+            ],
+            historic=forecast_sql.historic,
+            model=MLModel.model_validate(forecast_sql.model),
+        )
+
+    @classmethod
+    def model_validate(cls, forecast_sql: ForecastSQL, from_attributes: bool | None = None):
+        """Method to make Forecast object from ForecastSQL"""
+        # do normal transform
+        return Forecast(
+            forecast_creation_time=forecast_sql.forecast_creation_time,
+            location=Location.model_validate(
+                forecast_sql.location, from_attributes=from_attributes
+            ),
+            input_data_last_updated=InputDataLastUpdated.model_validate(
+                forecast_sql.input_data_last_updated, from_attributes=from_attributes
+            ),
+            forecast_values=[
+                ForecastValue.model_validate(forecast_value, from_attributes=from_attributes)
                 for forecast_value in forecast_sql.forecast_values
             ],
             historic=forecast_sql.historic,
@@ -525,11 +562,29 @@ class Forecast(EnhancedBaseModel):
         This is useful as we want the API to still present a Forecast object.
         """
         # do normal transform
-        forecast = cls.from_orm(forecast_sql)
+        forecast = cls.model_validate(forecast_sql, from_attributes=True)
 
         # move 'forecast_values_latest' to 'forecast_values'
         forecast.forecast_values = [
-            ForecastValue.from_orm(forecast_value)
+            ForecastValue.model_validate(forecast_value, from_attributes=True)
+            for forecast_value in forecast_sql.forecast_values_latest
+        ]
+
+        return forecast
+
+    @classmethod
+    def model_validate_latest(cls, forecast_sql: ForecastSQL, from_attributes: bool | None = None):
+        """Method to make Forecast object from ForecastSQL,
+
+        but move 'forecast_values_latest' to 'forecast_values'
+        This is useful as we want the API to still present a Forecast object.
+        """
+        # do normal transform
+        forecast = cls.model_validate(forecast_sql, from_attributes=from_attributes)
+
+        # move 'forecast_values_latest' to 'forecast_values'
+        forecast.forecast_values = [
+            ForecastValue.model_validate(forecast_value, from_attributes=from_attributes)
             for forecast_value in forecast_sql.forecast_values_latest
         ]
 

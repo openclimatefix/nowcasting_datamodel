@@ -75,6 +75,7 @@ def test_get_forecast(db_session, forecasts):
     assert forecast_read.forecast_values[0] == forecasts[-1].forecast_values[0]
 
     _ = Forecast.from_orm(forecast_read)
+    _ = Forecast.model_validate(forecast_read, from_attributes=True)
 
 
 def test_read_gsp_id(db_session, forecasts):
@@ -125,6 +126,7 @@ def test_get_forecast_values_gsp_id(db_session, forecasts):
     )
 
     _ = ForecastValue.from_orm(forecast_values_read[0])
+    _ = ForecastValue.model_validate(forecast_values_read[0], from_attributes=True)
 
     assert len(forecast_values_read) == N_FAKE_FORECASTS
 
@@ -152,7 +154,7 @@ def test_get_forecast_values_latest_gsp_id(db_session):
     forecast_values_read = get_forecast_values_latest(
         session=db_session, gsp_id=f1[0].location.gsp_id
     )
-    _ = ForecastValue.from_orm(forecast_values_read[0])
+    _ = ForecastValue.model_validate(forecast_values_read[0], from_attributes=True)
 
     assert len(forecast_values_read) == 2
     assert forecast_values_read[0].gsp_id == f1[0].location.gsp_id
@@ -220,7 +222,7 @@ def test_get_forecast_values_gsp_id_latest(db_session):
         start_datetime=datetime(2024, 1, 2, tzinfo=timezone.utc),
     )
 
-    _ = ForecastValue.from_orm(forecast_values_read[0])
+    _ = ForecastValue.model_validate(forecast_values_read[0], from_attributes=True)
 
     assert len(forecast_values_read) == 16  # only getting forecast ahead
 
@@ -244,7 +246,7 @@ def test_get_forecast_values_start_and_creation(db_session):
         created_utc_limit=datetime(2024, 1, 1, tzinfo=timezone.utc),
     )
 
-    _ = ForecastValue.from_orm(forecast_values_read[0])
+    _ = ForecastValue.model_validate(forecast_values_read[0], from_attributes=True)
 
     assert len(forecast_values_read) == 76  # only getting forecast ahead
 
@@ -402,7 +404,7 @@ def test_get_national_latest_forecast(db_session):
 
 
 def test_get_pv_system(db_session_pv):
-    pv_system = PVSystem.from_orm(make_fake_pv_system())
+    pv_system = PVSystem.model_validate(make_fake_pv_system(), from_attributes=True)
     save_pv_system(session=db_session_pv, pv_system=pv_system)
 
     pv_system_get = get_pv_system(
@@ -410,7 +412,9 @@ def test_get_pv_system(db_session_pv):
     )
     # this get defaulted to True when adding to the database
     pv_system.correct_data = True
-    assert PVSystem.from_orm(pv_system) == PVSystem.from_orm(pv_system_get)
+    assert PVSystem.model_validate(pv_system, from_attributes=True) == PVSystem.model_validate(
+        pv_system_get, from_attributes=True
+    )
 
 
 def test_get_latest_input_data_last_updated_multiple_entries(db_session):
