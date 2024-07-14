@@ -15,7 +15,7 @@ from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
-from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.utils import datetime_with_timezone
 
 logger = logging.getLogger(__name__)
 
@@ -112,12 +112,12 @@ class GSPYield(EnhancedBaseModel):
     @field_validator("datetime_utc", mode="before")
     def normalize_datetime_utc(cls, v):
         """Normalize datetime_utc field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     @field_validator("pvlive_updated_utc", mode="before")
     def normalize_pvlive_updated_utc(cls, v):
         """Normalize pvlive_updated_utc field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     @field_validator("solar_generation_kw")
     def validate_solar_generation_kw(cls, v):

@@ -34,7 +34,7 @@ from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.models import InputDataLastUpdated, MLModel
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
-from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.utils import datetime_with_timezone
 
 logger = logging.getLogger(__name__)
 
@@ -341,7 +341,7 @@ class ForecastValue(EnhancedBaseModel):
     @field_validator("target_time", mode="before")
     def normalize_target_time(cls, v):
         """Normalize target_time field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     def to_orm(self) -> ForecastValueSQL:
         """Change model to ForecastValueSQL"""
@@ -482,7 +482,7 @@ class Forecast(EnhancedBaseModel):
     @field_validator("forecast_creation_time", mode="before")
     def normalize_forecast_creation_time(cls, v):
         """Normalize forecast_creation_time field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     def to_orm(self) -> ForecastSQL:
         """Change model to ForecastSQL"""

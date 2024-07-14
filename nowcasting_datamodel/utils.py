@@ -2,11 +2,20 @@
 
 import logging
 from datetime import datetime, timezone
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def datetime_must_have_timezone(cls, v: datetime):
+def datetime_with_timezone(cls, v: Any) -> datetime:
+    """Convert to a datetime with a timezone"""
+    dt = v
+    if not isinstance(dt, datetime):
+        dt = datetime.fromisoformat(dt)
+    return datetime_must_have_timezone(cls, dt)
+
+
+def datetime_must_have_timezone(cls, v: datetime) -> datetime:
     """Enforce that this variable must have a timezone"""
     if v is None:
         return v
