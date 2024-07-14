@@ -11,7 +11,7 @@ def test_datetime_with_timezone_handles_none():
 
 
 def test_datetime_with_timezone_handles_string():
-    dt = datetime_with_timezone(None, "2024-07-14T18:01:26+0000")
+    dt = datetime_with_timezone(None, "2024-07-14T18:01:26+00:00")
     assert isinstance(dt, datetime)
     assert dt.tzinfo == timezone.utc
 
