@@ -6,6 +6,16 @@ from datetime import datetime, timezone
 from nowcasting_datamodel.utils import convert_to_camelcase, datetime_with_timezone
 
 
+def test_datetime_with_timezone_handles_none():
+    assert datetime_with_timezone(None, None) is None
+
+
+def test_datetime_with_timezone_handles_string():
+    dt = datetime_with_timezone(None, "2024-07-14T18:01:26+0000")
+    assert isinstance(dt, datetime)
+    assert dt.tzinfo == timezone.utc
+
+
 def test_datetime_with_timezone():
     """Test function datetime_with_timezone"""
 

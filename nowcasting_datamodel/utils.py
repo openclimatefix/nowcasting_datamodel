@@ -17,10 +17,10 @@ def datetime_with_timezone(cls, v: Any) -> Optional[datetime]:
             dt = datetime.fromisoformat(dt)
         else:
             raise TypeError(f"argument must be a datetime or a str, but was {dt.type()}")
-    return datetime_must_have_timezone(cls, dt)
+    return _datetime_must_have_timezone(cls, dt)
 
 
-def datetime_must_have_timezone(cls, v: datetime) -> Optional[datetime]:
+def _datetime_must_have_timezone(cls, v: datetime) -> Optional[datetime]:
     """Enforce that this variable must have a timezone"""
     if v is None:
         return v
