@@ -19,7 +19,7 @@ from sqlalchemy.orm import relationship
 
 from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
-from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.utils import datetime_with_timezone
 
 national_gb_label = "National-GB"
 
@@ -97,22 +97,22 @@ class InputDataLastUpdated(EnhancedBaseModel):
     @field_validator("gsp", mode="before")
     def normalize_gsp(cls, v):
         """Normalize gsp field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     @field_validator("nwp", mode="before")
     def normalize_nwp(cls, v):
         """Normalize nwp field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     @field_validator("pv", mode="before")
     def normalize_pv(cls, v):
         """Normalize pv field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     @field_validator("satellite", mode="before")
     def normalize_satellite(cls, v):
         """Normalize satellite field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     def to_orm(self) -> InputDataLastUpdatedSQL:
         """Change model to InputDataLastUpdatedSQL"""

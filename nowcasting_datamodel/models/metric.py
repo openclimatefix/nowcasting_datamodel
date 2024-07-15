@@ -17,7 +17,7 @@ from sqlalchemy.orm import relationship
 from nowcasting_datamodel.models.base import Base_Forecast
 from nowcasting_datamodel.models.gsp import Location
 from nowcasting_datamodel.models.utils import CreatedMixin, EnhancedBaseModel
-from nowcasting_datamodel.utils import datetime_must_have_timezone
+from nowcasting_datamodel.utils import datetime_with_timezone
 
 ########
 # 1. Metric
@@ -105,12 +105,12 @@ class DatetimeInterval(EnhancedBaseModel):
     @field_validator("start_datetime_utc", mode="before")
     def normalize_start_datetime_utc(cls, v):
         """Normalize start_datetime_utc field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     @field_validator("end_datetime_utc", mode="before")
     def normalize_end_datetime_utc(cls, v):
         """Normalize end_datetime_utc field"""
-        return datetime_must_have_timezone(cls, v)
+        return datetime_with_timezone(cls, v)
 
     def to_orm(self) -> DatetimeIntervalSQL:
         """Change model to GSPYieldSQL"""
