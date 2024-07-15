@@ -297,16 +297,19 @@ def get_gsp_yield_sum(
     return results
 
 
-def get_latest_gsp_capacities(session: Session, gsp_ids: List[int]) -> pd.Series:
+def get_latest_gsp_capacities(
+    session: Session, gsp_ids: List[int], datetime_utc: Optional[datetime] = None
+) -> pd.Series:
     """
     Get the latest gsp capacities.
 
     :param session: database sessions
     :param gsp_ids: list of gsp_ids
+    :param datetime_utc: datetime to filter on
     :return: pd.Series with gsp capacities, gsp_ids as the index
     """
 
-    gsp_yields = get_latest_gsp_yield(session=session, gsps=gsp_ids)
+    gsp_yields = get_latest_gsp_yield(session=session, gsps=gsp_ids, datetime_utc=datetime_utc)
 
     # format results
     eff_capacities = [gsp_yield.capacity_mwp for gsp_yield in gsp_yields]
