@@ -19,7 +19,6 @@ All models are in `nowcasting_datamodel.models.py`.
 The diagram below shows how the different tables are connected.
 
 ![Models](diagram.png)
-![Models](diagram_pv.png)
 
 ### connection.py
 

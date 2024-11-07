@@ -8,7 +8,6 @@ from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.fake import make_fake_forecasts, make_fake_me_latest
 from nowcasting_datamodel.models import MetricValueSQL
 from nowcasting_datamodel.models.forecast import ForecastSQL
-from nowcasting_datamodel.models.pv import Base_PV
 
 
 @pytest.fixture
@@ -70,34 +69,6 @@ def db_session(db_connection):
     t = connection.begin()
 
     with db_connection.Session(bind=connection) as s:
-        s.begin()
-        yield s
-        s.rollback()
-
-    t.rollback()
-    connection.close()
-
-
-@pytest.fixture
-def db_connection_pv():
-    url = os.getenv("DB_URL_PV", "sqlite:///test_pv.db")
-
-    connection = DatabaseConnection(url=url, base=Base_PV)
-    Base_PV.metadata.create_all(connection.engine)
-
-    yield connection
-
-    Base_PV.metadata.drop_all(connection.engine)
-
-
-@pytest.fixture(scope="function", autouse=True)
-def db_session_pv(db_connection_pv):
-    """Creates a new database session for a test."""
-
-    connection = db_connection_pv.engine.connect()
-    t = connection.begin()
-
-    with db_connection_pv.get_session() as s:
         s.begin()
         yield s
         s.rollback()
