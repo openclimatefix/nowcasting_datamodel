@@ -756,4 +756,3 @@ def get_all_locations(session: Session, gsp_ids: List[int] = None) -> List[Locat
         locations = [nation] + locations
 
     return locations
-
