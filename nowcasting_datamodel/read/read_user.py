@@ -1,12 +1,16 @@
 """ Read user"""
+
 import logging
 from datetime import datetime
 from typing import List, Optional
+
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.orm.session import Session
+
 from nowcasting_datamodel.models.api import APIRequestSQL, UserSQL
 
 logger = logging.getLogger(__name__)
+
 
 def get_user(session: Session, email: str) -> UserSQL:
     """
@@ -30,10 +34,9 @@ def get_user(session: Session, email: str) -> UserSQL:
         user = users[0]
     return user
 
+
 def get_all_last_api_request(
-    session: Session, 
-    include_in_url: Optional[str] = None, 
-    exclude_in_url: Optional[str] = None
+    session: Session, include_in_url: Optional[str] = None, exclude_in_url: Optional[str] = None
 ) -> List[APIRequestSQL]:
     """
     Get all last api requests for all users
@@ -50,15 +53,16 @@ def get_all_last_api_request(
         .populate_existing()
         .order_by(APIRequestSQL.user_uuid, APIRequestSQL.created_utc.desc())
     )
-    
+
     # Apply URL filtering if specified
     if include_in_url is not None:
-        query = query.filter(APIRequestSQL.url.like(f'%{include_in_url}%'))
-    
+        query = query.filter(APIRequestSQL.url.like(f"%{include_in_url}%"))
+
     if exclude_in_url is not None:
-        query = query.filter(~APIRequestSQL.url.like(f'%{exclude_in_url}%'))
-    
+        query = query.filter(~APIRequestSQL.url.like(f"%{exclude_in_url}%"))
+
     return query.all()
+
 
 def get_api_requests_for_one_user(
     session: Session,
@@ -78,18 +82,18 @@ def get_api_requests_for_one_user(
     :param exclude_in_url: Optional filter to exclude URLs containing this string
     """
     query = session.query(APIRequestSQL).join(UserSQL).filter(UserSQL.email == email)
-    
+
     if start_datetime is not None:
         query = query.filter(APIRequestSQL.created_utc >= start_datetime)
-    
+
     if end_datetime is not None:
         query = query.filter(APIRequestSQL.created_utc <= end_datetime)
-    
+
     # Apply URL filtering if specified
     if include_in_url is not None:
-        query = query.filter(APIRequestSQL.url.like(f'%{include_in_url}%'))
-    
+        query = query.filter(APIRequestSQL.url.like(f"%{include_in_url}%"))
+
     if exclude_in_url is not None:
-        query = query.filter(~APIRequestSQL.url.like(f'%{exclude_in_url}%'))
-    
+        query = query.filter(~APIRequestSQL.url.like(f"%{exclude_in_url}%"))
+
     return query.order_by(APIRequestSQL.created_utc.desc()).all()
