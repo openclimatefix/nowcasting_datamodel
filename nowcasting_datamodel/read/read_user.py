@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def get_user(session: Session, email: str) -> UserSQL:
     """
     Get metric object from database
-    
+
     :param session: database session
     :param email: email of user
     return: One Metric SQl object
