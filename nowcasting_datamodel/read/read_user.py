@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 def get_user(session: Session, email: str) -> UserSQL:
     """
     Get metric object from database
+    
     :param session: database session
     :param email: email of user
     return: One Metric SQl object
@@ -41,6 +42,7 @@ def get_all_last_api_request(
 ) -> List[APIRequestSQL]:
     """
     Get all last api requests for all users
+
     :param session: database session
     :param include_in_url: Optional filter to include only URLs containing this string
     :param exclude_in_url: Optional filter to exclude URLs containing this string
@@ -76,6 +78,7 @@ def get_api_requests_for_one_user(
 ) -> List[APIRequestSQL]:
     """
     Get all api requests for one user
+
     :param session: database session
     :param email: user email
     :param start_datetime: only get api requests after start datetime
