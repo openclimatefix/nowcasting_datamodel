@@ -40,22 +40,18 @@ def test_get_api_requests_for_one_user(db_session):
     user = get_user(session=db_session, email="test@test.com")
     db_session.add(APIRequestSQL(user_uuid=user.uuid, url="test"))
     db_session.add(APIRequestSQL(user_uuid=user.uuid, url="test2"))
-    
+
     requests_sql = get_api_requests_for_one_user(session=db_session, email=user.email)
-    assert len(requests_sql) == 2 
+    assert len(requests_sql) == 2
 
     include_filtered = get_api_requests_for_one_user(
-        session=db_session,
-        email=user.email,
-        include_in_url="test"
+        session=db_session, email=user.email, include_in_url="test"
     )
     assert len(include_filtered) == 1
     assert include_filtered[0].url == "test"
 
     exclude_filtered = get_api_requests_for_one_user(
-        session=db_session,
-        email=user.email,
-        exclude_in_url="test2"
+        session=db_session, email=user.email, exclude_in_url="test2"
     )
     assert len(exclude_filtered) == 1
     assert exclude_filtered[0].url == "test"
