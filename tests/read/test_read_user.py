@@ -39,7 +39,7 @@ def test_get_all_last_api_request(db_session):
 def test_get_api_requests_for_one_user(db_session):
     user = get_user(session=db_session, email="test@test.com")
     db_session.add(APIRequestSQL(user_uuid=user.uuid, url="test"))
-    db_session.add(APIRequestSQL(user_uuid=user.uuid, url="test2"))
+    db_session.add(APIRequestSQL(user_uuid=user.uuid, url="url"))
 
     requests_sql = get_api_requests_for_one_user(session=db_session, email=user.email)
     assert len(requests_sql) == 2
@@ -51,10 +51,10 @@ def test_get_api_requests_for_one_user(db_session):
     assert include_filtered[0].url == "test"
 
     exclude_filtered = get_api_requests_for_one_user(
-        session=db_session, email=user.email, exclude_in_url="test2"
+        session=db_session, email=user.email, exclude_in_url="test"
     )
     assert len(exclude_filtered) == 1
-    assert exclude_filtered[0].url == "test"
+    assert exclude_filtered[0].url == "url"
 
 
 def test_get_api_requests_for_one_user_start_datetime(db_session):

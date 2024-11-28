@@ -19,6 +19,7 @@ def get_user(session: Session, email: str) -> UserSQL:
     :param email: email of user
     return: One Metric SQl object
     """
+
     # start main query
     query = session.query(UserSQL)
     # filter on name
@@ -45,6 +46,7 @@ def get_all_last_api_request(
     :param exclude_in_url: Optional filter to exclude URLs containing this string
     :return: List of last API requests
     """
+
     query = (
         session.query(APIRequestSQL)
         .distinct(APIRequestSQL.user_uuid)
@@ -81,6 +83,7 @@ def get_api_requests_for_one_user(
     :param include_in_url: Optional filter to include only URLs containing this string
     :param exclude_in_url: Optional filter to exclude URLs containing this string
     """
+
     query = session.query(APIRequestSQL).join(UserSQL).filter(UserSQL.email == email)
 
     if start_datetime is not None:
