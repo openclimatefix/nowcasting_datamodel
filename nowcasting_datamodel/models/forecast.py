@@ -153,7 +153,7 @@ class ForecastValueSQL(
     forecast = relationship("ForecastSQL", back_populates="forecast_values")
 
 
-#def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
+# def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
 #    """Make partitions.
 #
 #    This is used in the connections object for testing.
