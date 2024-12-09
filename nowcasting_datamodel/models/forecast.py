@@ -153,41 +153,6 @@ class ForecastValueSQL(
     forecast = relationship("ForecastSQL", back_populates="forecast_values")
 
 
-# def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
-#    """Make partitions.
-#
-#    This is used in the connections object for testing.
-#    TODO: Thoroughly distinguish between this and make_parititons
-#    """
-#    partitions = []
-#    for year in range(start_year, end_year + 1):
-#        if year != start_year:
-#            start_month = 1
-#        if year == end_year:
-#            end_month_loop = end_month
-#        else:
-#            end_month_loop = 13
-#
-#        for month in range(start_month, end_month_loop):
-#            if month == 12:
-#                year_end = year + 1
-#                month_end = 1
-#            else:
-#                year_end = year
-#                month_end = month + 1
-#
-#            if month < 10:
-#                month = f"0{month}"
-#            if month_end < 10:
-#                month_end = f"0{month_end}"
-#
-#            partitions.append(
-#                ForecastValueSQL.create_partition(f"{year}_{month}", f"{year_end}_{month_end}")
-#            )
-#
-#    return partitions
-
-
 def create_forecastvalueyearmonth_class(year, month):
     """Dynamically create a ForecastValueYearMonthClass dynamically for input year and month"""
 
