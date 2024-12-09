@@ -36,7 +36,7 @@ class DatabaseConnection:
 
         self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
-    
+
     def drop_all(self):
         """Drop all partitions and tables"""
         # drop partitions
