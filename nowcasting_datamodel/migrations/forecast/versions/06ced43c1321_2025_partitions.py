@@ -6,8 +6,8 @@ Create Date: 2024-12-30
 
 """
 
-from alembic import op
 import pandas as pd
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "06ced43c1321"
