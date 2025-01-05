@@ -8,8 +8,7 @@ The following class are made
 5. Input data status, shows when the data was collected (models.py)
 6. Forecasts, a forecast that is made for one gsp,
     for several time steps into the future (models.py)
-7. PV system for storing PV data (pv.py)
-8. PV yield for storing PV data (pv.py)
+
 
 Current these models have a primary index of 'id'.
 This keeps things very simple at the start.
@@ -25,4 +24,3 @@ from .forecast import *  # noqa F403
 from .gsp import *  # noqa F403
 from .metric import *  # noqa F403
 from .models import *  # noqa F403
-from .pv import *  # noqa F403

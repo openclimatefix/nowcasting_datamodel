@@ -11,8 +11,8 @@ from nowcasting_datamodel.models.forecast import (
     ForecastValueSevenDaysSQL,
     ForecastValueSQL,
 )
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
-from nowcasting_datamodel.save.save import save, save_all_forecast_values_seven_days, save_pv_system
+
+from nowcasting_datamodel.save.save import save, save_all_forecast_values_seven_days
 
 
 @freeze_time("2024-01-01 00:00:00")
@@ -130,23 +130,6 @@ def test_save_no_adjuster(db_session):
         db_session.query(ForecastValueLatestSQL).filter(ForecastValueLatestSQL.gsp_id == 2).all()
     )
     assert forecast_latest_values[0].gsp_id == forecast_latest_values[1].gsp_id
-
-
-def test_save_pv_system(db_session_pv):
-    pv_systems = db_session_pv.query(PVSystemSQL).all()
-    assert len(pv_systems) == 0
-
-    pv_system = PVSystem(pv_system_id=2, provider="pvoutput.org", latitude=55, longitude=0)
-
-    save_pv_system(session=db_session_pv, pv_system=pv_system)
-
-    pv_systems = db_session_pv.query(PVSystemSQL).all()
-    assert len(pv_systems) == 1
-
-    save_pv_system(session=db_session_pv, pv_system=pv_system)
-
-    pv_systems = db_session_pv.query(PVSystemSQL).all()
-    assert len(pv_systems) == 1
 
 
 def test_save_all_forecast_values_seven_days(db_session):
