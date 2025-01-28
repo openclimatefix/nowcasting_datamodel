@@ -69,6 +69,7 @@ def make_all_migrations(database: str):
 
     logger.info("Making migrations:done")
 
+
 def downgrade_last_migration(database: str):
     """
     Downgrade last migration.
