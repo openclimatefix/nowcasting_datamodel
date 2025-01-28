@@ -216,13 +216,9 @@ def make_fake_gsp_yields_for_one_location(
         # Set to now but rounded to the previous half-hour
         t0_datetime_utc = datetime.now(tz=timezone.utc)
         if t0_datetime_utc.minute >= 30:
-            t0_datetime_utc.replace(
-                minute=30, second=0, microsecond=0
-            )
+            t0_datetime_utc.replace(minute=30, second=0, microsecond=0)
         else:
-            t0_datetime_utc.replace(
-                minute=0, second=0, microsecond=0
-            )
+            t0_datetime_utc.replace(minute=0, second=0, microsecond=0)
 
     location = get_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
