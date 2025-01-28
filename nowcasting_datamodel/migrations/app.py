@@ -69,6 +69,7 @@ def make_all_migrations(database: str):
 
     logger.info("Making migrations:done")
 
+
 def run_all_migrations(database: str):
     """Run migrations
 
