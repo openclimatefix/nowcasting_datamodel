@@ -69,6 +69,20 @@ def make_all_migrations(database: str):
 
     logger.info("Making migrations:done")
 
+def downgrade_last_migration(database: str):
+    """
+    Downgrade last migration.
+
+    :param database: either 'pv' or 'forecast'
+    """
+
+    logger.info(f"Downgrading last migration for {database}")
+
+    alembic_cfg = Config(filename, ini_section=database)
+    command.downgrade(alembic_cfg, "-1")
+
+    logger.info("Downgrading last migration:done")
+
 
 def run_all_migrations(database: str):
     """Run migrations

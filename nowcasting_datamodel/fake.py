@@ -198,7 +198,7 @@ def make_fake_gsp_yields_for_one_location(
     gsp_id: int, session: Session, t0_datetime_utc: Optional[datetime] = None
 ):
     """
-    Make GSP yields for one locations
+    Make GSP yields for one location
 
     :param gsp_id: the gsp id you want gsp yields for
     :param session: database sessions
@@ -210,23 +210,35 @@ def make_fake_gsp_yields_for_one_location(
         installed_capacity_mw = 13000
     else:
         # gsp capacity (roughly)
-        installed_capacity_mw = 10
+        installed_capacity_mw = 40
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
+        # Set to now but rounded to the previous half-hour
+        t0_datetime_utc = datetime.now(tz=timezone.utc)
+        if t0_datetime_utc.minute >= 30:
+            t0_datetime_utc.replace(
+                minute=30, second=0, microsecond=0
+            )
+        else:
+            t0_datetime_utc.replace(
+                minute=0, second=0, microsecond=0
+            )
 
     location = get_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    random_factor = 0.9 + 0.1 * np.random.random()
+    random_factor_in_day = 0.9 + 0.1 * np.random.random()
+    random_factor_day_after = 0.9 + 0.1 * np.random.random()
 
     # make 2 days of fake data
     for i in range(48 * 2):
-        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
+        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30) * 1000
 
         intensity = make_fake_intensity(datetime_utc)
-        power = installed_capacity_mw * intensity * random_factor
+        # GSP yields are in KW
+        power = installed_capacity_mw * 1000 * intensity * random_factor_in_day
+        power_day_after = installed_capacity_mw * 1000 * intensity * random_factor_day_after
 
         gsp_yield = GSPYieldSQL(
             datetime_utc=datetime_utc,
@@ -238,7 +250,7 @@ def make_fake_gsp_yields_for_one_location(
         session.add(gsp_yield)
 
         gsp_yield = GSPYieldSQL(
-            datetime_utc=datetime_utc, solar_generation_kw=3, regime="day-after"
+            datetime_utc=datetime_utc, solar_generation_kw=power_day_after, regime="day-after"
         )
         gsp_yield.location = location
 
@@ -247,13 +259,13 @@ def make_fake_gsp_yields_for_one_location(
 
 def make_fake_intensity(datetime_utc: datetime) -> float:
     """
-    Make a fake intesnity value based on the time of the day
+    Make a fake intensity value based on the time of the day
 
     :param datetime_utc:
-    :return: inteisty, between 0 and 1
+    :return: intensity, between 0 and 1
     """
     fraction_of_day = (datetime_utc.hour * 60 + datetime_utc.minute) / TOTAL_MINUTES_IN_ONE_DAY
-    # use single cos**2 wave for intensity, but set night time to zero
+    # use single cos**2 wave for intensity, but set nighttime to zero
     if (fraction_of_day > 0.25) & (fraction_of_day < 0.75):
         intensity = np.cos(2 * np.pi * fraction_of_day) ** 2
     else:
