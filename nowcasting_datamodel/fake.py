@@ -229,7 +229,7 @@ def make_fake_gsp_yields_for_one_location(
 
     # make 2 days of fake data
     for i in range(48 * 2):
-        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30) * 1000
+        datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
 
         intensity = make_fake_intensity(datetime_utc)
         # GSP yields are in KW
