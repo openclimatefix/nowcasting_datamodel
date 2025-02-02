@@ -316,7 +316,7 @@ def get_latest_gsp_capacities(
     """
 
     gsp_yields = get_latest_gsp_yield(
-        session=session, gsps=gsp_ids, datetime_utc=datetime_utc, allow_nans_in_capacities=True
+        session=session, gsps=gsp_ids, datetime_utc=datetime_utc, allow_nans_in_capacities=False
     )
 
     # format results
