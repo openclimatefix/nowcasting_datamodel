@@ -315,10 +315,9 @@ def get_latest_gsp_capacities(
     :return: pd.Series with gsp capacities, gsp_ids as the index
     """
 
-    gsp_yields = get_latest_gsp_yield(session=session,
-                                      gsps=gsp_ids,
-                                      datetime_utc=datetime_utc,
-                                      no_nans_in_capacities=True)
+    gsp_yields = get_latest_gsp_yield(
+        session=session, gsps=gsp_ids, datetime_utc=datetime_utc, no_nans_in_capacities=True
+    )
 
     # format results
     eff_capacities = [gsp_yield.capacity_mwp for gsp_yield in gsp_yields]
