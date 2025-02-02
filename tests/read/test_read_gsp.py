@@ -259,6 +259,27 @@ def test_get_latest_gsp_capacities(db_session):
     assert gsp_capacities[2] == 3
 
 
+def test_get_latest_gsp_capacities_nans(db_session):
+    gsp_yield = setup_gsp_yields(db_session)
+
+    gsp_yield[0].capacity_mwp = 10
+    gsp_yield[1].capacity_mwp = 20
+    db_session.commit()
+
+    gsp_capacities = get_latest_gsp_capacities(session=db_session, gsp_ids=[1])
+
+    assert len(gsp_capacities) == 1
+    gsp_capacities[0] = 20
+
+    # set to nan
+    gsp_yield[1].capacity_mwp = np.nan
+    db_session.commit()
+
+    gsp_capacities = get_latest_gsp_capacities(session=db_session, gsp_ids=[1])
+    assert len(gsp_capacities) == 1
+    gsp_capacities[0] = 10
+
+
 def test_get_latest_gsp_capacities_one(db_session):
     _ = setup_gsp_yields(db_session)
 
