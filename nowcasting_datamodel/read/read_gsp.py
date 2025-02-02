@@ -19,7 +19,7 @@ def get_latest_gsp_yield(
     append_to_gsps: bool = False,
     regime: str = "in-day",
     datetime_utc: Optional[datetime] = None,
-    no_nans_in_capacities: bool = False,
+    allow_nans_in_capacities: bool = True,
 ) -> Union[List[GSPYieldSQL], List[LocationSQL]]:
     """
     Get the last gsp yield data
@@ -30,7 +30,7 @@ def get_latest_gsp_yield(
         If appended the yield is access by 'pv_system.last_gsp_yield'
     :param regime: What regime the data is in, either 'in-day' or 'day-after'
     :param datetime_utc: Optional to filter on datetime
-    :param no_nans_in_capacities: Optional to filter out nans in capacities. Default is False
+    :param allow_nans_in_capacities: Optional to allow nans in capacities. Default is True
     :return: either list of gsp yields, or pv systems
     """
 
@@ -60,7 +60,7 @@ def get_latest_gsp_yield(
         query = query.where(GSPYieldSQL.datetime_utc >= datetime_utc)
 
     # don't get any nans. (Note nan+1 > nan = False)
-    if no_nans_in_capacities:
+    if allow_nans_in_capacities:
         query = query.where(GSPYieldSQL.capacity_mwp + 1 > GSPYieldSQL.capacity_mwp)
 
     # order by 'created_utc' desc, so we get the latest one
@@ -316,7 +316,7 @@ def get_latest_gsp_capacities(
     """
 
     gsp_yields = get_latest_gsp_yield(
-        session=session, gsps=gsp_ids, datetime_utc=datetime_utc, no_nans_in_capacities=True
+        session=session, gsps=gsp_ids, datetime_utc=datetime_utc, allow_nans_in_capacities=True
     )
 
     # format results
