@@ -60,7 +60,7 @@ def get_latest_gsp_yield(
         query = query.where(GSPYieldSQL.datetime_utc >= datetime_utc)
 
     # don't get any nans. (Note nan+1 > nan = False)
-    if allow_nans_in_capacities:
+    if not allow_nans_in_capacities:
         query = query.where(GSPYieldSQL.capacity_mwp + 1 > GSPYieldSQL.capacity_mwp)
 
     # order by 'created_utc' desc, so we get the latest one
