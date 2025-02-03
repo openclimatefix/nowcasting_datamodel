@@ -1,4 +1,4 @@
-""" Pydantic and Sqlalchemy models for the database
+"""Pydantic and Sqlalchemy models for the database
 
 The following class are made
 1. User
