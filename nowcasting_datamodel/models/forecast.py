@@ -281,6 +281,7 @@ class ForecastValueLatestSQL(Base_Forecast, CreatedMixin):
 
 class ForecastValue(EnhancedBaseModel):
     """One Forecast of generation at one timestamp"""
+
     target_time: datetime = Field(
         ...,
         description=(
