@@ -111,6 +111,7 @@ def update_latest_input_data_last_updated(
         new_input_data_last_updated = InputDataLastUpdatedSQL(
             gsp=now, nwp=now, pv=now, satellite=now
         )
+        session.add(new_input_data_last_updated)  # Ensure the new object is added to session
     else:
         # make new object
         new_input_data_last_updated = InputDataLastUpdatedSQL(
@@ -120,12 +121,20 @@ def update_latest_input_data_last_updated(
             satellite=latest_input_data_last_updated.satellite,
         )
 
-    # set new value
-    setattr(new_input_data_last_updated, component, update_datetime)
+    # get the existing timestamp for the given component
+    current_value = getattr(new_input_data_last_updated, component, None)
 
-    # save to database
-    session.add(new_input_data_last_updated)
-    session.commit()
+    # Update only if the new timestamp is greater
+    if current_value is None or update_datetime > current_value:
+        setattr(new_input_data_last_updated, component, update_datetime)
+
+        # save to database
+        session.add(new_input_data_last_updated)
+        session.commit()
+        logger.info(f"Updated {component} timestamp to {update_datetime}")
+    else:
+        logger.info(f"Skipped update for {component} as {update_datetime} <= {current_value}")
+
 
 
 def get_latest_forecast(
