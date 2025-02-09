@@ -136,7 +136,6 @@ def update_latest_input_data_last_updated(
         logger.info(f"Skipped update for {component} as {update_datetime} <= {current_value}")
 
 
-
 def get_latest_forecast(
     session: Session,
     gsp_id: Optional[int] = None,
