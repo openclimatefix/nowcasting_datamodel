@@ -1,4 +1,4 @@
-""" Make national forecasts """
+"""Make national forecasts"""
 
 import logging
 from typing import List

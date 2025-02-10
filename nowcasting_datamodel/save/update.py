@@ -1,4 +1,4 @@
-""" Method to update latest forecast values """
+"""Method to update latest forecast values"""
 
 import logging
 from datetime import datetime, timedelta, timezone
