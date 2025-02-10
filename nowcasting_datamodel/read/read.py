@@ -127,7 +127,6 @@ def update_latest_input_data_last_updated(
     session.add(new_input_data_last_updated)
     session.commit()
 
-
 def get_latest_forecast(
     session: Session,
     gsp_id: Optional[int] = None,
