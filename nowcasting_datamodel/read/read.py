@@ -91,7 +91,8 @@ def update_latest_input_data_last_updated(
     :param session:
     :param component: This should be gsp, pv, nwp or satellite
     :param update_datetime: the datetime is should be updated.
-        Default is None, so will be set to now
+        Default is None, so will be set to utc now. If without tz, assumed
+        to be in utc.
     :return:
     """
 
@@ -99,8 +100,13 @@ def update_latest_input_data_last_updated(
     # This may be a problem if these function is run at the same twice,
     # but for the moment lets ignore this
 
+    if not hasattr(InputDataLastUpdatedSQL, component):
+        raise AttributeError(f"unsupported {component=}")
+
     if update_datetime is None:
         update_datetime = datetime.now(tz=timezone.utc)
+    if update_datetime.tzinfo is None:
+        update_datetime = update_datetime.astimezone(timezone.utc)
 
     # get latest
     latest_input_data_last_updated = get_latest_input_data_last_updated(session=session)
@@ -112,6 +118,10 @@ def update_latest_input_data_last_updated(
             gsp=now, nwp=now, pv=now, satellite=now
         )
     else:
+        latest_last_updated = getattr(latest_input_data_last_updated, component)
+        # in case this update is actually old, do nothing
+        if latest_last_updated >= update_datetime:
+            return
         # make new object
         new_input_data_last_updated = InputDataLastUpdatedSQL(
             gsp=latest_input_data_last_updated.gsp,
