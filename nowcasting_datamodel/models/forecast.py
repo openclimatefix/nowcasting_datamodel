@@ -284,14 +284,17 @@ class ForecastValue(EnhancedBaseModel):
 
     target_time: datetime = Field(
         ...,
-        description="The target time that the forecast is produced for",
+        description=(
+            "The target time for which the forecast is produced, indicating the period end time "
+            "(e.g., a target_time of 12:30 refers to the period from 12:00 to 12:30)."
+        ),
     )
     expected_power_generation_megawatts: float = Field(
         ..., ge=0, description="The forecasted value in MW"
     )
 
     expected_power_generation_normalized: Optional[float] = Field(
-        None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
+        None, ge=0, description="The forecasted value divided by the GSP capacity [%]"
     )
 
     # The amount that the forecast should be adjusted by,
