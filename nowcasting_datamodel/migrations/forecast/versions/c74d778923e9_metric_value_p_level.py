@@ -1,4 +1,4 @@
-""" Add p_level to metric_value
+"""Add p_level to metric_value
 
 Revision ID: c74d778923e9
 Revises: ed4a2f8c030a
