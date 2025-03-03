@@ -1,4 +1,4 @@
-""" run migrations on PV Database """
+"""run migrations on PV Database"""
 
 import os
 from logging.config import fileConfig
