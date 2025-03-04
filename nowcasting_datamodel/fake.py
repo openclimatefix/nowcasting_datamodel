@@ -14,8 +14,9 @@ from nowcasting_datamodel.models import (
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
+    ForecastValueLatestSQL,
 )
-from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
+from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL, ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.gsp import GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location
 from nowcasting_datamodel.read.read_metric import get_datetime_interval
@@ -25,6 +26,7 @@ from nowcasting_datamodel.save.update import change_forecast_value_to_latest
 # 2 days in the past + 8 hours forward at 30 mins interval
 N_FAKE_FORECASTS = (24 * 2 + 8) * 2
 TOTAL_MINUTES_IN_ONE_DAY = 24 * 60
+NATIONAL_CAPACITY = 13000
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
@@ -75,10 +77,10 @@ def make_fake_forecast(
 
     if gsp_id == 0:
         # national capacity
-        installed_capacity_mw = 13000
+        installed_capacity_mw = NATIONAL_CAPACITY
     else:
         # gsp capacity (roughly)
-        installed_capacity_mw = 10
+        installed_capacity_mw = 40
 
     location = get_location(
         gsp_id=gsp_id, session=session, installed_capacity_mw=installed_capacity_mw
@@ -90,7 +92,7 @@ def make_fake_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    random_factor = 0.9 + 0.1 * np.random.random()
+    random_factor = 0.8 + 0.1 * np.random.random()
 
     # create
     if forecast_values is None:
@@ -128,8 +130,7 @@ def make_fake_forecast(
 
     return forecast
 
-
-def make_fake_forecasts(
+def generate_fake_forecasts(
     gsp_ids: List[int],
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
@@ -139,7 +140,7 @@ def make_fake_forecasts(
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
 ) -> List[ForecastSQL]:
-    """Make many fake forecast"""
+    """ Generate fake forecasts """
     forecasts = []
     for gsp_id in gsp_ids:
         forecasts.append(
@@ -155,6 +156,30 @@ def make_fake_forecasts(
             )
         )
 
+    return forecasts
+
+def make_fake_forecasts(
+    gsp_ids: List[int],
+    session: Session,
+    t0_datetime_utc: Optional[datetime] = None,
+    forecast_values: Optional[List[ForecastValueSQL]] = None,
+    add_latest: Optional[bool] = False,
+    historic: Optional[bool] = False,
+    model_name: Optional[str] = "fake_model",
+    n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+) -> List[ForecastSQL]:
+    """Make many fake forecast and add to db session"""
+    forecasts = generate_fake_forecasts(
+        gsp_ids,
+        session,
+        t0_datetime_utc,
+        forecast_values,
+        add_latest,
+        historic,
+        model_name,
+        n_fake_forecasts,
+    )
+
     session.add_all(forecasts)
 
     return forecasts
@@ -165,7 +190,7 @@ def make_fake_national_forecast(
 ) -> ForecastSQL:
     """Make national fake forecast"""
     location = get_location(
-        gsp_id=0, session=session, label=national_gb_label, installed_capacity_mw=14000
+        gsp_id=0, session=session, label=national_gb_label, installed_capacity_mw=NATIONAL_CAPACITY
     )
     model = MLModelSQL(name="fake_model_national", version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
@@ -207,7 +232,7 @@ def make_fake_gsp_yields_for_one_location(
 
     if gsp_id == 0:
         # national capacity
-        installed_capacity_mw = 13000
+        installed_capacity_mw = NATIONAL_CAPACITY
     else:
         # gsp capacity (roughly)
         installed_capacity_mw = 40
@@ -224,10 +249,11 @@ def make_fake_gsp_yields_for_one_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    random_factor_in_day = 0.9 + 0.1 * np.random.random()
-    random_factor_day_after = 0.9 + 0.1 * np.random.random()
+    random_factor_in_day = 0.8 + 0.1 * np.random.random()
+    random_factor_day_after = 0.8 + 0.1 * np.random.random()
 
     # make 2 days of fake data
+    # TODO: this should now be 48hr backwards & ~36hr forwards
     for i in range(48 * 2):
         datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
 
