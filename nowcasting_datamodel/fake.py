@@ -14,9 +14,11 @@ from nowcasting_datamodel.models import (
     MLModelSQL,
     PVSystemSQL,
     national_gb_label,
-    ForecastValueLatestSQL,
 )
-from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL, ForecastValueSevenDaysSQL
+from nowcasting_datamodel.models.forecast import (
+    ForecastSQL,
+    ForecastValueSQL,
+)
 from nowcasting_datamodel.models.gsp import GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location
 from nowcasting_datamodel.read.read_metric import get_datetime_interval
@@ -130,6 +132,7 @@ def make_fake_forecast(
 
     return forecast
 
+
 def generate_fake_forecasts(
     gsp_ids: List[int],
     session: Session,
@@ -140,7 +143,7 @@ def generate_fake_forecasts(
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
 ) -> List[ForecastSQL]:
-    """ Generate fake forecasts """
+    """Generate fake forecasts"""
     forecasts = []
     for gsp_id in gsp_ids:
         forecasts.append(
@@ -157,6 +160,7 @@ def generate_fake_forecasts(
         )
 
     return forecasts
+
 
 def make_fake_forecasts(
     gsp_ids: List[int],
