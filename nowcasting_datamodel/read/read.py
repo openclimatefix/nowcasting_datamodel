@@ -365,7 +365,8 @@ def get_latest_forecast_for_gsps(
         query = query.options(joinedload(ForecastSQL.location))
         query = query.options(joinedload(ForecastSQL.model))
         query = query.options(joinedload(ForecastSQL.input_data_last_updated))
-        query = query.options(joinedload(ForecastSQL.forecast_values))
+        if not historic:
+            query = query.options(joinedload(ForecastSQL.forecast_values))
 
     order_by_cols.append(desc(ForecastSQL.created_utc))
     query = query.order_by(*order_by_cols)
@@ -381,8 +382,12 @@ def get_latest_forecast_for_gsps(
     # add utc timezone
     for forecast in forecasts:
         forecast.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
-        for forecast_value in forecast.forecast_values:
-            forecast_value.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+        if forecast.historic:
+            for forecast_value in forecast.forecast_values_latest:
+                forecast_value.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+        else:
+            for forecast_value in forecast.forecast_values:
+                forecast_value.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
 
     return forecasts
 
