@@ -92,7 +92,7 @@ def make_fake_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
-    random_factor = 0.8 + 0.1 * np.random.random()
+    random_factor = 0.9 + 0.1 * np.random.random()
 
     # create
     if forecast_values is None:
@@ -249,8 +249,8 @@ def make_fake_gsp_yields_for_one_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    random_factor_in_day = 0.8 + 0.1 * np.random.random()
-    random_factor_day_after = 0.8 + 0.1 * np.random.random()
+    random_factor_in_day = 0.7 + 0.1 * np.random.random()
+    random_factor_day_after = 0.7 + 0.1 * np.random.random()
 
     # make 2 days of fake data
     # TODO: this should now be 48hr backwards & ~36hr forwards
