@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from nowcasting_datamodel.fake import (
+    generate_fake_forecasts,
     make_fake_forecast,
     make_fake_forecast_value,
     make_fake_forecasts,
@@ -67,13 +68,27 @@ def test_make_fake_forecast(db_session):
     db_session.commit()
     _ = db_session.execute(text("SELECT * FROM forecast_value_2023_01")).all()
 
+def test_generate_fake_forecasts(db_session):
+    fake_forecasts = generate_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3], add_latest=True)
+
+    assert len(db_session.query(ForecastSQL).all()) == 0
+    assert len(db_session.query(ForecastValueSQL).all()) == 0
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 0
+    assert len(fake_forecasts) == 4
 
 def test_make_fake_forecasts(db_session):
     make_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3], add_latest=True)
 
-    assert len(db_session.query(ForecastSQL).all()) > 0
-    assert len(db_session.query(ForecastValueLatestSQL).all()) > 0
-    assert len(db_session.query(ForecastValueSQL).all()) > 0
+    assert len(db_session.query(ForecastSQL).all()) == 4
+    assert len(db_session.query(ForecastValueSQL).all()) == 4 * 112
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 4 * 112
+
+def test_make_fake_forecasts_without_latest(db_session):
+    make_fake_forecasts(session=db_session, gsp_ids=[0, 1, 2, 3], add_latest=False)
+
+    assert len(db_session.query(ForecastSQL).all()) == 4
+    assert len(db_session.query(ForecastValueSQL).all()) == 4 * 112
+    assert len(db_session.query(ForecastValueLatestSQL).all()) == 0
 
 
 def test_make_national_fake_forecast(db_session):
