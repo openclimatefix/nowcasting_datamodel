@@ -1,4 +1,4 @@
-""" App for running database migrations """
+"""App for running database migrations"""
 
 import logging
 import os
