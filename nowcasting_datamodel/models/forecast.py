@@ -448,7 +448,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     input_data_last_updated_id = Column(
         Integer, ForeignKey("input_data_last_updated.id"), index=True
     )
-    initialisation_datetime_utc = Column(DateTime(timezone=True),nullable=True, default=None)
+    initialisation_datetime_utc = Column(DateTime(timezone=True), default=None)
     Index("index_forecast_historic", historic)
 
 
@@ -473,11 +473,17 @@ class Forecast(EnhancedBaseModel):
         ...,
         description="Information about the input data that was used to create the forecast",
     )
+    
+    initialisation_datetime_utc: datetime = Field(
+        False, description="The time when the forecast should be initialized"
+    )
 
     @field_validator("forecast_creation_time", mode="before")
     def normalize_forecast_creation_time(cls, v):
         """Normalize forecast_creation_time field"""
         return datetime_with_timezone(cls, v)
+    
+    
 
     def to_orm(self) -> ForecastSQL:
         """Change model to ForecastSQL"""
@@ -528,6 +534,7 @@ class Forecast(EnhancedBaseModel):
             ],
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
+            initialisation_datetime_utc = forecast_sql.initialisation_datetime_utc
         )
 
     @classmethod
