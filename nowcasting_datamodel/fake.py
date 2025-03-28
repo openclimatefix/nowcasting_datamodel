@@ -74,6 +74,7 @@ def make_fake_forecast(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+    intialization_datetime_utc : Optional[datetime] = None
 ) -> ForecastSQL:
     """Make one fake forecast"""
 
@@ -128,6 +129,7 @@ def make_fake_forecast(
         forecast_values=forecast_values,
         forecast_values_latest=forecast_values_latest,
         historic=historic,
+        intialization_datetime_utc : Optional[datetime] = None
     )
 
     return forecast
@@ -142,6 +144,7 @@ def generate_fake_forecasts(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+    intialization_datetime_utc : Optional[datetime] = None
 ) -> List[ForecastSQL]:
     """Generate fake forecasts"""
     forecasts = []
@@ -156,6 +159,7 @@ def generate_fake_forecasts(
                 historic=historic,
                 model_name=model_name,
                 n_fake_forecasts=n_fake_forecasts,
+                intialization_datetime_utc=intialization_datetime_utc
             )
         )
 
