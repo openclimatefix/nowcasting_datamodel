@@ -27,6 +27,7 @@ def upgrade():  # noqa
         sa.Column("gsp_id", sa.Integer(), nullable=False),
         sa.Column("is_primary", sa.Boolean(), nullable=True),
         sa.Column("forecast_id", sa.Integer(), nullable=True),
+        sa.Column("intialization_datetime_utc",sa.DateTime(timezone=True),nullable=True),
         sa.ForeignKeyConstraint(
             ["forecast_id"],
             ["forecast.id"],
