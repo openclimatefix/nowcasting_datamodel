@@ -485,6 +485,11 @@ class Forecast(EnhancedBaseModel):
     
     
 
+    @field_validator("initialisation_datetime_utc", mode="before")
+    def normalize_initialisation_datetime_utc(cls, v):
+        """Normalize initialisation_datetime_utc field"""
+        return datetime_with_timezone(cls, v)
+    
     def to_orm(self) -> ForecastSQL:
         """Change model to ForecastSQL"""
         return ForecastSQL(
