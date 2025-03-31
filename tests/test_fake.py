@@ -68,19 +68,21 @@ def test_make_fake_forecast(db_session):
     db_session.commit()
     _ = db_session.execute(text("SELECT * FROM forecast_value_2023_01")).all()
 
+
 def test_make_fake_forecast_with_creation_time(db_session):
     t0 = datetime(2023, 1, 1, tzinfo=timezone.utc)
     forecast_creation_time = datetime(2023, 1, 1, 1, tzinfo=timezone.utc)
-    forecast_sql: ForecastSQL = make_fake_forecast(gsp_id=1,
-                                                   session=db_session,
-                                                   t0_datetime_utc=t0)
+    forecast_sql: ForecastSQL = make_fake_forecast(gsp_id=1, session=db_session, t0_datetime_utc=t0)
     assert forecast_sql.forecast_creation_time == t0
 
-    forecast_sql: ForecastSQL = make_fake_forecast(gsp_id=1,
-                                                   session=db_session,
-                                                   t0_datetime_utc=t0,
-                                                   forecast_creation_time=forecast_creation_time)
+    forecast_sql: ForecastSQL = make_fake_forecast(
+        gsp_id=1,
+        session=db_session,
+        t0_datetime_utc=t0,
+        forecast_creation_time=forecast_creation_time,
+    )
     assert forecast_sql.forecast_creation_time == forecast_creation_time
+
 
 def test_generate_fake_forecasts(db_session):
     fake_forecasts = generate_fake_forecasts(
