@@ -85,9 +85,6 @@ def make_fake_forecast(
         # gsp capacity (roughly)
         installed_capacity_mw = 40
 
-    if forecast_creation_time is None:
-        forecast_creation_time = t0_datetime_utc
-
     location = get_location(
         gsp_id=gsp_id, session=session, installed_capacity_mw=installed_capacity_mw
     )
@@ -97,6 +94,9 @@ def make_fake_forecast(
 
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
+
+    if forecast_creation_time is None:
+        forecast_creation_time = t0_datetime_utc
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
