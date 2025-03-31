@@ -74,6 +74,7 @@ def make_fake_forecast(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+    forecast_creation_time: Optional[datetime] = None,
 ) -> ForecastSQL:
     """Make one fake forecast"""
 
@@ -93,6 +94,9 @@ def make_fake_forecast(
 
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
+
+    if forecast_creation_time is None:
+        forecast_creation_time = t0_datetime_utc
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
@@ -122,7 +126,7 @@ def make_fake_forecast(
 
     forecast = ForecastSQL(
         model=model,
-        forecast_creation_time=t0_datetime_utc,
+        forecast_creation_time=forecast_creation_time,
         location=location,
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
