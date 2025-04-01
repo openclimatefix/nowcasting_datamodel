@@ -119,8 +119,7 @@ def convert_df_to_national_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         historic=False,
-        initialisation_datetime_utc=datetime.now(tz=timezone.utc)
-        
+        initialisation_datetime_utc=datetime.now(tz=timezone.utc),
     )
 
     return forecast
