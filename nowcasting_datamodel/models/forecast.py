@@ -448,7 +448,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     input_data_last_updated_id = Column(
         Integer, ForeignKey("input_data_last_updated.id"), index=True
     )
-    initialisation_datetime_utc = Column(DateTime(timezone=True), default=None)
+    initialisation_datetime_utc = Column(DateTime(timezone=True), default=None,nullable=True)
     Index("index_forecast_historic", historic)
 
 
