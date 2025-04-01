@@ -98,6 +98,9 @@ def make_fake_forecast(
 
     if forecast_creation_time is None:
         forecast_creation_time = t0_datetime_utc
+    
+    if intialization_datetime_utc is None:
+        intialization_datetime_utc = forecast_creation_time
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
