@@ -376,7 +376,7 @@ class ForecastValue(EnhancedBaseModel):
 
         return self
 
-    def adjust(self, limit: float = 0.0):
+    def adjust(self, limit: float = 0.0, limit_percent: float = 0.1):
         """Adjust forecasts"""
         if isinstance(self._adjust_mw, float):
             adjust_mw = self._adjust_mw
@@ -384,6 +384,11 @@ class ForecastValue(EnhancedBaseModel):
                 adjust_mw = limit
             elif adjust_mw < -limit:
                 adjust_mw = -limit
+
+            if adjust_mw > limit_percent * self.expected_power_generation_megawatts:
+                adjust_mw = limit_percent * self.expected_power_generation_megawatts
+            elif adjust_mw < -limit_percent * self.expected_power_generation_megawatts:
+                adjust_mw = -limit_percent * self.expected_power_generation_megawatts
 
             self.expected_power_generation_megawatts = (
                 self.expected_power_generation_megawatts - adjust_mw
@@ -574,7 +579,7 @@ class Forecast(EnhancedBaseModel):
 
         return forecast
 
-    def normalize(self, adjust: bool = False):
+    def normalize(self):
         """Normalize forecasts by installed capacity mw"""
 
         self.forecast_values = [
@@ -584,12 +589,13 @@ class Forecast(EnhancedBaseModel):
 
         return self
 
-    def adjust(self, limit: float = 0.0):
+    def adjust(self, limit: float = 0.0, limit_percent: float = 0.1):
         """Adjust forecasts by adjust values, useful for time persistence errors"""
 
         print("start main")
         self.forecast_values = [
-            forecast_value.adjust(limit=limit) for forecast_value in self.forecast_values
+            forecast_value.adjust(limit=limit, limit_percent=limit_percent)
+            for forecast_value in self.forecast_values
         ]
 
         return self
