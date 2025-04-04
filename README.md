@@ -1,6 +1,6 @@
 # nowcasting_datamodel
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 Datamodel for the nowcasting project
 
@@ -127,6 +127,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tmi"><img src="https://avatars.githubusercontent.com/u/147159?v=4?s=100" width="100px;" alt="tmi"/><br /><sub><b>tmi</b></sub></a><br /><a href="https://github.com/openclimatefix/nowcasting_datamodel/commits?author=tmi" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Averagenormaljoe"><img src="https://avatars.githubusercontent.com/u/99669149?v=4?s=100" width="100px;" alt="Database Missing no1"/><br /><sub><b>Database Missing no1</b></sub></a><br /><a href="https://github.com/openclimatefix/nowcasting_datamodel/commits?author=Averagenormaljoe" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
