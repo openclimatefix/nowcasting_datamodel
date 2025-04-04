@@ -9,12 +9,10 @@ from nowcasting_datamodel.fake import (
     make_fake_forecast,
     make_fake_forecasts,
     make_fake_national_forecast,
-    make_fake_pv_system,
 )
 from nowcasting_datamodel.models import (
     InputDataLastUpdatedSQL,
     LocationSQL,
-    PVSystem,
     Status,
     national_gb_label,
 )
@@ -35,10 +33,8 @@ from nowcasting_datamodel.read.read import (
     get_latest_national_forecast,
     get_latest_status,
     get_location,
-    get_pv_system,
     update_latest_input_data_last_updated,
 )
-from nowcasting_datamodel.save.save import save_pv_system
 
 logger = logging.getLogger(__name__)
 
@@ -401,20 +397,6 @@ def test_get_national_latest_forecast(db_session):
     db_session.add(f2)
     forecast_values_read = get_latest_national_forecast(session=db_session)
     assert forecast_values_read == f2
-
-
-def test_get_pv_system(db_session_pv):
-    pv_system = PVSystem.model_validate(make_fake_pv_system(), from_attributes=True)
-    save_pv_system(session=db_session_pv, pv_system=pv_system)
-
-    pv_system_get = get_pv_system(
-        session=db_session_pv, provider=pv_system.provider, pv_system_id=pv_system.pv_system_id
-    )
-    # this get defaulted to True when adding to the database
-    pv_system.correct_data = True
-    assert PVSystem.model_validate(pv_system, from_attributes=True) == PVSystem.model_validate(
-        pv_system_get, from_attributes=True
-    )
 
 
 def test_get_latest_input_data_last_updated_multiple_entries(db_session):
