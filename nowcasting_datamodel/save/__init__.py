@@ -1,1 +1,1 @@
-""" init for save functions """
+"""init for save functions"""
