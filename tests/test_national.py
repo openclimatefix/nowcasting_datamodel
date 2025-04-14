@@ -1,4 +1,4 @@
-""" Test national forecast"""
+"""Test national forecast"""
 
 # Used constants
 import pytest
