@@ -1,4 +1,4 @@
-"""Added the 'intialization_datetime_utc' column to the Forecast
+"""Added the 'initialization_datetime_utc' column to the Forecast
 
 Revision ID: e8654d87379b
 Revises: 06ced43c1321
