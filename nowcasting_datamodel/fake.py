@@ -75,7 +75,7 @@ def make_fake_forecast(
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
     forecast_creation_time: Optional[datetime] = None,
-    intialization_datetime_utc: Optional[datetime] = None,
+    initialization_datetime_utc: Optional[datetime] = None,
 ) -> ForecastSQL:
     """Make one fake forecast"""
 
@@ -99,8 +99,8 @@ def make_fake_forecast(
     if forecast_creation_time is None:
         forecast_creation_time = t0_datetime_utc
 
-    if intialization_datetime_utc is None:
-        intialization_datetime_utc = forecast_creation_time
+    if initialization_datetime_utc is None:
+        initialization_datetime_utc = forecast_creation_time
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
@@ -136,7 +136,7 @@ def make_fake_forecast(
         forecast_values=forecast_values,
         forecast_values_latest=forecast_values_latest,
         historic=historic,
-        intialization_datetime_utc=intialization_datetime_utc,
+        initialization_datetime_utc=initialization_datetime_utc,
     )
 
     return forecast
@@ -151,7 +151,7 @@ def generate_fake_forecasts(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
-    intialization_datetime_utc: Optional[datetime] = None,
+    initialization_datetime_utc: Optional[datetime] = None,
 ) -> List[ForecastSQL]:
     """Generate fake forecasts"""
     forecasts = []
@@ -166,7 +166,7 @@ def generate_fake_forecasts(
                 historic=historic,
                 model_name=model_name,
                 n_fake_forecasts=n_fake_forecasts,
-                intialization_datetime_utc=intialization_datetime_utc,
+                initialization_datetime_utc=initialization_datetime_utc,
             )
         )
 
@@ -182,7 +182,7 @@ def make_fake_forecasts(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
-    intialization_datetime_utc: Optional[datetime] = None,
+    initialization_datetime_utc: Optional[datetime] = None,
 ) -> List[ForecastSQL]:
     """Make many fake forecast and add to db session"""
     forecasts = generate_fake_forecasts(
@@ -194,7 +194,7 @@ def make_fake_forecasts(
         historic,
         model_name,
         n_fake_forecasts,
-        intialization_datetime_utc,
+        initialization_datetime_utc,
     )
 
     session.add_all(forecasts)
@@ -205,7 +205,7 @@ def make_fake_forecasts(
 def make_fake_national_forecast(
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
-    intialization_datetime_utc: Optional[datetime] = None,
+    initialization_datetime_utc: Optional[datetime] = None,
 ) -> ForecastSQL:
     """Make national fake forecast"""
     location = get_location(
@@ -216,6 +216,9 @@ def make_fake_national_forecast(
 
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
+
+    if initialization_datetime_utc is None:
+        initialization_datetime_utc = t0_datetime_utc
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
@@ -232,7 +235,7 @@ def make_fake_national_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         historic=False,
-        intialization_datetime_utc=intialization_datetime_utc,
+        initialization_datetime_utc=initialization_datetime_utc,
     )
 
     return forecast

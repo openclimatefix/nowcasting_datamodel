@@ -98,7 +98,7 @@ def make_national_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_creation_time=forecasts[0].forecast_creation_time,
         historic=False,
-        initialisation_datetime_utc=forecasts[0].initialisation_datetime_utc,
+        initialization_datetime_utc=forecasts[0].initialization_datetime_utc,
     )
 
     # validate
