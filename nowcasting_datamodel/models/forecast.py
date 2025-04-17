@@ -446,7 +446,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     input_data_last_updated_id = Column(
         Integer, ForeignKey("input_data_last_updated.id"), index=True
     )
-    initialisation_datetime_utc = Column(DateTime(timezone=True), default=None, nullable=True)
+    initialization_datetime_utc = Column(DateTime(timezone=True), default=None, nullable=True)
     Index("index_forecast_historic", historic)
 
 
@@ -472,7 +472,7 @@ class Forecast(EnhancedBaseModel):
         description="Information about the input data that was used to create the forecast",
     )
 
-    initialisation_datetime_utc: datetime = Field(
+    initialization_datetime_utc: datetime = Field(
         False, description="The time when the forecast should be initialized"
     )
 
@@ -481,9 +481,9 @@ class Forecast(EnhancedBaseModel):
         """Normalize forecast_creation_time field"""
         return datetime_with_timezone(cls, v)
 
-    @field_validator("initialisation_datetime_utc", mode="before")
-    def normalize_initialisation_datetime_utc(cls, v):
-        """Normalize initialisation_datetime_utc field"""
+    @field_validator("initialization_datetime_utc", mode="before")
+    def normalize_initialization_datetime_utc(cls, v):
+        """Normalize initialization_datetime_utc field"""
         return datetime_with_timezone(cls, v)
 
     def to_orm(self) -> ForecastSQL:
@@ -495,7 +495,7 @@ class Forecast(EnhancedBaseModel):
             input_data_last_updated=self.input_data_last_updated.to_orm(),
             forecast_values=[forecast_value.to_orm() for forecast_value in self.forecast_values],
             historic=self.historic,
-            initialisation_datetime_utc=self.initialisation_datetime_utc,
+            initialization_datetime_utc=self.initialization_datetime_utc,
         )
 
     @classmethod
@@ -514,7 +514,7 @@ class Forecast(EnhancedBaseModel):
             ],
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
-            initialisation_datetime_utc=forecast_sql.initialisation_datetime_utc,
+            initialization_datetime_utc=forecast_sql.initialization_datetime_utc,
         )
 
     @classmethod
@@ -535,7 +535,7 @@ class Forecast(EnhancedBaseModel):
             ],
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
-            initialisation_datetime_utc=forecast_sql.initialisation_datetime_utc,
+            initialization_datetime_utc=forecast_sql.initialization_datetime_utc,
         )
 
     @classmethod
