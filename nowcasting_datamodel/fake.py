@@ -15,7 +15,10 @@ from nowcasting_datamodel.models import (
     PVSystemSQL,
     national_gb_label,
 )
-from nowcasting_datamodel.models.forecast import ForecastSQL, ForecastValueSQL
+from nowcasting_datamodel.models.forecast import (
+    ForecastSQL,
+    ForecastValueSQL,
+)
 from nowcasting_datamodel.models.gsp import GSPYieldSQL
 from nowcasting_datamodel.read.read import get_location
 from nowcasting_datamodel.read.read_metric import get_datetime_interval
@@ -25,6 +28,7 @@ from nowcasting_datamodel.save.update import change_forecast_value_to_latest
 # 2 days in the past + 8 hours forward at 30 mins interval
 N_FAKE_FORECASTS = (24 * 2 + 8) * 2
 TOTAL_MINUTES_IN_ONE_DAY = 24 * 60
+NATIONAL_CAPACITY = 13000
 
 
 def make_fake_location(gsp_id: int) -> LocationSQL:
@@ -70,15 +74,17 @@ def make_fake_forecast(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+    forecast_creation_time: Optional[datetime] = None,
+    intialization_datetime_utc: Optional[datetime] = None,
 ) -> ForecastSQL:
     """Make one fake forecast"""
 
     if gsp_id == 0:
         # national capacity
-        installed_capacity_mw = 13000
+        installed_capacity_mw = NATIONAL_CAPACITY
     else:
         # gsp capacity (roughly)
-        installed_capacity_mw = 10
+        installed_capacity_mw = 40
 
     location = get_location(
         gsp_id=gsp_id, session=session, installed_capacity_mw=installed_capacity_mw
@@ -89,6 +95,12 @@ def make_fake_forecast(
 
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
+
+    if forecast_creation_time is None:
+        forecast_creation_time = t0_datetime_utc
+
+    if intialization_datetime_utc is None:
+        intialization_datetime_utc = forecast_creation_time
 
     random_factor = 0.9 + 0.1 * np.random.random()
 
@@ -118,18 +130,19 @@ def make_fake_forecast(
 
     forecast = ForecastSQL(
         model=model,
-        forecast_creation_time=t0_datetime_utc,
+        forecast_creation_time=forecast_creation_time,
         location=location,
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         forecast_values_latest=forecast_values_latest,
         historic=historic,
+        intialization_datetime_utc=intialization_datetime_utc,
     )
 
     return forecast
 
 
-def make_fake_forecasts(
+def generate_fake_forecasts(
     gsp_ids: List[int],
     session: Session,
     t0_datetime_utc: Optional[datetime] = None,
@@ -138,8 +151,9 @@ def make_fake_forecasts(
     historic: Optional[bool] = False,
     model_name: Optional[str] = "fake_model",
     n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+    intialization_datetime_utc: Optional[datetime] = None,
 ) -> List[ForecastSQL]:
-    """Make many fake forecast"""
+    """Generate fake forecasts"""
     forecasts = []
     for gsp_id in gsp_ids:
         forecasts.append(
@@ -152,8 +166,36 @@ def make_fake_forecasts(
                 historic=historic,
                 model_name=model_name,
                 n_fake_forecasts=n_fake_forecasts,
+                intialization_datetime_utc=intialization_datetime_utc,
             )
         )
+
+    return forecasts
+
+
+def make_fake_forecasts(
+    gsp_ids: List[int],
+    session: Session,
+    t0_datetime_utc: Optional[datetime] = None,
+    forecast_values: Optional[List[ForecastValueSQL]] = None,
+    add_latest: Optional[bool] = False,
+    historic: Optional[bool] = False,
+    model_name: Optional[str] = "fake_model",
+    n_fake_forecasts: Optional[int] = N_FAKE_FORECASTS,
+    intialization_datetime_utc: Optional[datetime] = None,
+) -> List[ForecastSQL]:
+    """Make many fake forecast and add to db session"""
+    forecasts = generate_fake_forecasts(
+        gsp_ids,
+        session,
+        t0_datetime_utc,
+        forecast_values,
+        add_latest,
+        historic,
+        model_name,
+        n_fake_forecasts,
+        intialization_datetime_utc,
+    )
 
     session.add_all(forecasts)
 
@@ -161,11 +203,13 @@ def make_fake_forecasts(
 
 
 def make_fake_national_forecast(
-    session: Session, t0_datetime_utc: Optional[datetime] = None
+    session: Session,
+    t0_datetime_utc: Optional[datetime] = None,
+    intialization_datetime_utc: Optional[datetime] = None,
 ) -> ForecastSQL:
     """Make national fake forecast"""
     location = get_location(
-        gsp_id=0, session=session, label=national_gb_label, installed_capacity_mw=14000
+        gsp_id=0, session=session, label=national_gb_label, installed_capacity_mw=NATIONAL_CAPACITY
     )
     model = MLModelSQL(name="fake_model_national", version="0.1.2")
     input_data_last_updated = make_fake_input_data_last_updated()
@@ -181,7 +225,6 @@ def make_fake_national_forecast(
         target_datetime_utc = t0_datetime_utc + timedelta(minutes=i * 30) - timedelta(days=2)
         f = make_fake_forecast_value(target_time=target_datetime_utc, random_factor=random_factor)
         forecast_values.append(f)
-
     forecast = ForecastSQL(
         model=model,
         forecast_creation_time=t0_datetime_utc,
@@ -189,6 +232,7 @@ def make_fake_national_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         historic=False,
+        intialization_datetime_utc=intialization_datetime_utc,
     )
 
     return forecast
@@ -198,7 +242,7 @@ def make_fake_gsp_yields_for_one_location(
     gsp_id: int, session: Session, t0_datetime_utc: Optional[datetime] = None
 ):
     """
-    Make GSP yields for one locations
+    Make GSP yields for one location
 
     :param gsp_id: the gsp id you want gsp yields for
     :param session: database sessions
@@ -207,26 +251,35 @@ def make_fake_gsp_yields_for_one_location(
 
     if gsp_id == 0:
         # national capacity
-        installed_capacity_mw = 13000
+        installed_capacity_mw = NATIONAL_CAPACITY
     else:
         # gsp capacity (roughly)
-        installed_capacity_mw = 10
+        installed_capacity_mw = 40
 
     if t0_datetime_utc is None:
-        t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
+        # Set to now but rounded to the previous half-hour
+        t0_datetime_utc = datetime.now(tz=timezone.utc)
+        if t0_datetime_utc.minute >= 30:
+            t0_datetime_utc.replace(minute=30, second=0, microsecond=0)
+        else:
+            t0_datetime_utc.replace(minute=0, second=0, microsecond=0)
 
     location = get_location(
         session=session, gsp_id=gsp_id, installed_capacity_mw=installed_capacity_mw
     )
 
-    random_factor = 0.9 + 0.1 * np.random.random()
+    random_factor_in_day = 0.7 + 0.1 * np.random.random()
+    random_factor_day_after = 0.7 + 0.1 * np.random.random()
 
     # make 2 days of fake data
+    # TODO: this should now be 48hr backwards & ~36hr forwards
     for i in range(48 * 2):
         datetime_utc = t0_datetime_utc - timedelta(days=2) + timedelta(minutes=i * 30)
 
         intensity = make_fake_intensity(datetime_utc)
-        power = installed_capacity_mw * intensity * random_factor
+        # GSP yields are in KW
+        power = installed_capacity_mw * 1000 * intensity * random_factor_in_day
+        power_day_after = installed_capacity_mw * 1000 * intensity * random_factor_day_after
 
         gsp_yield = GSPYieldSQL(
             datetime_utc=datetime_utc,
@@ -238,7 +291,7 @@ def make_fake_gsp_yields_for_one_location(
         session.add(gsp_yield)
 
         gsp_yield = GSPYieldSQL(
-            datetime_utc=datetime_utc, solar_generation_kw=3, regime="day-after"
+            datetime_utc=datetime_utc, solar_generation_kw=power_day_after, regime="day-after"
         )
         gsp_yield.location = location
 
@@ -247,13 +300,13 @@ def make_fake_gsp_yields_for_one_location(
 
 def make_fake_intensity(datetime_utc: datetime) -> float:
     """
-    Make a fake intesnity value based on the time of the day
+    Make a fake intensity value based on the time of the day
 
     :param datetime_utc:
-    :return: inteisty, between 0 and 1
+    :return: intensity, between 0 and 1
     """
     fraction_of_day = (datetime_utc.hour * 60 + datetime_utc.minute) / TOTAL_MINUTES_IN_ONE_DAY
-    # use single cos**2 wave for intensity, but set night time to zero
+    # use single cos**2 wave for intensity, but set nighttime to zero
     if (fraction_of_day > 0.25) & (fraction_of_day < 0.75):
         intensity = np.cos(2 * np.pi * fraction_of_day) ** 2
     else:

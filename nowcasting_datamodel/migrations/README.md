@@ -2,17 +2,23 @@
 
 When we change the datamodel of the PV or Forecast database we will need to run a database migration
 
-## 1. old local database
-start local database of database before data model changes. This can be done by setting `DB_URL` and `DB_URL_PV` and running
-by running ```python nowcasting_datamodel/migrations/app.py --make-migrations```
+## 1. Connect to database via SSH
+Open an SSH tunnel from the target database instance to your local machine. Then, set
+`DB_URL` environment variable to point to the local end of the tunnel e.g.
+```bash
+$ export DB_URL=postgresql://<user>:<password>@localhost:<port>/forecastdevelopment
+$ python nowcasting_datamodel/migrations/app.py --make-migrations
+```
 
-## 2. run migrations scripts
-by running ```python nowcasting_datamodel/migrations/app.py --run-migrations```
+## 2. Commit new migration file
+Commit migrations revision to repo using git
 
-## 3. migrations revision
-commit migrations revision to repo
+## 3a. Run migrations manually
+```
+$ python nowcasting_datamodel/migrations/app.py --run-migrations
+```
 
-## 4. Start AWS task on ECS with docker container from this repo
+## 3b. Start AWS task on ECS with docker container from this repo
 This will run all the migrations an update the database in production / development
 TODO Set up task definition using terraform
 The current solution is to oopen ssh tunnel and run the migrations from there

@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 from nowcasting_datamodel.models.base import Base_Forecast
-from nowcasting_datamodel.models.forecast import get_partitions
 
 logger = logging.getLogger(__name__)
 
@@ -37,18 +36,6 @@ class DatabaseConnection:
 
         self.base.metadata.drop_all(self.engine)
         self.base.metadata.create_all(self.engine)
-
-    def make_partitions(self):
-        """Make partitions tables (useful for testing)"""
-        # get partitions
-        self.partitions = get_partitions(2019, 1, 2022, 7)
-
-        # make partitions
-        for partition in self.partitions:
-            if not self.engine.dialect.has_table(
-                connection=self.engine.connect(), table_name=partition.__table__.name
-            ):
-                partition.__table__.create(bind=self.engine)
 
     def drop_all(self):
         """Drop all partitions and tables"""

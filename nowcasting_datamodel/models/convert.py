@@ -51,6 +51,7 @@ def convert_list_forecast_value_seven_days_sql_to_list_forecast(
                 input_data_last_updated=forecast_value_sql.forecast.input_data_last_updated,
                 forecast_values=[forecast_value_sql],
                 historic=forecast_value_sql.forecast.historic,
+                initialisation_datetime_utc=forecast_value_sql.forecast.initialisation_datetime_utc,
             )
             forecast = Forecast.model_validate(forecast, from_attributes=True)
             forecasts_by_gsp[gsp_id] = forecast
@@ -110,7 +111,6 @@ def convert_df_to_national_forecast(
             forecast_value_sql.properties["90"] = forecast_value.forecast_mw_plevel_90
 
         forecast_values.append(forecast_value_sql)
-
     # make forecast object
     forecast = ForecastSQL(
         model=model,
@@ -119,6 +119,7 @@ def convert_df_to_national_forecast(
         input_data_last_updated=input_data_last_updated,
         forecast_values=forecast_values,
         historic=False,
+        initialisation_datetime_utc=datetime.now(tz=timezone.utc),
     )
 
     return forecast

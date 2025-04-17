@@ -153,37 +153,6 @@ class ForecastValueSQL(
     forecast = relationship("ForecastSQL", back_populates="forecast_values")
 
 
-def get_partitions(start_year: int, start_month: int, end_year: int, end_month: int):
-    """Make partitions"""
-    partitions = []
-    for year in range(start_year, end_year + 1):
-        if year != start_year:
-            start_month = 1
-        if year == end_year:
-            end_month_loop = end_month
-        else:
-            end_month_loop = 13
-
-        for month in range(start_month, end_month_loop):
-            if month == 12:
-                year_end = year + 1
-                month_end = 1
-            else:
-                year_end = year
-                month_end = month + 1
-
-            if month < 10:
-                month = f"0{month}"
-            if month_end < 10:
-                month_end = f"0{month_end}"
-
-            partitions.append(
-                ForecastValueSQL.create_partition(f"{year}_{month}", f"{year_end}_{month_end}")
-            )
-
-    return partitions
-
-
 def create_forecastvalueyearmonth_class(year, month):
     """Dynamically create a ForecastValueYearMonthClass dynamically for input year and month"""
 
@@ -254,7 +223,7 @@ def make_partitions(start_year: int, start_month: int, end_year: int):
             )
 
 
-make_partitions(2022, 8, 2025)
+make_partitions(2022, 8, 2030)
 
 
 # legacy table, this means migration still work
@@ -315,14 +284,17 @@ class ForecastValue(EnhancedBaseModel):
 
     target_time: datetime = Field(
         ...,
-        description="The target time that the forecast is produced for",
+        description=(
+            "The target time for which the forecast is produced, indicating the period end time "
+            "(e.g., a target_time of 12:30 refers to the period from 12:00 to 12:30)."
+        ),
     )
     expected_power_generation_megawatts: float = Field(
         ..., ge=0, description="The forecasted value in MW"
     )
 
     expected_power_generation_normalized: Optional[float] = Field(
-        None, ge=0, description="The forecasted value divided by the gsp capacity [%]"
+        None, ge=0, description="The forecasted value divided by the GSP capacity [%]"
     )
 
     # The amount that the forecast should be adjusted by,
@@ -479,7 +451,7 @@ class ForecastSQL(Base_Forecast, CreatedMixin):
     input_data_last_updated_id = Column(
         Integer, ForeignKey("input_data_last_updated.id"), index=True
     )
-
+    initialisation_datetime_utc = Column(DateTime(timezone=True), default=None, nullable=True)
     Index("index_forecast_historic", historic)
 
 
@@ -505,9 +477,18 @@ class Forecast(EnhancedBaseModel):
         description="Information about the input data that was used to create the forecast",
     )
 
+    initialisation_datetime_utc: datetime = Field(
+        False, description="The time when the forecast should be initialized"
+    )
+
     @field_validator("forecast_creation_time", mode="before")
     def normalize_forecast_creation_time(cls, v):
         """Normalize forecast_creation_time field"""
+        return datetime_with_timezone(cls, v)
+
+    @field_validator("initialisation_datetime_utc", mode="before")
+    def normalize_initialisation_datetime_utc(cls, v):
+        """Normalize initialisation_datetime_utc field"""
         return datetime_with_timezone(cls, v)
 
     def to_orm(self) -> ForecastSQL:
@@ -519,6 +500,7 @@ class Forecast(EnhancedBaseModel):
             input_data_last_updated=self.input_data_last_updated.to_orm(),
             forecast_values=[forecast_value.to_orm() for forecast_value in self.forecast_values],
             historic=self.historic,
+            initialisation_datetime_utc=self.initialisation_datetime_utc,
         )
 
     @classmethod
@@ -537,6 +519,7 @@ class Forecast(EnhancedBaseModel):
             ],
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
+            initialisation_datetime_utc=forecast_sql.initialisation_datetime_utc,
         )
 
     @classmethod
@@ -557,6 +540,7 @@ class Forecast(EnhancedBaseModel):
             ],
             historic=forecast_sql.historic,
             model=MLModel.model_validate(forecast_sql.model),
+            initialisation_datetime_utc=forecast_sql.initialisation_datetime_utc,
         )
 
     @classmethod

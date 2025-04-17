@@ -450,6 +450,13 @@ def test_update_latest_input_data_last_updated(db_session):
     assert input_data_last_updated.gsp.replace(tzinfo=None) == now
     assert input_data_last_updated.pv.replace(tzinfo=None) == yesterday
 
+    # test that outdated update does not update the value backwards in time
+    update_latest_input_data_last_updated(
+        session=db_session, component="gsp", update_datetime=yesterday
+    )
+    input_data_last_updated = get_latest_input_data_last_updated(session=db_session)
+    assert input_data_last_updated.gsp.replace(tzinfo=None) == now
+
     assert len(db_session.query(InputDataLastUpdatedSQL).all()) == 2
 
 
