@@ -473,7 +473,7 @@ class Forecast(EnhancedBaseModel):
     )
 
     initialization_datetime_utc: datetime = Field(
-        False, description="The time when the forecast should be initialized"
+        ..., description="The time when the forecast should be initialized"
     )
 
     @field_validator("forecast_creation_time", mode="before")

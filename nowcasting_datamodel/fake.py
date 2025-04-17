@@ -217,6 +217,9 @@ def make_fake_national_forecast(
     if t0_datetime_utc is None:
         t0_datetime_utc = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
+    if initialization_datetime_utc is None:
+        initialization_datetime_utc = t0_datetime_utc
+
     random_factor = 0.9 + 0.1 * np.random.random()
 
     # create
