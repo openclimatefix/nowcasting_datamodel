@@ -23,7 +23,7 @@ def test_adjust_forecasts(forecasts):
 
     assert forecasts[0].forecast_values[0]._adjust_mw == 1.23
 
-    forecasts[0].adjust(limit=1.22)
+    forecasts[0].adjust(limit=1.22, limit_percent=0.2)
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 8.78
     assert "expected_power_generation_megawatts" in forecasts[0].forecast_values[0].model_dump()
     assert "_adjust_mw" not in forecasts[0].forecast_values[0].model_dump()
@@ -34,8 +34,21 @@ def test_adjust_forecast_neg(forecasts):
     forecasts[0].forecast_values[0].adjust_mw = -1.23
     forecasts = [Forecast.model_validate(f, from_attributes=True) for f in forecasts]
 
-    forecasts[0].adjust(limit=1.22)
+    forecasts[0].adjust(limit=1.22, limit_percent=0.2)
     assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 11.22
+    assert "expected_power_generation_megawatts" in forecasts[0].forecast_values[0].model_dump()
+    assert "_adjust_mw" not in forecasts[0].forecast_values[0].model_dump()
+
+
+def test_adjust_forecasts_percentage(forecasts):
+    forecasts[0].forecast_values[0].expected_power_generation_megawatts = 10.0
+    forecasts[0].forecast_values[0].adjust_mw = 1.23
+    forecasts = [Forecast.model_validate(f, from_attributes=True) for f in forecasts]
+
+    assert forecasts[0].forecast_values[0]._adjust_mw == 1.23
+
+    forecasts[0].adjust(limit=1.22, limit_percent=0.05)
+    assert forecasts[0].forecast_values[0].expected_power_generation_megawatts == 9.5
     assert "expected_power_generation_megawatts" in forecasts[0].forecast_values[0].model_dump()
     assert "_adjust_mw" not in forecasts[0].forecast_values[0].model_dump()
 
