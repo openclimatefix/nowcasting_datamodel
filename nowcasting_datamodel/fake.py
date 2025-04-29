@@ -12,7 +12,6 @@ from nowcasting_datamodel.models import (
     MetricSQL,
     MetricValueSQL,
     MLModelSQL,
-    PVSystemSQL,
     national_gb_label,
 )
 from nowcasting_datamodel.models.forecast import (
@@ -34,11 +33,6 @@ NATIONAL_CAPACITY = 13000
 def make_fake_location(gsp_id: int) -> LocationSQL:
     """Make fake location with gsp id"""
     return LocationSQL(label=f"GSP_{gsp_id}", gsp_id=gsp_id)
-
-
-def make_fake_pv_system() -> PVSystemSQL:
-    """Make fake location with gsp id"""
-    return PVSystemSQL(pv_system_id=1, provider="pvoutput.org", latitude=55, longitude=0)
 
 
 def make_fake_input_data_last_updated() -> InputDataLastUpdatedSQL:

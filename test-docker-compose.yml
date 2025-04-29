@@ -2,7 +2,8 @@ version: "3"
 
 services:
   postgres_forecast:
-    image: postgres:14.5
+    container_name: postgres_forecast
+    image: postgres:17
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -10,27 +11,16 @@ services:
     ports:
       - "5432:5432"
 
-  postgres_pv:
-    image: postgres:14.5
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5433:5432"
-
   datamodel:
     build:
       context: .
       dockerfile: infrastructure/docker/Dockerfile
     environment:
       - DB_URL=postgresql://postgres:postgres@postgres_forecast:5432/postgres
-      - DB_URL_PV=postgresql://postgres:postgres@postgres_pv:5432/postgres
       - GIT_PYTHON_REFRESH=quiet
       - LOG_LEVEL=DEBUG
     depends_on:
       - postgres_forecast
-      - postgres_pv
     volumes:
       - ./tests/:/app/tests
       - ./nowcasting_datamodel/:/app/nowcasting_datamodel
@@ -43,7 +33,6 @@ services:
         TESTING: 1
     environment:
       - DB_URL=postgresql://postgres:postgres@postgres_forecast:5432/postgres
-      - DB_URL_PV=postgresql://postgres:postgres@postgres_pv:5432/postgres
       - GIT_PYTHON_REFRESH=quiet
       - LOG_LEVEL=DEBUG
     command: >
@@ -55,7 +44,6 @@ services:
       && cp coverage.xml ./tests/"
     depends_on:
       - postgres_forecast
-      - postgres_pv
       - datamodel
     volumes:
       - ./tests/:/app/tests
