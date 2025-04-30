@@ -11,6 +11,7 @@ from nowcasting_datamodel.fake import (
 from nowcasting_datamodel.read.read_models import get_model
 from nowcasting_datamodel.models import ForecastValueSevenDaysSQL
 from nowcasting_datamodel.models.forecast import (
+    Forecast,
     ForecastSQL,
     ForecastValueLatestSQL,
     ForecastValueSQL,
@@ -91,6 +92,8 @@ def test_update_one_gsp(db_session):
     forecast = db_session.query(ForecastSQL).filter(ForecastSQL.historic == True).first()
     assert forecast.input_data_last_updated == forecast_sql.input_data_last_updated
 
+    # make sure we can convert to pydantic object
+    _ = Forecast.from_orm(forecast)
 
 @freeze_time("2024-01-01 00:00:00")
 def test_update_all_forecast_latest(db_session):
