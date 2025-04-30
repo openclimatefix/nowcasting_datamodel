@@ -478,7 +478,7 @@ class Forecast(EnhancedBaseModel):
     )
 
     initialization_datetime_utc: datetime = Field(
-        ...,
+        None,
         description="The time when the forecast should be initialized",
         exclude=True,
     )
