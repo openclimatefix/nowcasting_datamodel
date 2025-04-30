@@ -95,6 +95,7 @@ def test_update_one_gsp(db_session):
     # make sure we can convert to pydantic object
     _ = Forecast.from_orm(forecast)
 
+
 @freeze_time("2024-01-01 00:00:00")
 def test_update_all_forecast_latest(db_session):
     today_forecasts = make_fake_forecasts(
