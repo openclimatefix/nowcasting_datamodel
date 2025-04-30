@@ -50,6 +50,7 @@ def get_historic_forecast(
             location=forecast.location,
             input_data_last_updated=forecast.input_data_last_updated,
             model=forecast.model,
+            initialization_datetime_utc=datetime.now(timezone.utc),
         )
         session.add(forecast_historic)
         session.commit()
