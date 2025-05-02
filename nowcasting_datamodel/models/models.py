@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 ########
 # 3. Model
 ########
-class MLModelSQL(Base_Forecast):
+class MLModelSQL(Base_Forecast, CreatedMixin):
     """ML model that is being used"""
 
     __tablename__ = "model"
