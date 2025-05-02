@@ -34,7 +34,7 @@ def get_models(
             query = query.filter(ForecastSQL.created_utc > forecast_created_utc)
 
     # order by
-    query = query.order_by(MLModelSQL.name)
+    query = query.order_by(MLModelSQL.name, MLModelSQL.created_utc.desc())
 
     # get all results
     models = query.all()
@@ -63,7 +63,7 @@ def get_model(session: Session, name: str, version: Optional[str] = None) -> MLM
         query = query.filter(MLModelSQL.version == version)
 
     # gets the latest version
-    query = query.order_by(MLModelSQL.version.desc())
+    query = query.order_by(MLModelSQL.created_utc.desc())
 
     # get all results
     models = query.all()
