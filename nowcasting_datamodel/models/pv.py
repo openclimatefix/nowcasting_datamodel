@@ -1,4 +1,4 @@
-""" Pydantic and Sqlalchemy models for the database
+"""Pydantic and Sqlalchemy models for the database
 
 7. PV system for storing PV data (pv.py)
 8. PV yield for storing PV data (pv.py)
