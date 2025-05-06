@@ -384,10 +384,10 @@ def get_latest_forecast_for_gsps(
         forecast.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
         if forecast.historic:
             for forecast_value in forecast.forecast_values_latest:
-                forecast_value.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+                forecast_value.created_utc = forecast_value.created_utc.replace(tzinfo=timezone.utc)
         else:
             for forecast_value in forecast.forecast_values:
-                forecast_value.created_utc = forecast.created_utc.replace(tzinfo=timezone.utc)
+                forecast_value.created_utc = forecast_value.created_utc.replace(tzinfo=timezone.utc)
 
     return forecasts
 
