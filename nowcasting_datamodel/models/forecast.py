@@ -477,7 +477,7 @@ class Forecast(EnhancedBaseModel):
         description="Information about the input data that was used to create the forecast",
     )
 
-    initialization_datetime_utc: datetime = Field(
+    initialization_datetime_utc: datetime | None = Field(
         None,
         description="The time when the forecast should be initialized",
         exclude=True,
