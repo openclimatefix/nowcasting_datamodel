@@ -227,6 +227,9 @@ def sort_all_forecast_value(forecasts: List[ForecastSQL]):
     """
     """ Sorting all forecasts"""
 
+    if len(forecasts) == 0:
+        return forecasts
+
     if forecasts[0].historic:
         logger.debug("Sorting 'forecast_values_latest' values")
         logger.debug(
