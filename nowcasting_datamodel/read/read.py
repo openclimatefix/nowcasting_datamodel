@@ -225,7 +225,6 @@ def sort_all_forecast_value(forecasts: List[ForecastSQL]):
     :param forecasts:  list of forecasts
     :return: list of forecasts, but with sorted forecat values
     """
-    """ Sorting all forecasts"""
 
     if len(forecasts) == 0:
         return forecasts
