@@ -225,9 +225,18 @@ def sort_all_forecast_value(forecasts: List[ForecastSQL]):
     :param forecasts:  list of forecasts
     :return: list of forecasts, but with sorted forecat values
     """
-    """ Sorting all forecasts"""
 
-    logger.debug("sorting 'forecast_values_latest' or 'forecast_values' values.")
+    if len(forecasts) == 0:
+        return forecasts
+
+    if forecasts[0].historic:
+        logger.debug("Sorting 'forecast_values_latest' values")
+        logger.debug(
+            f"Will be sorting {len(forecasts[0].forecast_values_latest)} " f"forecast values latest"
+        )
+    else:
+        logger.debug("Sorting 'forecast_values' values")
+        logger.debug(f"Will be sorting {len(forecasts[0].forecast_values)} " f"forecast values")
 
     for forecast in forecasts:
         sort_forecast_values(forecast=forecast)
@@ -374,8 +383,6 @@ def get_latest_forecast_for_gsps(
     forecasts = query.all()
 
     logger.debug(f"Found {len(forecasts)} forecasts")
-    if len(forecasts) > 0:
-        logger.debug(f"The first forecast has {len(forecasts[0].forecast_values)} forecast_values")
 
     forecasts = sort_all_forecast_value(forecasts)
 
