@@ -234,13 +234,13 @@ def sort_all_forecast_value(forecasts: List[ForecastSQL]):
         logger.debug("Sorting 'forecast_values_latest' values")
         logger.debug(
             f"Will be sorting {len(forecasts[0].forecast_values_latest)} "
-            f"forecast values latest for gsp id: {forecasts[0].gsp_id}"
+            f"forecast values latest"
         )
     else:
         logger.debug("Sorting 'forecast_values' values")
         logger.debug(
             f"Will be sorting {len(forecasts[0].forecast_values)} "
-            f"forecast values for gsp id: {forecasts[0].gsp_id}"
+            f"forecast values"
         )
 
     for forecast in forecasts:
