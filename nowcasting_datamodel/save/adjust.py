@@ -1,4 +1,4 @@
-""" Methods for adding adjust values to the forecast"""
+"""Methods for adding adjust values to the forecast"""
 
 import logging
 from datetime import datetime, timedelta
