@@ -1,4 +1,4 @@
-""" Read functions for models"""
+"""Read functions for models"""
 
 from datetime import datetime
 from typing import Optional

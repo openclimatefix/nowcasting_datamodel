@@ -1,4 +1,4 @@
-""" Read pv functions """
+"""Read pv functions"""
 
 import logging
 from datetime import datetime, timezone

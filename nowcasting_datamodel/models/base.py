@@ -1,4 +1,4 @@
-""" Base files for SQL sqlalchemy """
+"""Base files for SQL sqlalchemy"""
 
 from sqlalchemy.orm import declarative_base
 
