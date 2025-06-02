@@ -1,1 +1,1 @@
-""" Database Migrations """
+"""Database Migrations"""

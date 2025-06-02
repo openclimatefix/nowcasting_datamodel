@@ -1,1 +1,1 @@
-""" init for read functions """
+"""init for read functions"""

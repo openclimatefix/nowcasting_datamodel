@@ -1,4 +1,4 @@
-""" Database Connection class"""
+"""Database Connection class"""
 
 import logging
 
