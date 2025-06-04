@@ -105,6 +105,17 @@ class PartitionByMeta(DeclarativeMeta):
         return super().__new__(cls, clsname, bases, attrs)
 
 
+def default_horizon_minutes(context):
+    columns = context.get_current_parameters()
+    target_time = columns["target_time"]
+    created_utc = columns["created_utc"]
+
+    if created_utc is None:
+        created_utc = datetime.now(tz=target_time.tzinfo)
+    delta = (target_time - created_utc).total_seconds() / 60.0  # convert to minutes
+    return delta
+
+
 class ForecastValueSQLMixin(CreatedMixin):
     """One Forecast of generation at one timestamp
 
@@ -118,6 +129,17 @@ class ForecastValueSQLMixin(CreatedMixin):
     # this can be used to store any additional information about the forecast, like p_levels.
     # Want to keep it as json so that we can store different properties for different forecasts
     properties = Column(MutableDict.as_mutable(JSON), nullable=True)
+
+    # we want to store the forecast horizon. This is the difference between target_time and created_utc.
+    # By storing the value, and index, queries should be faster when looking for an N hour forecast.
+    # I tried to use  server_default = "CAST(EXTRACT(EPOCH FROM (target_time - created_utc))/60 as INT)"
+    # but this does not work.
+    horizon_minutes = Column(
+        Integer,
+        nullable=True,
+        index=True,
+        default=default_horizon_minutes,
+    )
 
     @declared_attr
     def forecast_id(self):
