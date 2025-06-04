@@ -7,7 +7,7 @@ The following class are made
 """
 
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Optional
 
 import numpy as np
