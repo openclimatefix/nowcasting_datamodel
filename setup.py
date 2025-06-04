@@ -1,4 +1,4 @@
-""" Usual setup file for package """
+"""Usual setup file for package"""
 
 from pathlib import Path
 

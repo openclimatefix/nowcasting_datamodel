@@ -1,4 +1,4 @@
-""" Add created_utc index
+"""Add created_utc index
 
 This migrations takes about 5 minutes to run
 

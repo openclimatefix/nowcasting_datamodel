@@ -1,4 +1,4 @@
-""" Functions to convert objects """
+"""Functions to convert objects"""
 
 import logging
 from datetime import datetime, timezone

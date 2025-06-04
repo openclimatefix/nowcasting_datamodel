@@ -1,4 +1,4 @@
-""" Utils functions for models """
+"""Utils functions for models"""
 
 import logging
 from datetime import datetime, timezone

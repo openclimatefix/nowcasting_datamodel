@@ -1,4 +1,4 @@
-""" Read user"""
+"""Read user"""
 
 import logging
 from datetime import datetime

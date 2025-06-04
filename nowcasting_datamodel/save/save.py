@@ -1,4 +1,4 @@
-""" Save forecasts to the database """
+"""Save forecasts to the database"""
 
 import logging
 import os
