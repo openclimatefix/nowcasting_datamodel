@@ -16,6 +16,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
+    Computed,
     DateTime,
     Float,
     ForeignKey,
@@ -118,6 +119,16 @@ class ForecastValueSQLMixin(CreatedMixin):
     # this can be used to store any additional information about the forecast, like p_levels.
     # Want to keep it as json so that we can store different properties for different forecasts
     properties = Column(MutableDict.as_mutable(JSON), nullable=True)
+
+    # we want to store the forecast horizon.
+    # This is the difference between target_time and created_utc.
+    # By storing the value queries should be faster when looking for an N hour forecast.
+    horizon_minutes = Column(
+        Integer,
+        Computed("CAST(EXTRACT(EPOCH FROM target_time - created_utc)/60 as INT)"),
+        nullable=False,
+        index=True,
+    )
 
     @declared_attr
     def forecast_id(self):

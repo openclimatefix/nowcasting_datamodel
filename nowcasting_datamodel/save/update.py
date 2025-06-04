@@ -291,7 +291,8 @@ def change_forecast_value_to_forecast_last_7_days(
 
     forecast_new = ForecastValueSevenDaysSQL()
     for key in ForecastValueSQL.__table__.columns.keys():
-        if hasattr(forecast, key):
+        # Dont copy horizon minutes column as this is a generated column
+        if hasattr(forecast, key) and key != "horizon_minutes":
             setattr(forecast_new, key, getattr(forecast, key))
 
     return forecast_new
