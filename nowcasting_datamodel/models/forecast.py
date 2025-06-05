@@ -16,7 +16,6 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
-    Computed,
     DateTime,
     Float,
     ForeignKey,
@@ -147,12 +146,7 @@ class ForecastValueSQLMixin(CreatedMixin):
     # server_default=Computed("CAST(EXTRACT(EPOCH FROM target_time - created_utc)/60 as INT)")
     # but the migration took >1 hour.
 
-    horizon_minutes = Column(
-        Integer,
-        nullable=True,
-        index=True,
-        default=default_horizon_minutes
-    )
+    horizon_minutes = Column(Integer, nullable=True, index=True, default=default_horizon_minutes)
 
     @declared_attr
     def forecast_id(self):

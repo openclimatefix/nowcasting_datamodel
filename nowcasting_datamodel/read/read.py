@@ -527,7 +527,6 @@ def get_forecast_values(
             >= text(f"interval '{forecast_horizon_minutes} minute'")
         )
 
-
         # this seems to only work for postgres
         query = query.filter(
             model.created_utc - datetime.now(tz=timezone.utc)
