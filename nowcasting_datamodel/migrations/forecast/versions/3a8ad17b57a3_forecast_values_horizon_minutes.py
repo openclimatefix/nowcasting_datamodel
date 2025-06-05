@@ -1,13 +1,13 @@
-""" Add horizon minutes to forecast_values tables
+"""Add horizon minutes to forecast_values tables
 
 Revision ID: 3a8ad17b57a3
 Revises: 820c16a0524c
 Create Date: 2025-06-05 19:13:15.137091
 
 """
-from alembic import op
-import sqlalchemy as sa
 
+import sqlalchemy as sa
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "3a8ad17b57a3"
