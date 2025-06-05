@@ -519,7 +519,14 @@ def get_forecast_values(
         query = query.filter(model.created_utc <= created_utc_limit)
 
     if forecast_horizon_minutes is not None:
-        query = query.filter(model.horizon_minutes >= forecast_horizon_minutes)
+        # Once horizon_minutes has been filled and is not Null, we can use
+        # query = query.filter(model.horizon_minutes >= forecast_horizon_minutes)
+
+        query = query.filter(
+            model.target_time - model.created_utc
+            >= text(f"interval '{forecast_horizon_minutes} minute'")
+        )
+
 
         # this seems to only work for postgres
         query = query.filter(
