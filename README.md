@@ -4,6 +4,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 Datamodel for the nowcasting project
 
+**:warning: Note this repo will soon be deprecated in favour of a new Data Platform**
 
 The data model has been made using `sqlalchemy` with a mirrored model in `pydantic`.
 
