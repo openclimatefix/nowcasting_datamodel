@@ -19,8 +19,9 @@ Future: The data model could be moved, to be a more modular solution.
 All models are in `nowcasting_datamodel.models.py`.
 The diagram below shows how the different tables are connected.
 
-![Models](diagram.png)
-![Models](diagram_pv.png)
+![Models](https://raw.githubusercontent.com/openclimatefix/nowcasting_datamodel/main/diagram.png)
+![Models](https://raw.githubusercontent.com/openclimatefix/nowcasting_datamodel/main/diagram_pv.png)
+
 
 ### connection.py
 
