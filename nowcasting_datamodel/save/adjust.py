@@ -205,7 +205,7 @@ def reduce_metric_values_to_correct_forecast_horizon(
 
     results_df = pd.DataFrame(
         index=pd.date_range(
-            start=datetime_now, end=datetime_now + timedelta(hours=hours_ahead), freq="30T"
+            start=datetime_now, end=datetime_now + timedelta(hours=hours_ahead), freq="30min"
         ),
     )
     results_df["datetime"] = results_df.index
